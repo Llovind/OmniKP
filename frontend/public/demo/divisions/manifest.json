@@ -1,0 +1,79 @@
+[
+  {
+    "division": "ED",
+    "kpis": 13,
+    "readings": 26,
+    "filename": "ed.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location"
+  },
+  {
+    "division": "BGES & OLO",
+    "kpis": 41,
+    "readings": 82,
+    "filename": "bges-olo.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Location columns"
+  },
+  {
+    "division": "NETOP OSP",
+    "kpis": 8,
+    "readings": 16,
+    "filename": "netop-osp.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location"
+  },
+  {
+    "division": "AIM",
+    "kpis": 2,
+    "readings": 4,
+    "filename": "aim.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Location columns"
+  },
+  {
+    "division": "FBB",
+    "kpis": 8,
+    "readings": 16,
+    "filename": "fbb.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location"
+  },
+  {
+    "division": "MBB",
+    "kpis": 17,
+    "readings": 34,
+    "filename": "mbb.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Location columns"
+  },
+  {
+    "division": "DEFA",
+    "kpis": 1,
+    "readings": 2,
+    "filename": "defa.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location"
+  }
+]

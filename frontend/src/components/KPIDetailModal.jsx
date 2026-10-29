@@ -6,7 +6,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ReferenceLine,
   CartesianGrid,
 } from 'recharts';
 import { api } from '../api/client';
@@ -24,11 +23,9 @@ export default function KPIDetailModal({
   useEffect(() => {
     if (!selectedCell) return;
     let isMounted = true;
-    setLoading(true);
-    setError(null);
 
     api
-      .getHistory(domainId, selectedCell.kpi_id, selectedCell.location_id)
+      .getHistory(domainId, selectedCell.kpi_id, selectedCell.location_id, selectedCell.date)
       .then((data) => {
         if (isMounted) {
           setHistoryData(data);
@@ -52,11 +49,12 @@ export default function KPIDetailModal({
   // Format chart data
   const chartPoints =
     historyData?.history.map((h) => ({
-      date: h.date.slice(5), // MM-DD
+      date: h.date,
       actual: h.actual_value,
       zScore: h.z_score,
       isAnomaly: h.is_anomaly,
       status: h.status,
+      target: h.target_value,
     })) || [];
 
   return (
@@ -92,7 +90,7 @@ export default function KPIDetailModal({
           {/* Quick Metrics Header */}
           <div className="grid grid-cols-4 gap-3">
             <div className="glass-sm p-3 border border-white/5">
-              <span className="text-[10px] text-slate-400 block uppercase font-mono">Current Value</span>
+              <span className="text-[10px] text-slate-400 block uppercase font-mono">Selected Reading</span>
               <span className="display-font text-lg font-bold text-slate-100">
                 {selectedCell.actual_value} <span className="text-xs font-normal text-slate-400">{selectedCell.unit}</span>
               </span>
@@ -107,7 +105,7 @@ export default function KPIDetailModal({
             <div className="glass-sm p-3 border border-white/5">
               <span className="text-[10px] text-slate-400 block uppercase font-mono">Standard Rule</span>
               <span className="text-xs font-medium text-slate-200 block mt-1">
-                {historyData?.higher_is_better ? 'Higher is Better' : 'Lower is Better'}
+                {(historyData?.higher_is_better ?? selectedCell.higher_is_better) ? 'Higher is Better' : 'Lower is Better'}
               </span>
             </div>
             <div className="glass-sm p-3 border border-white/5">
@@ -128,7 +126,7 @@ export default function KPIDetailModal({
           <div className="glass-sm p-4 border border-white/10 space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-mono">
-                30-Day Historical Trend &amp; Anomaly Horizon
+                Recent Readings &amp; Applicable Targets (up to 30)
               </h4>
               <span className="text-[11px] text-slate-400">
                 Unit: <strong className="text-slate-200">{selectedCell.unit}</strong>
@@ -188,19 +186,7 @@ export default function KPIDetailModal({
                         return null;
                       }}
                     />
-                    {historyData?.target_threshold && (
-                      <ReferenceLine
-                        y={historyData.target_threshold}
-                        stroke="#f97316"
-                        strokeDasharray="4 4"
-                        label={{
-                          value: `Target (${historyData.target_threshold})`,
-                          fill: '#f97316',
-                          fontSize: 10,
-                          position: 'insideTopRight',
-                        }}
-                      />
-                    )}
+                    <Line type="stepAfter" dataKey="target" name="Applicable target" stroke="#f97316" strokeDasharray="4 4" dot={false} connectNulls={false} />
                     <Line
                       type="monotone"
                       dataKey="actual"
@@ -218,7 +204,6 @@ export default function KPIDetailModal({
                               fill="#ef4444"
                               stroke="#ffffff"
                               strokeWidth={1.5}
-                              className="animate-ping"
                             />
                           );
                         }
@@ -257,7 +242,7 @@ export default function KPIDetailModal({
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            Trigger AI Root Cause Analysis
+            Review / draft RCA
           </button>
         </div>
       </div>

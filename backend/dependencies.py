@@ -1,9 +1,9 @@
 """
-dependencies.py — Shared FastAPI dependency functions for OmniKPI / PlantIntel.
+dependencies.py — Shared FastAPI dependency functions for OmniKPI.
 
 Domain isolation rule (from ANTIGRAVITY_PROJECT_CONTEXT.md):
     All routes enforce domain_id via Depends() at router level — never filter manually per-endpoint.
-    Valid domain_ids: 1 = telco (ITASE), 2 = petrochemical (CALIBER).
+    Active domain_id: 1 = telecommunications (ITASE 7.0).
 """
 from fastapi import Path, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -11,7 +11,7 @@ from database import get_db, DimDomain
 
 
 async def get_validated_domain(
-    domain_id: int = Path(..., description="Domain ID: 1=telco (ITASE), 2=petrochemical (CALIBER)"),
+    domain_id: int = Path(..., description="Domain ID: 1=telecommunications (ITASE 7.0)"),
     db: Session = Depends(get_db),
 ) -> DimDomain:
     """
@@ -20,9 +20,9 @@ async def get_validated_domain(
     Attach to any router with: dependencies=[Depends(get_validated_domain)]
     """
     domain = db.query(DimDomain).filter(DimDomain.domain_id == domain_id).first()
-    if not domain:
+    if domain_id != 1 or not domain:
         raise HTTPException(
             status_code=404,
-            detail=f"Domain ID {domain_id} not found. Valid options: 1=telco, 2=petrochemical.",
+            detail=f"Domain ID {domain_id} not found. The active domain is 1=telecommunications.",
         )
     return domain

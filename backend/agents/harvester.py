@@ -16,6 +16,9 @@ import io
 import os
 from typing import Any
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import pandas as pd
 from openai import AsyncOpenAI
 from rapidfuzz import fuzz, process
@@ -61,7 +64,7 @@ async def _llm_map_column(source_col: str) -> str | None:
             model=LLM_MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0,
-            max_tokens=15,
+            max_tokens=50,
         )
         result = response.choices[0].message.content.strip().lower().strip('"')
         return result if result in TARGET_COLUMNS else None

@@ -1,0 +1,3 @@
+Date,KPI,Unit,Direction,Target,Category,Demo North | Actual,Demo North | ACH,Demo South | Actual,Demo South | ACH
+2026-10-02,Fiber Service Availability,%,Higher better,99.5,Availability,98.1,98.59,99.8,100.3
+2026-10-02,Fiber Repair Time,hours,Lower better,8,Reliability,10.5,76.19,6.0,133.33

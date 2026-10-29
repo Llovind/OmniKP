@@ -1,5 +1,5 @@
 """
-schemas.py — Pydantic response models for OmniKPI / PlantIntel API.
+schemas.py — Pydantic response models for OmniKPI API.
 """
 from pydantic import BaseModel
 from typing import Optional
@@ -48,6 +48,7 @@ class KPIInfo(BaseModel):
 # ─── Heatmap ──────────────────────────────────────────────────────────────────
 
 class HeatmapCell(BaseModel):
+    fact_id: int
     kpi_id: int
     kpi_name: str
     kpi_archetype: str
@@ -58,6 +59,12 @@ class HeatmapCell(BaseModel):
     status: str          # GREEN | YELLOW | RED
     unit: str
     higher_is_better: bool
+    date: str
+    division: Optional[str] = None
+    source_file: Optional[str] = None
+    source_row: Optional[int] = None
+    attainment_pct: Optional[float] = None
+    feedback_count: int = 0
 
 
 class LocationSummary(BaseModel):
@@ -91,6 +98,7 @@ class HistoryPoint(BaseModel):
     z_score: Optional[float]
     is_anomaly: bool
     status: str
+    target_value: Optional[float] = None
 
 
 class HistoryResponse(BaseModel):
@@ -134,6 +142,7 @@ class AnomalyResponse(BaseModel):
 class RCARequest(BaseModel):
     kpi_id: int
     location_id: int
+    fact_id: Optional[int] = None
 
 
 class RCAResponse(BaseModel):
@@ -142,12 +151,16 @@ class RCAResponse(BaseModel):
     actual_value: float
     z_score: Optional[float]
     root_cause: str
-    confidence_score: int         # Derived from Z-score — NOT LLM-generated
-    confidence_basis: str
     prescriptive_action: str
     estimated_impact: str
     shift_logs_retrieved: int
     llm_model: str
+    evidence_status: str
+    evidence: list[dict] = []
+    cited_feedback_ids: list[int] = []
+    fact_id: int
+    date: str
+    division: Optional[str] = None
 
 
 # ─── Harvester ────────────────────────────────────────────────────────────────

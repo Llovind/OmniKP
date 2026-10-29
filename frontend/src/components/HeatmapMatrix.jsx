@@ -25,12 +25,6 @@ const ARCHETYPE_STYLES = {
     text: '#fde047',
     label: 'Reliability',
   },
-  Composite: {
-    bg: 'rgba(99, 102, 241, 0.15)',
-    border: 'rgba(99, 102, 241, 0.45)',
-    text: '#a5b4fc',
-    label: 'Composite',
-  },
 };
 
 export default function HeatmapMatrix({
@@ -56,8 +50,9 @@ export default function HeatmapMatrix({
     );
   }
 
-  // Get canonical list of KPIs from the first location (all locations share the same KPIs)
-  const sampleKpis = heatmapData.locations[0]?.kpis || [];
+  // Different divisions and locations may report different KPI sets.
+  const sampleKpis = [...new Map(heatmapData.locations.flatMap(loc => loc.kpis).map(kpi => [kpi.kpi_id, kpi])).values()]
+    .sort((a, b) => a.kpi_archetype.localeCompare(b.kpi_archetype) || a.kpi_name.localeCompare(b.kpi_name));
   
   // Group KPIs by archetype to create 2-tier header
   const archetypeGroups = [];
@@ -78,9 +73,8 @@ export default function HeatmapMatrix({
       {/* Matrix Controls / Subheader */}
       <div className="px-5 py-3.5 border-b border-white/5 bg-slate-950/40 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
           <h2 className="display-font text-sm font-semibold text-white tracking-wide">
-            SDG 9 Infrastructure Health Matrix &bull; {heatmapData.domain_name}
+            KPI performance
           </h2>
           <span className="text-xs text-slate-400 ml-2">
             ({heatmapData.locations.length} nodes &bull; {sampleKpis.length} KPIs monitored)
@@ -91,16 +85,16 @@ export default function HeatmapMatrix({
         <div className="flex items-center gap-4 text-xs">
           <div className="flex items-center gap-1.5">
             <span className="dot dot-green"></span>
-            <span className="text-slate-300">Normal (&plusmn;1.5&sigma;)</span>
+            <span className="text-slate-300">Meeting target</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="dot dot-yellow"></span>
-            <span className="text-slate-300">Warning (1.5&sigma;&ndash;2.0&sigma;)</span>
+            <span className="text-slate-300">Target unavailable</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="dot dot-red"></span>
             <span className="text-slate-300 font-semibold text-red-400">
-              Critical Anomaly (&gt;2.0&sigma;)
+              Missing target
             </span>
           </div>
         </div>
@@ -125,7 +119,7 @@ export default function HeatmapMatrix({
                 Status Split
               </th>
               {archetypeGroups.map((group) => {
-                const style = ARCHETYPE_STYLES[group.archetype] || ARCHETYPE_STYLES.Composite;
+                const style = ARCHETYPE_STYLES[group.archetype] || ARCHETYPE_STYLES.Availability;
                 return (
                   <th
                     key={group.archetype}
@@ -243,7 +237,8 @@ export default function HeatmapMatrix({
                           key={cell.kpi_id}
                           className="p-1 border-r border-white/5 text-center"
                         >
-                          <div
+                          <button
+                            type="button"
                             id={`cell-${loc.location_id}-${cell.kpi_id}`}
                             onClick={() =>
                               onSelectCell({
@@ -267,9 +262,9 @@ export default function HeatmapMatrix({
                             <div className="text-[10px] opacity-75 font-mono">
                               {cell.z_score !== null && cell.z_score !== undefined
                                 ? `Z:${cell.z_score > 0 ? '+' : ''}${cell.z_score.toFixed(1)}`
-                                : cell.unit}
+                                  : 'No baseline'}
                             </div>
-                          </div>
+                          </button>
                         </td>
                       );
                     })

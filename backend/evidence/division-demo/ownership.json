@@ -1,0 +1,556 @@
+{
+  "ED": [
+    {
+      "name": "DEP-ALL-Compliance Deployment Supervision",
+      "unit": "%",
+      "higher": true,
+      "source_row": 4
+    },
+    {
+      "name": "DEP-ENT-Time To Feasibility Check & Design",
+      "unit": "%",
+      "higher": true,
+      "source_row": 13
+    },
+    {
+      "name": "DEP-ENT-TT Deployment Comply PT-2",
+      "unit": "%",
+      "higher": true,
+      "source_row": 14
+    },
+    {
+      "name": "DEP-ENT-TT Deployment Comply PT-3 (Brancing & Murni)",
+      "unit": "%",
+      "higher": true,
+      "source_row": 15
+    },
+    {
+      "name": "DEP-ENT-Feasibility Check Validity",
+      "unit": "%",
+      "higher": true,
+      "source_row": 16
+    },
+    {
+      "name": "DEP-WHF-Deployment Alpro",
+      "unit": "Port",
+      "higher": true,
+      "source_row": 49
+    },
+    {
+      "name": "DEP-WHF-Deployment PT2",
+      "unit": "Port",
+      "higher": true,
+      "source_row": 50
+    },
+    {
+      "name": "DEP-WHF-Deployment PT3",
+      "unit": "Port",
+      "higher": true,
+      "source_row": 51
+    },
+    {
+      "name": "DEP-WHF-Time to Deployment PT2",
+      "unit": "%",
+      "higher": true,
+      "source_row": 52
+    },
+    {
+      "name": "DEP-WHM-New Link Express",
+      "unit": "%",
+      "higher": true,
+      "source_row": 68
+    },
+    {
+      "name": "DEP-WHM-New Infra Reguler",
+      "unit": "%",
+      "higher": true,
+      "source_row": 69
+    },
+    {
+      "name": "DEP-WHM-New Link Reguler",
+      "unit": "%",
+      "higher": true,
+      "source_row": 70
+    },
+    {
+      "name": "DEP-WHM-Hardware Upgrade",
+      "unit": "%",
+      "higher": true,
+      "source_row": 71
+    }
+  ],
+  "BGES & OLO": [
+    {
+      "name": "ONM-ALL-Service Availability-WiFi",
+      "unit": "%",
+      "higher": true,
+      "source_row": 5
+    },
+    {
+      "name": "FFM-ENT-Fulfillment Guarantee HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 18
+    },
+    {
+      "name": "FFM-ENT-PS to PI Ratio HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 19
+    },
+    {
+      "name": "FFM-ENT-TTI Compliance HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 20
+    },
+    {
+      "name": "FFM-ENT-TTR Fulfillment Guarantee 3 jam HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 21
+    },
+    {
+      "name": "FFM-ENT- Compliance Underspec Warranty Guarantee HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 22
+    },
+    {
+      "name": "FFM-ENT-TTD Compliance SL WDM",
+      "unit": "%",
+      "higher": true,
+      "source_row": 23
+    },
+    {
+      "name": "FFM-ENT-Fulfillment Guarantee Non HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 24
+    },
+    {
+      "name": "FFM-ENT-TTD Compliance Datin & Siptrunk",
+      "unit": "%",
+      "higher": true,
+      "source_row": 25
+    },
+    {
+      "name": "FFM-ENT-TTD Compliance WIFI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 26
+    },
+    {
+      "name": "FFM-ENT-TTR Fulfillment Guarantee 3 Jam Non HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 27
+    },
+    {
+      "name": "FFM-ENT- Compliance Underspec Warranty Guarantee Non HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 28
+    },
+    {
+      "name": "FFM-ENT-Provcomp Ratio Datin & Siptrunk",
+      "unit": "%",
+      "higher": true,
+      "source_row": 29
+    },
+    {
+      "name": "FFM-ENT-Provcomp Ratio Wifi",
+      "unit": "%",
+      "higher": true,
+      "source_row": 30
+    },
+    {
+      "name": "FFM-ENT-Compliance Order Aging",
+      "unit": "%",
+      "higher": true,
+      "source_row": 31
+    },
+    {
+      "name": "FFM-ENT-Fallout Order Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 32
+    },
+    {
+      "name": "ONM-ENT-WiFi Revitalization",
+      "unit": "%",
+      "higher": true,
+      "source_row": 33
+    },
+    {
+      "name": "ASR-ENT-Assurance Guarantee DATIN",
+      "unit": "%",
+      "higher": true,
+      "source_row": 34
+    },
+    {
+      "name": "ASR-ENT-Assurance Guarantee HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 35
+    },
+    {
+      "name": "ASR-ENT-Assurance Guarantee WiFi",
+      "unit": "%",
+      "higher": true,
+      "source_row": 36
+    },
+    {
+      "name": "ASR-ENT-MTTR DWDM Unprotected & Protected Repair",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 37
+    },
+    {
+      "name": "ASR-ENT-MTTR SIP TRUNK",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 38
+    },
+    {
+      "name": "ASR-ENT-Outstanding Saldo DATIN",
+      "unit": "%",
+      "higher": false,
+      "source_row": 39
+    },
+    {
+      "name": "ASR-ENT-Outstanding Saldo HSI",
+      "unit": "%",
+      "higher": false,
+      "source_row": 40
+    },
+    {
+      "name": "ASR-ENT-TTR Compliance K1 DATIN 43 menit",
+      "unit": "%",
+      "higher": true,
+      "source_row": 41
+    },
+    {
+      "name": "ASR-ENT-TTR Compliance K2 dan K1 Repair DATIN 3,6 Jam",
+      "unit": "%",
+      "higher": true,
+      "source_row": 42
+    },
+    {
+      "name": "ASR-ENT-TTR Compliance K3 DATIN 7,2 Jam",
+      "unit": "%",
+      "higher": true,
+      "source_row": 43
+    },
+    {
+      "name": "ASR-ENT-TTR Compliance WiFi",
+      "unit": "%",
+      "higher": true,
+      "source_row": 44
+    },
+    {
+      "name": "ASR-ENT-Compliance TTR Indibiz HVC (4 Jam)",
+      "unit": "%",
+      "higher": true,
+      "source_row": 45
+    },
+    {
+      "name": "ASR-ENT-Compliance TTR Indibiz Reguler (24 Jam)",
+      "unit": "%",
+      "higher": true,
+      "source_row": 46
+    },
+    {
+      "name": "ONM-WHO-MTTR Datin (Quality)",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 80
+    },
+    {
+      "name": "FFM-WHO-TTD Compliance DATIN",
+      "unit": "%",
+      "higher": true,
+      "source_row": 81
+    },
+    {
+      "name": "FFM-WHO-TTD Compliance IN",
+      "unit": "%",
+      "higher": true,
+      "source_row": 82
+    },
+    {
+      "name": "FFM-WHO-TTD Compliance SIP Trunk",
+      "unit": "%",
+      "higher": true,
+      "source_row": 83
+    },
+    {
+      "name": "ASR-WHO-MTTR Datin Gamas (Down)",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 84
+    },
+    {
+      "name": "ASR-WHO-MTTR Datin Non Gamas (Down)",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 85
+    },
+    {
+      "name": "ASR-WHO-MTTR E1 Interkoneksi",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 86
+    },
+    {
+      "name": "ASR-WHO-TTR Compliance Traffic",
+      "unit": "%",
+      "higher": true,
+      "source_row": 87
+    },
+    {
+      "name": "ASR-WHO-MTTR Transport SKKL (Reroute Service)",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 88
+    },
+    {
+      "name": "ASR-WHO-TTR Compliance Datin",
+      "unit": "%",
+      "higher": true,
+      "source_row": 89
+    },
+    {
+      "name": "ASR-WHO-MTTR Traffic",
+      "unit": "Jam",
+      "higher": false,
+      "source_row": 90
+    }
+  ],
+  "NETOP OSP": [
+    {
+      "name": "ASR-ENT-Q gangguan - HSI",
+      "unit": "%",
+      "higher": false,
+      "source_row": 6
+    },
+    {
+      "name": "ASR-ENT-Q gangguan DATIN",
+      "unit": "%",
+      "higher": false,
+      "source_row": 7
+    },
+    {
+      "name": "ONM-ENT-Underspec DATIN",
+      "unit": "%",
+      "higher": true,
+      "source_row": 8
+    },
+    {
+      "name": "ONM-ENT-Underspec HSI EBIS",
+      "unit": "%",
+      "higher": true,
+      "source_row": 9
+    },
+    {
+      "name": "ONM-ENT-% Closed SQM EBIS Datin",
+      "unit": "%",
+      "higher": true,
+      "source_row": 10
+    },
+    {
+      "name": "ONM-ENT-% Closed SQM HSI",
+      "unit": "%",
+      "higher": true,
+      "source_row": 11
+    },
+    {
+      "name": "ONM-ENT-TTR Compliance Ticket Non- Numbering",
+      "unit": "%",
+      "higher": true,
+      "source_row": 12
+    },
+    {
+      "name": "ASR-WHF-Service Availability",
+      "unit": "%",
+      "higher": true,
+      "source_row": 47
+    }
+  ],
+  "AIM": [
+    {
+      "name": "DEP-ENT-Minimum Stock NTE Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 17
+    },
+    {
+      "name": "ONM-WHF-Service and Infrastructure Data Validity",
+      "unit": "%",
+      "higher": true,
+      "source_row": 48
+    }
+  ],
+  "FBB": [
+    {
+      "name": "FFM-WHF-Fulfillment Guarantee Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 53
+    },
+    {
+      "name": "FFM-WHF-TTI Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 54
+    },
+    {
+      "name": "FFM-WHF-TTR Fulfillment Guarantee Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 55
+    },
+    {
+      "name": "ASR-WHF-Assurance Guarantee",
+      "unit": "%",
+      "higher": true,
+      "source_row": 56
+    },
+    {
+      "name": "ASR-WHF-TTR Comply 36H (Non HVC)",
+      "unit": "%",
+      "higher": true,
+      "source_row": 57
+    },
+    {
+      "name": "ASR-WHF-TTR Comply 3H (D,V)",
+      "unit": "%",
+      "higher": true,
+      "source_row": 58
+    },
+    {
+      "name": "ASR-WHF-TTR Comply 3H Manja",
+      "unit": "%",
+      "higher": true,
+      "source_row": 59
+    },
+    {
+      "name": "ASR-WHF-TTR Comply 6H (P)",
+      "unit": "%",
+      "higher": true,
+      "source_row": 60
+    }
+  ],
+  "MBB": [
+    {
+      "name": "ONM-WHM-Jitter RAN to Core-West Java",
+      "unit": "%",
+      "higher": true,
+      "source_row": 61
+    },
+    {
+      "name": "ONM-WHM-Latency RAN to Core-West Java",
+      "unit": "%",
+      "higher": true,
+      "source_row": 62
+    },
+    {
+      "name": "ONM-WHM-MTTRq RAN to Core Major-Jawa",
+      "unit": "%",
+      "higher": true,
+      "source_row": 63
+    },
+    {
+      "name": "ONM-WHM-MTTRq RAN to Core Minor-Jawa",
+      "unit": "%",
+      "higher": true,
+      "source_row": 64
+    },
+    {
+      "name": "ONM-WHM-MTTRq RAN to Core Critical-Jawa",
+      "unit": "%",
+      "higher": true,
+      "source_row": 65
+    },
+    {
+      "name": "ONM-WHM-Packet Loss RAN to Core-PL > 5%",
+      "unit": "Site",
+      "higher": false,
+      "source_row": 66
+    },
+    {
+      "name": "ONM-WHM-Packet Loss RAN to Core-PL 1-5 %",
+      "unit": "Site",
+      "higher": false,
+      "source_row": 67
+    },
+    {
+      "name": "DEP-WHM-Event",
+      "unit": "%",
+      "higher": true,
+      "source_row": 72
+    },
+    {
+      "name": "ASR-WHM-Repetitive Incidents Area 2",
+      "unit": "Gangguan",
+      "higher": false,
+      "source_row": 73
+    },
+    {
+      "name": "ASR-WHM-Transport Service Availability Access-West Java",
+      "unit": "%",
+      "higher": true,
+      "source_row": 74
+    },
+    {
+      "name": "ASR-WHM-MTTRi Critical Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 75
+    },
+    {
+      "name": "ASR-WHM-MTTRi Low Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 76
+    },
+    {
+      "name": "ASR-WHM-MTTRi Major Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 77
+    },
+    {
+      "name": "ASR-WHM-MTTRi Minor Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 78
+    },
+    {
+      "name": "ASR-WHM-MTTRi Premium Site Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 79
+    },
+    {
+      "name": "ONM-ALL-Parameter Radio Aktif & ISR Compliance",
+      "unit": "%",
+      "higher": true,
+      "source_row": 92
+    },
+    {
+      "name": "ONM-ALL-NMS Radio IP Monitoring Ratio",
+      "unit": "%",
+      "higher": true,
+      "source_row": 93
+    }
+  ],
+  "DEFA": [
+    {
+      "name": "ONM-ALL-Compliance-Network Segment Availability-DEFA",
+      "unit": "%",
+      "higher": true,
+      "source_row": 91
+    }
+  ]
+}

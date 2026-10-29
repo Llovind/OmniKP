@@ -1,31 +1,8 @@
-"""
-seed_data.py — Seed data generator for OmniKPI / PlantIntel.
+"""Synthetic telco demo generator for OmniKPI, ITASE 7.0.
 
-Generates a clean, reproducible SQLite database containing:
-  • 2 domains      (telco, petrochemical)
-  • 11 locations   (7 telco nodes + 4 petrochemical nodes, adjacency list)
-  • 30 KPIs        (15 per domain; ISO 22400 + TM Forum / industry practice)
-  • 30 periods     (daily: 2026-07-27 → 2026-08-25)
-  • N fact rows    (30 days × 15 KPIs × leaf locations, synthetic normal distribution)
-  • 6 shift logs   (3 per Golden Flow scenario, FTS5 auto-indexed via trigger)
-
-Golden Flow Demo Scenarios (injected on Day 30 — 2026-08-25):
-  Scenario 1 [Telco]   — Fiber cut at District Bandung Timur → Network Availability drops
-                          from mean 99.6% to 96.2% (Z ≈ −22.6). Cascading RED on
-                          BTS Accessibility, Call Drop Rate, Data Throughput.
-  Scenario 2 [Petro]   — Feed pump P-204 trip at Unit Polyethylene Plant B → Equipment
-                          Availability drops from mean 91.8% to 78.4% (Z ≈ −11.2).
-                          Cascading RED on OEE, Throughput Rate, Pump Availability,
-                          PM Compliance Rate (overdue maintenance pattern).
-
-Run:
-    cd backend
-    python seed_data.py          # drops + recreates omnikpi.db
-
-Safety:
-    All values are synthetic. Location names are generic geographic names, not
-    internal structures of any specific operator or company. Root causes in
-    shift logs are well-known industry failure modes, not proprietary incident data.
+Creates one domain, seven hierarchy nodes, fifteen KPIs, thirty periods,
+1,350 readings and three operational logs. The featured incident is a fiber cut
+at District Bandung Timur. Running this script replaces the local demo database.
 """
 
 import sys
@@ -160,105 +137,6 @@ TELCO_KPIS = [
     ),
 ]
 
-PETRO_KPIS = [
-    # ── Availability ──────────────────────────────────────────────────────────
-    (
-        "Equipment Availability", "Availability",
-        "Operating Time / Planned Production Time × 100",
-        "%", 92.0, True, "ISO 22400",
-        91.8, 1.2, 85.0, 98.0,
-    ),
-    (
-        "Pump Availability", "Availability",
-        "Pump Operating Time / Planned Time × 100",
-        "%", 95.0, True, "ISO 22400",
-        94.5, 1.5, 88.0, 99.0,
-    ),
-    # ── Composite ─────────────────────────────────────────────────────────────
-    (
-        "OEE", "Composite",
-        "Availability Rate × Performance Rate × Quality Rate",
-        "%", 85.0, True, "ISO 22400",
-        82.0, 2.0, 70.0, 92.0,
-    ),
-    # ── Performance ───────────────────────────────────────────────────────────
-    (
-        "Throughput Rate", "Performance",
-        "Actual Production Volume / Time Period",
-        "MT/day", 500.0, True, "ISO 22400",
-        485.0, 25.0, 400.0, 560.0,
-    ),
-    (
-        "Ethylene Yield", "Performance",
-        "Ethylene Produced / Total Hydrocarbon Feed × 100",
-        "%", 32.0, True, "Domain Practice",
-        31.5, 0.8, 28.0, 35.0,
-    ),
-    (
-        "Compressor Efficiency", "Performance",
-        "Actual Work Output / Theoretical Isentropic Work × 100",
-        "%", 88.0, True, "ISO 22400",
-        87.5, 1.5, 80.0, 95.0,
-    ),
-    (
-        "Heat Exchanger Effectiveness", "Performance",
-        "Actual Heat Transfer / Maximum Theoretical Heat Transfer × 100",
-        "%", 85.0, True, "Domain Practice",
-        84.5, 2.0, 78.0, 92.0,
-    ),
-    (
-        "Energy Intensity", "Performance",
-        "Total Energy Consumed / Total Production Volume",
-        "GJ/MT", 15.0, False, "ISO 22400",
-        15.5, 1.0, 12.0, 20.0,
-    ),
-    # ── Quality ───────────────────────────────────────────────────────────────
-    (
-        "Scrap Ratio", "Quality",
-        "Off-spec / Defect Units / Total Units Produced × 100",
-        "%", 2.0, False, "ISO 22400",
-        1.8, 0.3, 0.5, 4.0,
-    ),
-    (
-        "First Pass Yield", "Quality",
-        "Good Units Produced on First Pass / Total Units Produced × 100",
-        "%", 95.0, True, "ISO 22400",
-        94.5, 1.0, 90.0, 99.0,
-    ),
-    (
-        "Catalyst Selectivity", "Quality",
-        "Moles of Desired Product / Total Moles of Reactant Converted × 100",
-        "%", 90.0, True, "Domain Practice",
-        89.5, 1.5, 84.0, 95.0,
-    ),
-    (
-        "Flaring Loss", "Quality",
-        "Gas Flared Volume / Total Production Volume × 100",
-        "%", 0.5, False, "Domain Practice",
-        0.45, 0.08, 0.1, 1.2,
-    ),
-    # ── Reliability ───────────────────────────────────────────────────────────
-    (
-        "MTBF", "Reliability",
-        "Total Operating Time / Number of Equipment Failures",
-        "hours", 720.0, True, "ISO 22400",
-        680.0, 50.0, 500.0, 820.0,
-    ),
-    (
-        "MTTR", "Reliability",
-        "Total Repair Downtime / Number of Maintenance Incidents",
-        "hours", 8.0, False, "ISO 22400",
-        7.5, 1.5, 2.0, 20.0,
-    ),
-    (
-        "PM Compliance Rate", "Reliability",
-        "Preventive Maintenance Tasks Completed On Schedule / Total Scheduled PMs × 100",
-        "%", 95.0, True, "ISO 22400",
-        88.0, 4.0, 70.0, 100.0,
-    ),
-]
-
-
 # ── Golden Flow anomaly overrides (Day 30) ────────────────────────────────────
 # (location_name, kpi_name): anomalous_actual_value
 # Values are chosen to produce Z-scores matching Demo_Case_Studies_OmniKPI.md.
@@ -272,13 +150,6 @@ ANOMALY_OVERRIDES = {
     ("District Bandung Timur", "Call Drop Rate"):           2.8,    # Z ≈ +16.0 (higher_is_better=F)
     ("District Bandung Timur", "Data Throughput"):        312.0,    # Z ≈ −6.7  (redundant capacity)
     ("District Bandung Timur", "Bandwidth Utilization"):   89.5,    # Z ≈ +3.1  (congestion)
-
-    # Scenario 2: Pump trip — Unit Polyethylene Plant B (Petrochemical)
-    ("Unit Polyethylene Plant B", "Equipment Availability"): 78.4,  # Z ≈ −11.2
-    ("Unit Polyethylene Plant B", "OEE"):                    61.5,  # Z ≈ −10.25 (unit shutdown)
-    ("Unit Polyethylene Plant B", "Throughput Rate"):       182.0,  # Z ≈ −12.1  (production halted)
-    ("Unit Polyethylene Plant B", "Pump Availability"):      68.5,  # Z ≈ −17.3  (P-204 trip)
-    ("Unit Polyethylene Plant B", "PM Compliance Rate"):     61.0,  # Z ≈ −6.75  (overdue pattern)
 }
 
 
@@ -336,10 +207,9 @@ def main() -> None:
     try:
         # ── 1. Domains ────────────────────────────────────────────────────────
         telco = DimDomain(domain_id=1, domain_name="Digital Infrastructure (SDG 9.c)", domain_code="digital_infra")
-        petro = DimDomain(domain_id=2, domain_name="Sustainable Industry (SDG 9.4)",    domain_code="sustainable_industry")
-        db.add_all([telco, petro])
+        db.add(telco)
         db.flush()
-        print("  [1/6] Domains ......... 2 (SDG 9.c & SDG 9.4)")
+        print("  [1/6] Domains ......... 1 (Telecommunications, SDG 9.c)")
 
         # ── 2. Locations ──────────────────────────────────────────────────────
         # Telco (domain 1): Nasional → Regional Jawa Barat → Witel → Districts
@@ -358,18 +228,8 @@ def main() -> None:
         l_crbn  = DimLocation(location_name="District Cirebon",       location_type="district",  parent_location_id=l_wcrb.location_id, domain_id=1)
         db.add_all([l_bdgt, l_bdgb, l_crbn]); db.flush()
 
-        # Petrochemical (domain 2): Plant Cilegon → Units
-        l_cil   = DimLocation(location_name="Plant Cilegon",               location_type="plant", parent_location_id=None,              domain_id=2)
-        db.add(l_cil); db.flush()
-
-        l_peb   = DimLocation(location_name="Unit Polyethylene Plant B",    location_type="unit",  parent_location_id=l_cil.location_id, domain_id=2)  # DEMO
-        l_pea   = DimLocation(location_name="Unit Polyethylene Plant A",    location_type="unit",  parent_location_id=l_cil.location_id, domain_id=2)
-        l_pp    = DimLocation(location_name="Unit Polypropylene",           location_type="unit",  parent_location_id=l_cil.location_id, domain_id=2)
-        db.add_all([l_peb, l_pea, l_pp]); db.flush()
-
         telco_leaves = [l_bdgt, l_bdgb, l_crbn]
-        petro_leaves = [l_peb,  l_pea,  l_pp ]
-        print(f"  [2/6] Locations ....... 11 (7 telco + 4 petrochemical)")
+        print(f"  [2/6] Locations ....... 7 telco hierarchy nodes")
 
         # ── 3. KPIs ───────────────────────────────────────────────────────────
         def insert_kpis(definitions, domain_id):
@@ -388,12 +248,10 @@ def main() -> None:
             return result
 
         t_kpis = insert_kpis(TELCO_KPIS, domain_id=1)
-        p_kpis = insert_kpis(PETRO_KPIS, domain_id=2)
-        print(f"  [3/6] KPIs ............ {len(t_kpis)} telco + {len(p_kpis)} petrochemical")
+        print(f"  [3/6] KPIs ............ {len(t_kpis)} telco")
 
         # KPI name → kpi_id lookups (used for shift log references)
         t_kpi_id = {kpi.kpi_name: kpi.kpi_id for kpi, *_ in t_kpis}
-        p_kpi_id = {kpi.kpi_name: kpi.kpi_id for kpi, *_ in p_kpis}
 
         # ── 4. Periods ────────────────────────────────────────────────────────
         periods = []
@@ -421,9 +279,6 @@ def main() -> None:
                     if (loc.location_name == "District Bandung Timur"
                             and kpi.kpi_name == "Network Availability"):
                         loc_mean, loc_std = 99.6, 0.15
-                    elif (loc.location_name == "Unit Polyethylene Plant B"
-                            and kpi.kpi_name == "Equipment Availability"):
-                        loc_mean, loc_std = 91.8, 1.2
 
                     # 29 normal historical data points
                     normal_vals = gauss_series(loc_mean, loc_std, NUM_DAYS - 1, lo, hi)
@@ -456,7 +311,6 @@ def main() -> None:
                         fact_count[0] += 1
 
         seed_facts(telco_leaves, t_kpis, domain_id=1)
-        seed_facts(petro_leaves, p_kpis, domain_id=2)
         db.flush()
         print(f"  [5/6] Fact KPI rows ... {fact_count[0]}")
 
@@ -494,36 +348,6 @@ def main() -> None:
                     "baseline."
                 ),
             ),
-            # ── Scenario 2: Pump trip (Petrochemical / Unit PE Plant B) ─────
-            ShiftLog(
-                location_id=l_peb.location_id, domain_id=2,
-                timestamp="2026-08-21 09:10:00",
-                kpi_id=p_kpi_id["Equipment Availability"],
-                log_text=(
-                    "Lokasi: Unit Polyethylene Plant B. Feed pump P-204 trip akibat "
-                    "lonjakan vibrasi di atas ambang batas (8.2 mm/s, threshold 7.0 "
-                    "mm/s). Unit shutdown otomatis via interlock safety."
-                ),
-            ),
-            ShiftLog(
-                location_id=l_peb.location_id, domain_id=2,
-                timestamp="2026-08-21 09:45:00",
-                kpi_id=p_kpi_id["Equipment Availability"],
-                log_text=(
-                    "Lokasi: Unit Polyethylene Plant B. Tim maintenance konfirmasi "
-                    "indikasi bearing wear pada P-204, terakhir preventive maintenance "
-                    "145 hari lalu (jadwal standar: 90 hari)."
-                ),
-            ),
-            ShiftLog(
-                location_id=l_peb.location_id, domain_id=2,
-                timestamp="2026-08-15 11:00:00",
-                kpi_id=None,
-                log_text=(
-                    "Lokasi: Unit Polyethylene Plant B. Catatan rutin — tidak ada "
-                    "anomali, dicatat sebagai baseline."
-                ),
-            ),
         ]
         db.add_all(logs)
         db.flush()
@@ -532,15 +356,14 @@ def main() -> None:
         db.commit()
         print(f"\n[OK] Seeding complete!")
         print(f"   DB path  : {db_path}")
-        print(f"   Domains  : 2")
-        print(f"   Locations: 11   (7 telco + 4 petrochemical)")
-        print(f"   KPIs     : 30   (15 + 15)")
+        print(f"   Domains  : 1")
+        print(f"   Locations: 7 (telco)")
+        print(f"   KPIs     : 15 (telco)")
         print(f"   Facts    : {fact_count[0]}")
         print(f"   Logs     : {len(logs)}")
         print()
         print("   [!] Anomalies injected on Day 30 (2026-08-25):")
         print("       Telco -> District Bandung Timur   (5 RED KPIs, fiber cut)")
-        print("       Petro -> Unit Polyethylene Plant B (5 RED KPIs, pump trip + overdue PM)")
 
     except Exception as exc:
         db.rollback()

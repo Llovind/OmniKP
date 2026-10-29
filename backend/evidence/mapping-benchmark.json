@@ -1,0 +1,161 @@
+{
+  "dataset": "Synthetic v1, 5 layouts, 100 readings each; author-labelled, not independently adjudicated or held-out",
+  "model": null,
+  "human_review_seconds": null,
+  "manual_consolidation_seconds": null,
+  "limitations": [
+    "Ground-truth mappings applied automatically; correction counts are mapping differences, not observed human edits.",
+    "Timing excludes human review and manual Excel work; no human time-saving claim.",
+    "Rules are a baseline; AI-labelled runs with zero LLM columns are provider fallback, not AI success.",
+    "CSV layouts only; complex real workbooks and mapping-memory benefits not evaluated."
+  ],
+  "results": [
+    {
+      "case": "standard",
+      "mode": "rules",
+      "repeat": 0,
+      "columns": 7,
+      "correct": 7,
+      "corrections_required": 0,
+      "active_columns": 7,
+      "active_correct": 7,
+      "llm_columns": 0,
+      "preview_seconds": 0.0435,
+      "reviewed_import_seconds": 0.1369,
+      "imported_readings": 100,
+      "errors": []
+    },
+    {
+      "case": "indonesian",
+      "mode": "rules",
+      "repeat": 0,
+      "columns": 7,
+      "correct": 7,
+      "corrections_required": 0,
+      "active_columns": 7,
+      "active_correct": 7,
+      "llm_columns": 0,
+      "preview_seconds": 0.0158,
+      "reviewed_import_seconds": 0.1663,
+      "imported_readings": 100,
+      "errors": []
+    },
+    {
+      "case": "unfamiliar",
+      "mode": "rules",
+      "repeat": 0,
+      "columns": 7,
+      "correct": 0,
+      "corrections_required": 7,
+      "active_columns": 7,
+      "active_correct": 0,
+      "llm_columns": 0,
+      "preview_seconds": 0.0126,
+      "reviewed_import_seconds": 0.129,
+      "imported_readings": 100,
+      "errors": [
+        {
+          "column": "Service measure",
+          "expected": "kpi_name",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Observed result",
+          "expected": "actual_value",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Required minimum",
+          "expected": "target_value",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Reporting area",
+          "expected": "location_name",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Measurement scale",
+          "expected": "unit",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Desired trend",
+          "expected": "higher_is_better",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Observation day",
+          "expected": "date",
+          "proposed": "ignore"
+        }
+      ]
+    },
+    {
+      "case": "reordered",
+      "mode": "rules",
+      "repeat": 0,
+      "columns": 7,
+      "correct": 0,
+      "corrections_required": 7,
+      "active_columns": 7,
+      "active_correct": 0,
+      "llm_columns": 0,
+      "preview_seconds": 0.0101,
+      "reviewed_import_seconds": 0.1405,
+      "imported_readings": 100,
+      "errors": [
+        {
+          "column": "Observation day",
+          "expected": "date",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Reporting area",
+          "expected": "location_name",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Service measure",
+          "expected": "kpi_name",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Desired trend",
+          "expected": "higher_is_better",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Required minimum",
+          "expected": "target_value",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Observed result",
+          "expected": "actual_value",
+          "proposed": "ignore"
+        },
+        {
+          "column": "Measurement scale",
+          "expected": "unit",
+          "proposed": "ignore"
+        }
+      ]
+    },
+    {
+      "case": "wide_with_achievement",
+      "mode": "rules",
+      "repeat": 0,
+      "columns": 9,
+      "correct": 9,
+      "corrections_required": 0,
+      "active_columns": 7,
+      "active_correct": 7,
+      "llm_columns": 0,
+      "preview_seconds": 0.0129,
+      "reviewed_import_seconds": 0.1101,
+      "imported_readings": 100,
+      "errors": []
+    }
+  ]
+}

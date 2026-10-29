@@ -1,4 +1,4 @@
-# OmniKPI / PlantIntel — Python dependencies
+# OmniKPI — Python dependencies
 # Install: pip install -r requirements.txt
 
 # --- Web Framework ---

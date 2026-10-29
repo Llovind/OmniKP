@@ -1,0 +1,1853 @@
+[
+  {
+    "division": "ED",
+    "kpis": 13,
+    "readings": 26,
+    "filename": "ed.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location",
+    "columns": [
+      "KPI WISA",
+      "SATUAN",
+      "FORMULA",
+      "TGT",
+      "Lokasi",
+      "Realisasi",
+      "Keterangan"
+    ],
+    "rows": [
+      [
+        "DEP-ALL-Compliance Deployment Supervision",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo North",
+        97.8,
+        "SYNTHETIC DEMO: deployment completion was delayed by a rescheduled site access window. Proposed action: confirm the revised access schedule."
+      ],
+      [
+        "DEP-ALL-Compliance Deployment Supervision",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo South",
+        99.8,
+        ""
+      ],
+      [
+        "DEP-ENT-Time To Feasibility Check & Design",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo North",
+        100,
+        ""
+      ],
+      [
+        "DEP-ENT-Time To Feasibility Check & Design",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo South",
+        100,
+        ""
+      ],
+      [
+        "DEP-ENT-TT Deployment Comply PT-2",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo North",
+        98.1,
+        ""
+      ],
+      [
+        "DEP-ENT-TT Deployment Comply PT-2",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo South",
+        95.6,
+        "SYNTHETIC DEMO: deployment completion was delayed by a rescheduled site access window. Proposed action: confirm the revised access schedule."
+      ],
+      [
+        "DEP-ENT-TT Deployment Comply PT-3 (Brancing & Murni)",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo North",
+        91.6,
+        ""
+      ],
+      [
+        "DEP-ENT-TT Deployment Comply PT-3 (Brancing & Murni)",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo South",
+        92.7,
+        ""
+      ],
+      [
+        "DEP-ENT-Feasibility Check Validity",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo North",
+        95.7,
+        ""
+      ],
+      [
+        "DEP-ENT-Feasibility Check Validity",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo South",
+        96.3,
+        ""
+      ],
+      [
+        "DEP-WHF-Deployment Alpro",
+        "Port",
+        "HIGHER BETTER",
+        600,
+        "Demo North",
+        624,
+        ""
+      ],
+      [
+        "DEP-WHF-Deployment Alpro",
+        "Port",
+        "HIGHER BETTER",
+        600,
+        "Demo South",
+        546,
+        ""
+      ],
+      [
+        "DEP-WHF-Deployment PT2",
+        "Port",
+        "HIGHER BETTER",
+        1200,
+        "Demo North",
+        1092,
+        "SYNTHETIC DEMO: deployment completion was delayed by a rescheduled site access window. Proposed action: confirm the revised access schedule."
+      ],
+      [
+        "DEP-WHF-Deployment PT2",
+        "Port",
+        "HIGHER BETTER",
+        1200,
+        "Demo South",
+        1248,
+        ""
+      ],
+      [
+        "DEP-WHF-Deployment PT3",
+        "Port",
+        "HIGHER BETTER",
+        850,
+        "Demo North",
+        884,
+        ""
+      ],
+      [
+        "DEP-WHF-Deployment PT3",
+        "Port",
+        "HIGHER BETTER",
+        850,
+        "Demo South",
+        884,
+        ""
+      ],
+      [
+        "DEP-WHF-Time to Deployment PT2",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo North",
+        92.7,
+        ""
+      ],
+      [
+        "DEP-WHF-Time to Deployment PT2",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo South",
+        90.7,
+        "SYNTHETIC DEMO: deployment completion was delayed by a rescheduled site access window. Proposed action: confirm the revised access schedule."
+      ],
+      [
+        "DEP-WHM-New Link Express",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo North",
+        93.7,
+        ""
+      ],
+      [
+        "DEP-WHM-New Link Express",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo South",
+        97.1,
+        ""
+      ],
+      [
+        "DEP-WHM-New Infra Reguler",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo North",
+        100,
+        ""
+      ],
+      [
+        "DEP-WHM-New Infra Reguler",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo South",
+        98.9,
+        ""
+      ],
+      [
+        "DEP-WHM-New Link Reguler",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo North",
+        99.6,
+        ""
+      ],
+      [
+        "DEP-WHM-New Link Reguler",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo South",
+        98.5,
+        ""
+      ],
+      [
+        "DEP-WHM-Hardware Upgrade",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo North",
+        95.3,
+        "SYNTHETIC DEMO: deployment completion was delayed by a rescheduled site access window. Proposed action: confirm the revised access schedule."
+      ],
+      [
+        "DEP-WHM-Hardware Upgrade",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo South",
+        97.3,
+        ""
+      ]
+    ],
+    "definitions": [
+      {
+        "name": "DEP-ALL-Compliance Deployment Supervision",
+        "unit": "%",
+        "higher": true,
+        "source_row": 4
+      },
+      {
+        "name": "DEP-ENT-Time To Feasibility Check & Design",
+        "unit": "%",
+        "higher": true,
+        "source_row": 13
+      },
+      {
+        "name": "DEP-ENT-TT Deployment Comply PT-2",
+        "unit": "%",
+        "higher": true,
+        "source_row": 14
+      },
+      {
+        "name": "DEP-ENT-TT Deployment Comply PT-3 (Brancing & Murni)",
+        "unit": "%",
+        "higher": true,
+        "source_row": 15
+      },
+      {
+        "name": "DEP-ENT-Feasibility Check Validity",
+        "unit": "%",
+        "higher": true,
+        "source_row": 16
+      },
+      {
+        "name": "DEP-WHF-Deployment Alpro",
+        "unit": "Port",
+        "higher": true,
+        "source_row": 49
+      },
+      {
+        "name": "DEP-WHF-Deployment PT2",
+        "unit": "Port",
+        "higher": true,
+        "source_row": 50
+      },
+      {
+        "name": "DEP-WHF-Deployment PT3",
+        "unit": "Port",
+        "higher": true,
+        "source_row": 51
+      },
+      {
+        "name": "DEP-WHF-Time to Deployment PT2",
+        "unit": "%",
+        "higher": true,
+        "source_row": 52
+      },
+      {
+        "name": "DEP-WHM-New Link Express",
+        "unit": "%",
+        "higher": true,
+        "source_row": 68
+      },
+      {
+        "name": "DEP-WHM-New Infra Reguler",
+        "unit": "%",
+        "higher": true,
+        "source_row": 69
+      },
+      {
+        "name": "DEP-WHM-New Link Reguler",
+        "unit": "%",
+        "higher": true,
+        "source_row": 70
+      },
+      {
+        "name": "DEP-WHM-Hardware Upgrade",
+        "unit": "%",
+        "higher": true,
+        "source_row": 71
+      }
+    ]
+  },
+  {
+    "division": "BGES & OLO",
+    "kpis": 41,
+    "readings": 82,
+    "filename": "bges-olo.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Location columns",
+    "columns": [
+      "KPI WISA",
+      "SATUAN",
+      "FORMULA",
+      "TGT",
+      "Demo North | REAL",
+      "Demo North | ACH",
+      "Demo South | REAL",
+      "Demo South | ACH"
+    ],
+    "rows": [
+      [
+        "ONM-ALL-Service Availability-WiFi",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        97.8,
+        null,
+        99.8,
+        null
+      ],
+      [
+        "FFM-ENT-Fulfillment Guarantee HSI",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        100,
+        null,
+        100,
+        null
+      ],
+      [
+        "FFM-ENT-PS to PI Ratio HSI",
+        "%",
+        "HIGHER BETTER",
+        96,
+        98.1,
+        null,
+        95.6,
+        null
+      ],
+      [
+        "FFM-ENT-TTI Compliance HSI",
+        "%",
+        "HIGHER BETTER",
+        92,
+        91.6,
+        null,
+        92.7,
+        null
+      ],
+      [
+        "FFM-ENT-TTR Fulfillment Guarantee 3 jam HSI",
+        "%",
+        "HIGHER BETTER",
+        95,
+        95.7,
+        null,
+        96.3,
+        null
+      ],
+      [
+        "FFM-ENT- Compliance Underspec Warranty Guarantee HSI",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        99.8,
+        null,
+        96.4,
+        null
+      ],
+      [
+        "FFM-ENT-TTD Compliance SL WDM",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        97.1,
+        null,
+        99.6,
+        null
+      ],
+      [
+        "FFM-ENT-Fulfillment Guarantee Non HSI",
+        "%",
+        "HIGHER BETTER",
+        96,
+        96.4,
+        null,
+        96.7,
+        null
+      ],
+      [
+        "FFM-ENT-TTD Compliance Datin & Siptrunk",
+        "%",
+        "HIGHER BETTER",
+        92,
+        92.7,
+        null,
+        90.7,
+        null
+      ],
+      [
+        "FFM-ENT-TTD Compliance WIFI",
+        "%",
+        "HIGHER BETTER",
+        95,
+        93.7,
+        null,
+        97.1,
+        null
+      ],
+      [
+        "FFM-ENT-TTR Fulfillment Guarantee 3 Jam Non HSI",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        100,
+        null,
+        98.9,
+        null
+      ],
+      [
+        "FFM-ENT- Compliance Underspec Warranty Guarantee Non HSI",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        99.6,
+        null,
+        98.5,
+        null
+      ],
+      [
+        "FFM-ENT-Provcomp Ratio Datin & Siptrunk",
+        "%",
+        "HIGHER BETTER",
+        96,
+        95.3,
+        null,
+        97.3,
+        null
+      ],
+      [
+        "FFM-ENT-Provcomp Ratio Wifi",
+        "%",
+        "HIGHER BETTER",
+        92,
+        93.3,
+        null,
+        94.1,
+        null
+      ],
+      [
+        "FFM-ENT-Compliance Order Aging",
+        "%",
+        "HIGHER BETTER",
+        95,
+        97.1,
+        null,
+        94.6,
+        null
+      ],
+      [
+        "FFM-ENT-Fallout Order Compliance",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        98.1,
+        null,
+        99.2,
+        null
+      ],
+      [
+        "ONM-ENT-WiFi Revitalization",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        99.9,
+        null,
+        100,
+        null
+      ],
+      [
+        "ASR-ENT-Assurance Guarantee DATIN",
+        "%",
+        "HIGHER BETTER",
+        96,
+        97.3,
+        null,
+        93.9,
+        null
+      ],
+      [
+        "ASR-ENT-Assurance Guarantee HSI",
+        "%",
+        "HIGHER BETTER",
+        92,
+        89.9,
+        null,
+        92.4,
+        null
+      ],
+      [
+        "ASR-ENT-Assurance Guarantee WiFi",
+        "%",
+        "HIGHER BETTER",
+        95,
+        95.4,
+        null,
+        95.7,
+        null
+      ],
+      [
+        "ASR-ENT-MTTR DWDM Unprotected & Protected Repair",
+        "Jam",
+        "LOWER BETTER",
+        4,
+        3.2,
+        null,
+        5.0,
+        null
+      ],
+      [
+        "ASR-ENT-MTTR SIP TRUNK",
+        "Jam",
+        "LOWER BETTER",
+        6,
+        7.5,
+        null,
+        4.8,
+        null
+      ],
+      [
+        "ASR-ENT-Outstanding Saldo DATIN",
+        "%",
+        "LOWER BETTER",
+        3,
+        0.9,
+        null,
+        2.6,
+        null
+      ],
+      [
+        "ASR-ENT-Outstanding Saldo HSI",
+        "%",
+        "LOWER BETTER",
+        4,
+        3.6,
+        null,
+        4.7,
+        null
+      ],
+      [
+        "ASR-ENT-TTR Compliance K1 DATIN 43 menit",
+        "%",
+        "HIGHER BETTER",
+        95,
+        94.3,
+        null,
+        96.3,
+        null
+      ],
+      [
+        "ASR-ENT-TTR Compliance K2 dan K1 Repair DATIN 3,6 Jam",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        99.8,
+        null,
+        100,
+        null
+      ],
+      [
+        "ASR-ENT-TTR Compliance K3 DATIN 7,2 Jam",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        100,
+        null,
+        98.8,
+        null
+      ],
+      [
+        "ASR-ENT-TTR Compliance WiFi",
+        "%",
+        "HIGHER BETTER",
+        96,
+        95.6,
+        null,
+        96.7,
+        null
+      ],
+      [
+        "ASR-ENT-Compliance TTR Indibiz HVC (4 Jam)",
+        "%",
+        "HIGHER BETTER",
+        92,
+        92.7,
+        null,
+        93.3,
+        null
+      ],
+      [
+        "ASR-ENT-Compliance TTR Indibiz Reguler (24 Jam)",
+        "%",
+        "HIGHER BETTER",
+        95,
+        96.3,
+        null,
+        92.9,
+        null
+      ],
+      [
+        "ONM-WHO-MTTR Datin (Quality)",
+        "Jam",
+        "LOWER BETTER",
+        8,
+        10.0,
+        null,
+        6.4,
+        null
+      ],
+      [
+        "FFM-WHO-TTD Compliance DATIN",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        99.6,
+        null,
+        99.9,
+        null
+      ],
+      [
+        "FFM-WHO-TTD Compliance IN",
+        "%",
+        "HIGHER BETTER",
+        96,
+        96.7,
+        null,
+        94.7,
+        null
+      ],
+      [
+        "FFM-WHO-TTD Compliance SIP Trunk",
+        "%",
+        "HIGHER BETTER",
+        92,
+        90.7,
+        null,
+        94.1,
+        null
+      ],
+      [
+        "ASR-WHO-MTTR Datin Gamas (Down)",
+        "Jam",
+        "LOWER BETTER",
+        8,
+        6.4,
+        null,
+        6.4,
+        null
+      ],
+      [
+        "ASR-WHO-MTTR Datin Non Gamas (Down)",
+        "Jam",
+        "LOWER BETTER",
+        12,
+        9.6,
+        null,
+        15.0,
+        null
+      ],
+      [
+        "ASR-WHO-MTTR E1 Interkoneksi",
+        "Jam",
+        "LOWER BETTER",
+        4,
+        5.0,
+        null,
+        3.2,
+        null
+      ],
+      [
+        "ASR-WHO-TTR Compliance Traffic",
+        "%",
+        "HIGHER BETTER",
+        96,
+        97.3,
+        null,
+        98.1,
+        null
+      ],
+      [
+        "ASR-WHO-MTTR Transport SKKL (Reroute Service)",
+        "Jam",
+        "LOWER BETTER",
+        8,
+        6.4,
+        null,
+        10.0,
+        null
+      ],
+      [
+        "ASR-WHO-TTR Compliance Datin",
+        "%",
+        "HIGHER BETTER",
+        95,
+        94.6,
+        null,
+        95.7,
+        null
+      ],
+      [
+        "ASR-WHO-MTTR Traffic",
+        "Jam",
+        "LOWER BETTER",
+        4,
+        3.2,
+        null,
+        3.2,
+        null
+      ]
+    ],
+    "definitions": [
+      {
+        "name": "ONM-ALL-Service Availability-WiFi",
+        "unit": "%",
+        "higher": true,
+        "source_row": 5
+      },
+      {
+        "name": "FFM-ENT-Fulfillment Guarantee HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 18
+      },
+      {
+        "name": "FFM-ENT-PS to PI Ratio HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 19
+      },
+      {
+        "name": "FFM-ENT-TTI Compliance HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 20
+      },
+      {
+        "name": "FFM-ENT-TTR Fulfillment Guarantee 3 jam HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 21
+      },
+      {
+        "name": "FFM-ENT- Compliance Underspec Warranty Guarantee HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 22
+      },
+      {
+        "name": "FFM-ENT-TTD Compliance SL WDM",
+        "unit": "%",
+        "higher": true,
+        "source_row": 23
+      },
+      {
+        "name": "FFM-ENT-Fulfillment Guarantee Non HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 24
+      },
+      {
+        "name": "FFM-ENT-TTD Compliance Datin & Siptrunk",
+        "unit": "%",
+        "higher": true,
+        "source_row": 25
+      },
+      {
+        "name": "FFM-ENT-TTD Compliance WIFI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 26
+      },
+      {
+        "name": "FFM-ENT-TTR Fulfillment Guarantee 3 Jam Non HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 27
+      },
+      {
+        "name": "FFM-ENT- Compliance Underspec Warranty Guarantee Non HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 28
+      },
+      {
+        "name": "FFM-ENT-Provcomp Ratio Datin & Siptrunk",
+        "unit": "%",
+        "higher": true,
+        "source_row": 29
+      },
+      {
+        "name": "FFM-ENT-Provcomp Ratio Wifi",
+        "unit": "%",
+        "higher": true,
+        "source_row": 30
+      },
+      {
+        "name": "FFM-ENT-Compliance Order Aging",
+        "unit": "%",
+        "higher": true,
+        "source_row": 31
+      },
+      {
+        "name": "FFM-ENT-Fallout Order Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 32
+      },
+      {
+        "name": "ONM-ENT-WiFi Revitalization",
+        "unit": "%",
+        "higher": true,
+        "source_row": 33
+      },
+      {
+        "name": "ASR-ENT-Assurance Guarantee DATIN",
+        "unit": "%",
+        "higher": true,
+        "source_row": 34
+      },
+      {
+        "name": "ASR-ENT-Assurance Guarantee HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 35
+      },
+      {
+        "name": "ASR-ENT-Assurance Guarantee WiFi",
+        "unit": "%",
+        "higher": true,
+        "source_row": 36
+      },
+      {
+        "name": "ASR-ENT-MTTR DWDM Unprotected & Protected Repair",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 37
+      },
+      {
+        "name": "ASR-ENT-MTTR SIP TRUNK",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 38
+      },
+      {
+        "name": "ASR-ENT-Outstanding Saldo DATIN",
+        "unit": "%",
+        "higher": false,
+        "source_row": 39
+      },
+      {
+        "name": "ASR-ENT-Outstanding Saldo HSI",
+        "unit": "%",
+        "higher": false,
+        "source_row": 40
+      },
+      {
+        "name": "ASR-ENT-TTR Compliance K1 DATIN 43 menit",
+        "unit": "%",
+        "higher": true,
+        "source_row": 41
+      },
+      {
+        "name": "ASR-ENT-TTR Compliance K2 dan K1 Repair DATIN 3,6 Jam",
+        "unit": "%",
+        "higher": true,
+        "source_row": 42
+      },
+      {
+        "name": "ASR-ENT-TTR Compliance K3 DATIN 7,2 Jam",
+        "unit": "%",
+        "higher": true,
+        "source_row": 43
+      },
+      {
+        "name": "ASR-ENT-TTR Compliance WiFi",
+        "unit": "%",
+        "higher": true,
+        "source_row": 44
+      },
+      {
+        "name": "ASR-ENT-Compliance TTR Indibiz HVC (4 Jam)",
+        "unit": "%",
+        "higher": true,
+        "source_row": 45
+      },
+      {
+        "name": "ASR-ENT-Compliance TTR Indibiz Reguler (24 Jam)",
+        "unit": "%",
+        "higher": true,
+        "source_row": 46
+      },
+      {
+        "name": "ONM-WHO-MTTR Datin (Quality)",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 80
+      },
+      {
+        "name": "FFM-WHO-TTD Compliance DATIN",
+        "unit": "%",
+        "higher": true,
+        "source_row": 81
+      },
+      {
+        "name": "FFM-WHO-TTD Compliance IN",
+        "unit": "%",
+        "higher": true,
+        "source_row": 82
+      },
+      {
+        "name": "FFM-WHO-TTD Compliance SIP Trunk",
+        "unit": "%",
+        "higher": true,
+        "source_row": 83
+      },
+      {
+        "name": "ASR-WHO-MTTR Datin Gamas (Down)",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 84
+      },
+      {
+        "name": "ASR-WHO-MTTR Datin Non Gamas (Down)",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 85
+      },
+      {
+        "name": "ASR-WHO-MTTR E1 Interkoneksi",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 86
+      },
+      {
+        "name": "ASR-WHO-TTR Compliance Traffic",
+        "unit": "%",
+        "higher": true,
+        "source_row": 87
+      },
+      {
+        "name": "ASR-WHO-MTTR Transport SKKL (Reroute Service)",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 88
+      },
+      {
+        "name": "ASR-WHO-TTR Compliance Datin",
+        "unit": "%",
+        "higher": true,
+        "source_row": 89
+      },
+      {
+        "name": "ASR-WHO-MTTR Traffic",
+        "unit": "Jam",
+        "higher": false,
+        "source_row": 90
+      }
+    ]
+  },
+  {
+    "division": "NETOP OSP",
+    "kpis": 8,
+    "readings": 16,
+    "filename": "netop-osp.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location",
+    "columns": [
+      "KPI WISA",
+      "SATUAN",
+      "FORMULA",
+      "TGT",
+      "Lokasi",
+      "Realisasi",
+      "Keterangan"
+    ],
+    "rows": [
+      [
+        "ASR-ENT-Q gangguan - HSI",
+        "%",
+        "LOWER BETTER",
+        2.5,
+        "Demo North",
+        3.2,
+        "SYNTHETIC DEMO: the field team reports repeated cable repair visits. Proposed action: inspect the affected synthetic route and verify repair records."
+      ],
+      [
+        "ASR-ENT-Q gangguan - HSI",
+        "%",
+        "LOWER BETTER",
+        2.5,
+        "Demo South",
+        1.2,
+        ""
+      ],
+      [
+        "ASR-ENT-Q gangguan DATIN",
+        "%",
+        "LOWER BETTER",
+        3,
+        "Demo North",
+        1.7,
+        ""
+      ],
+      [
+        "ASR-ENT-Q gangguan DATIN",
+        "%",
+        "LOWER BETTER",
+        3,
+        "Demo South",
+        0.9,
+        ""
+      ],
+      [
+        "ONM-ENT-Underspec DATIN",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo North",
+        98.1,
+        ""
+      ],
+      [
+        "ONM-ENT-Underspec DATIN",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo South",
+        95.6,
+        "SYNTHETIC DEMO: the field team reports repeated cable repair visits. Proposed action: inspect the affected synthetic route and verify repair records."
+      ],
+      [
+        "ONM-ENT-Underspec HSI EBIS",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo North",
+        91.6,
+        ""
+      ],
+      [
+        "ONM-ENT-Underspec HSI EBIS",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo South",
+        92.7,
+        ""
+      ],
+      [
+        "ONM-ENT-% Closed SQM EBIS Datin",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo North",
+        95.7,
+        ""
+      ],
+      [
+        "ONM-ENT-% Closed SQM EBIS Datin",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo South",
+        96.3,
+        ""
+      ],
+      [
+        "ONM-ENT-% Closed SQM HSI",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo North",
+        99.8,
+        ""
+      ],
+      [
+        "ONM-ENT-% Closed SQM HSI",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo South",
+        96.4,
+        ""
+      ],
+      [
+        "ONM-ENT-TTR Compliance Ticket Non- Numbering",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo North",
+        97.1,
+        "SYNTHETIC DEMO: the field team reports repeated cable repair visits. Proposed action: inspect the affected synthetic route and verify repair records."
+      ],
+      [
+        "ONM-ENT-TTR Compliance Ticket Non- Numbering",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo South",
+        99.6,
+        ""
+      ],
+      [
+        "ASR-WHF-Service Availability",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo North",
+        96.4,
+        ""
+      ],
+      [
+        "ASR-WHF-Service Availability",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo South",
+        96.7,
+        ""
+      ]
+    ],
+    "definitions": [
+      {
+        "name": "ASR-ENT-Q gangguan - HSI",
+        "unit": "%",
+        "higher": false,
+        "source_row": 6
+      },
+      {
+        "name": "ASR-ENT-Q gangguan DATIN",
+        "unit": "%",
+        "higher": false,
+        "source_row": 7
+      },
+      {
+        "name": "ONM-ENT-Underspec DATIN",
+        "unit": "%",
+        "higher": true,
+        "source_row": 8
+      },
+      {
+        "name": "ONM-ENT-Underspec HSI EBIS",
+        "unit": "%",
+        "higher": true,
+        "source_row": 9
+      },
+      {
+        "name": "ONM-ENT-% Closed SQM EBIS Datin",
+        "unit": "%",
+        "higher": true,
+        "source_row": 10
+      },
+      {
+        "name": "ONM-ENT-% Closed SQM HSI",
+        "unit": "%",
+        "higher": true,
+        "source_row": 11
+      },
+      {
+        "name": "ONM-ENT-TTR Compliance Ticket Non- Numbering",
+        "unit": "%",
+        "higher": true,
+        "source_row": 12
+      },
+      {
+        "name": "ASR-WHF-Service Availability",
+        "unit": "%",
+        "higher": true,
+        "source_row": 47
+      }
+    ]
+  },
+  {
+    "division": "AIM",
+    "kpis": 2,
+    "readings": 4,
+    "filename": "aim.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Location columns",
+    "columns": [
+      "KPI WISA",
+      "SATUAN",
+      "FORMULA",
+      "TGT",
+      "Demo North | REAL",
+      "Demo North | ACH",
+      "Demo South | REAL",
+      "Demo South | ACH"
+    ],
+    "rows": [
+      [
+        "DEP-ENT-Minimum Stock NTE Compliance",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        97.8,
+        null,
+        99.8,
+        null
+      ],
+      [
+        "ONM-WHF-Service and Infrastructure Data Validity",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        100,
+        null,
+        100,
+        null
+      ]
+    ],
+    "definitions": [
+      {
+        "name": "DEP-ENT-Minimum Stock NTE Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 17
+      },
+      {
+        "name": "ONM-WHF-Service and Infrastructure Data Validity",
+        "unit": "%",
+        "higher": true,
+        "source_row": 48
+      }
+    ]
+  },
+  {
+    "division": "FBB",
+    "kpis": 8,
+    "readings": 16,
+    "filename": "fbb.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location",
+    "columns": [
+      "KPI WISA",
+      "SATUAN",
+      "FORMULA",
+      "TGT",
+      "Lokasi",
+      "Realisasi",
+      "Keterangan"
+    ],
+    "rows": [
+      [
+        "FFM-WHF-Fulfillment Guarantee Compliance",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo North",
+        97.8,
+        "SYNTHETIC DEMO: provisioning orders waited for installation slots. Proposed action: review the pending-order queue."
+      ],
+      [
+        "FFM-WHF-Fulfillment Guarantee Compliance",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo South",
+        99.8,
+        ""
+      ],
+      [
+        "FFM-WHF-TTI Compliance",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo North",
+        100,
+        ""
+      ],
+      [
+        "FFM-WHF-TTI Compliance",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo South",
+        100,
+        ""
+      ],
+      [
+        "FFM-WHF-TTR Fulfillment Guarantee Compliance",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo North",
+        98.1,
+        ""
+      ],
+      [
+        "FFM-WHF-TTR Fulfillment Guarantee Compliance",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo South",
+        95.6,
+        "SYNTHETIC DEMO: provisioning orders waited for installation slots. Proposed action: review the pending-order queue."
+      ],
+      [
+        "ASR-WHF-Assurance Guarantee",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo North",
+        91.6,
+        ""
+      ],
+      [
+        "ASR-WHF-Assurance Guarantee",
+        "%",
+        "HIGHER BETTER",
+        92,
+        "Demo South",
+        92.7,
+        ""
+      ],
+      [
+        "ASR-WHF-TTR Comply 36H (Non HVC)",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo North",
+        95.7,
+        ""
+      ],
+      [
+        "ASR-WHF-TTR Comply 36H (Non HVC)",
+        "%",
+        "HIGHER BETTER",
+        95,
+        "Demo South",
+        96.3,
+        ""
+      ],
+      [
+        "ASR-WHF-TTR Comply 3H (D,V)",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo North",
+        99.8,
+        ""
+      ],
+      [
+        "ASR-WHF-TTR Comply 3H (D,V)",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo South",
+        96.4,
+        ""
+      ],
+      [
+        "ASR-WHF-TTR Comply 3H Manja",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo North",
+        97.1,
+        "SYNTHETIC DEMO: provisioning orders waited for installation slots. Proposed action: review the pending-order queue."
+      ],
+      [
+        "ASR-WHF-TTR Comply 3H Manja",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        "Demo South",
+        99.6,
+        ""
+      ],
+      [
+        "ASR-WHF-TTR Comply 6H (P)",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo North",
+        96.4,
+        ""
+      ],
+      [
+        "ASR-WHF-TTR Comply 6H (P)",
+        "%",
+        "HIGHER BETTER",
+        96,
+        "Demo South",
+        96.7,
+        ""
+      ]
+    ],
+    "definitions": [
+      {
+        "name": "FFM-WHF-Fulfillment Guarantee Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 53
+      },
+      {
+        "name": "FFM-WHF-TTI Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 54
+      },
+      {
+        "name": "FFM-WHF-TTR Fulfillment Guarantee Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 55
+      },
+      {
+        "name": "ASR-WHF-Assurance Guarantee",
+        "unit": "%",
+        "higher": true,
+        "source_row": 56
+      },
+      {
+        "name": "ASR-WHF-TTR Comply 36H (Non HVC)",
+        "unit": "%",
+        "higher": true,
+        "source_row": 57
+      },
+      {
+        "name": "ASR-WHF-TTR Comply 3H (D,V)",
+        "unit": "%",
+        "higher": true,
+        "source_row": 58
+      },
+      {
+        "name": "ASR-WHF-TTR Comply 3H Manja",
+        "unit": "%",
+        "higher": true,
+        "source_row": 59
+      },
+      {
+        "name": "ASR-WHF-TTR Comply 6H (P)",
+        "unit": "%",
+        "higher": true,
+        "source_row": 60
+      }
+    ]
+  },
+  {
+    "division": "MBB",
+    "kpis": 17,
+    "readings": 34,
+    "filename": "mbb.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Location columns",
+    "columns": [
+      "KPI WISA",
+      "SATUAN",
+      "FORMULA",
+      "TGT",
+      "Demo North | REAL",
+      "Demo North | ACH",
+      "Demo South | REAL",
+      "Demo South | ACH"
+    ],
+    "rows": [
+      [
+        "ONM-WHM-Jitter RAN to Core-West Java",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        97.8,
+        null,
+        99.8,
+        null
+      ],
+      [
+        "ONM-WHM-Latency RAN to Core-West Java",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        100,
+        null,
+        100,
+        null
+      ],
+      [
+        "ONM-WHM-MTTRq RAN to Core Major-Jawa",
+        "%",
+        "HIGHER BETTER",
+        96,
+        98.1,
+        null,
+        95.6,
+        null
+      ],
+      [
+        "ONM-WHM-MTTRq RAN to Core Minor-Jawa",
+        "%",
+        "HIGHER BETTER",
+        92,
+        91.6,
+        null,
+        92.7,
+        null
+      ],
+      [
+        "ONM-WHM-MTTRq RAN to Core Critical-Jawa",
+        "%",
+        "HIGHER BETTER",
+        95,
+        95.7,
+        null,
+        96.3,
+        null
+      ],
+      [
+        "ONM-WHM-Packet Loss RAN to Core-PL > 5%",
+        "Site",
+        "LOWER BETTER",
+        2,
+        1,
+        null,
+        3,
+        null
+      ],
+      [
+        "ONM-WHM-Packet Loss RAN to Core-PL 1-5 %",
+        "Site",
+        "LOWER BETTER",
+        0,
+        1,
+        null,
+        0,
+        null
+      ],
+      [
+        "DEP-WHM-Event",
+        "%",
+        "HIGHER BETTER",
+        96,
+        96.4,
+        null,
+        96.7,
+        null
+      ],
+      [
+        "ASR-WHM-Repetitive Incidents Area 2",
+        "Gangguan",
+        "LOWER BETTER",
+        4,
+        3,
+        null,
+        5,
+        null
+      ],
+      [
+        "ASR-WHM-Transport Service Availability Access-West Java",
+        "%",
+        "HIGHER BETTER",
+        95,
+        93.7,
+        null,
+        97.1,
+        null
+      ],
+      [
+        "ASR-WHM-MTTRi Critical Compliance",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        100,
+        null,
+        98.9,
+        null
+      ],
+      [
+        "ASR-WHM-MTTRi Low Compliance",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        99.6,
+        null,
+        98.5,
+        null
+      ],
+      [
+        "ASR-WHM-MTTRi Major Compliance",
+        "%",
+        "HIGHER BETTER",
+        96,
+        95.3,
+        null,
+        97.3,
+        null
+      ],
+      [
+        "ASR-WHM-MTTRi Minor Compliance",
+        "%",
+        "HIGHER BETTER",
+        92,
+        93.3,
+        null,
+        94.1,
+        null
+      ],
+      [
+        "ASR-WHM-MTTRi Premium Site Compliance",
+        "%",
+        "HIGHER BETTER",
+        95,
+        97.1,
+        null,
+        94.6,
+        null
+      ],
+      [
+        "ONM-ALL-Parameter Radio Aktif & ISR Compliance",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        98.1,
+        null,
+        99.2,
+        null
+      ],
+      [
+        "ONM-ALL-NMS Radio IP Monitoring Ratio",
+        "%",
+        "HIGHER BETTER",
+        99.2,
+        99.9,
+        null,
+        100,
+        null
+      ]
+    ],
+    "definitions": [
+      {
+        "name": "ONM-WHM-Jitter RAN to Core-West Java",
+        "unit": "%",
+        "higher": true,
+        "source_row": 61
+      },
+      {
+        "name": "ONM-WHM-Latency RAN to Core-West Java",
+        "unit": "%",
+        "higher": true,
+        "source_row": 62
+      },
+      {
+        "name": "ONM-WHM-MTTRq RAN to Core Major-Jawa",
+        "unit": "%",
+        "higher": true,
+        "source_row": 63
+      },
+      {
+        "name": "ONM-WHM-MTTRq RAN to Core Minor-Jawa",
+        "unit": "%",
+        "higher": true,
+        "source_row": 64
+      },
+      {
+        "name": "ONM-WHM-MTTRq RAN to Core Critical-Jawa",
+        "unit": "%",
+        "higher": true,
+        "source_row": 65
+      },
+      {
+        "name": "ONM-WHM-Packet Loss RAN to Core-PL > 5%",
+        "unit": "Site",
+        "higher": false,
+        "source_row": 66
+      },
+      {
+        "name": "ONM-WHM-Packet Loss RAN to Core-PL 1-5 %",
+        "unit": "Site",
+        "higher": false,
+        "source_row": 67
+      },
+      {
+        "name": "DEP-WHM-Event",
+        "unit": "%",
+        "higher": true,
+        "source_row": 72
+      },
+      {
+        "name": "ASR-WHM-Repetitive Incidents Area 2",
+        "unit": "Gangguan",
+        "higher": false,
+        "source_row": 73
+      },
+      {
+        "name": "ASR-WHM-Transport Service Availability Access-West Java",
+        "unit": "%",
+        "higher": true,
+        "source_row": 74
+      },
+      {
+        "name": "ASR-WHM-MTTRi Critical Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 75
+      },
+      {
+        "name": "ASR-WHM-MTTRi Low Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 76
+      },
+      {
+        "name": "ASR-WHM-MTTRi Major Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 77
+      },
+      {
+        "name": "ASR-WHM-MTTRi Minor Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 78
+      },
+      {
+        "name": "ASR-WHM-MTTRi Premium Site Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 79
+      },
+      {
+        "name": "ONM-ALL-Parameter Radio Aktif & ISR Compliance",
+        "unit": "%",
+        "higher": true,
+        "source_row": 92
+      },
+      {
+        "name": "ONM-ALL-NMS Radio IP Monitoring Ratio",
+        "unit": "%",
+        "higher": true,
+        "source_row": 93
+      }
+    ]
+  },
+  {
+    "division": "DEFA",
+    "kpis": 1,
+    "readings": 2,
+    "filename": "defa.xlsx",
+    "sheet": "Report",
+    "header_row": 4,
+    "header_depth": 1,
+    "report_date": "2026-06-30",
+    "layout": "Rows per location",
+    "columns": [
+      "KPI WISA",
+      "SATUAN",
+      "FORMULA",
+      "TGT",
+      "Lokasi",
+      "Realisasi",
+      "Keterangan"
+    ],
+    "rows": [
+      [
+        "ONM-ALL-Compliance-Network Segment Availability-DEFA",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo North",
+        97.8,
+        "SYNTHETIC DEMO: a scheduled infrastructure maintenance window reduced availability. Proposed action: verify the maintenance duration."
+      ],
+      [
+        "ONM-ALL-Compliance-Network Segment Availability-DEFA",
+        "%",
+        "HIGHER BETTER",
+        98.5,
+        "Demo South",
+        99.8,
+        ""
+      ]
+    ],
+    "definitions": [
+      {
+        "name": "ONM-ALL-Compliance-Network Segment Availability-DEFA",
+        "unit": "%",
+        "higher": true,
+        "source_row": 91
+      }
+    ]
+  }
+]

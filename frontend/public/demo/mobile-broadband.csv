@@ -1,0 +1,7 @@
+Date,KPI,Actual,Target,Location,Unit,Direction,Category,Division feedback
+2026-10-01,Network Availability,99.7,99.5,Demo North,%,Higher better,Availability,
+2026-10-01,Latency (RTT),43,50,Demo North,ms,Lower better,Quality,
+2026-10-01,Network Availability,99.8,99.5,Demo South,%,Higher better,Availability,
+2026-10-02,Network Availability,96.2,99.5,Demo North,%,Higher better,Availability,Synthetic exercise: division reports a backbone link outage during this reporting period.
+2026-10-02,Latency (RTT),65,50,Demo North,ms,Lower better,Quality,
+2026-10-02,Network Availability,99.9,99.5,Demo South,%,Higher better,Availability,

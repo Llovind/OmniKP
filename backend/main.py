@@ -1,5 +1,5 @@
 """
-main.py — OmniKPI / PlantIntel FastAPI application entrypoint.
+main.py — OmniKPI FastAPI application entrypoint.
 
 Architecture: Monorepo, frontend-backend decoupled via REST API (SPA + FastAPI).
 Domain isolation: all routes enforce domain_id via Depends() at router level.
@@ -19,15 +19,16 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from database import DimDomain, get_db, init_db
+from database import DimDomain, get_db, init_db, SessionLocal
 from dotenv import load_dotenv
+
+load_dotenv()
 
 from routers.anomaly import router as anomaly_router
 from routers.harvest import router as harvest_router
 from routers.kpi import router as kpi_router
 from routers.rca import router as rca_router
-
-load_dotenv()
+from routers.submissions import router as submissions_router
 
 
 # ─── Lifespan ─────────────────────────────────────────────────────────────────
@@ -36,18 +37,22 @@ load_dotenv()
 async def lifespan(app: FastAPI):
     """Initialize DB tables (and FTS5 trigger) on startup. Safe to call on every start."""
     init_db()
+    with SessionLocal() as db:
+        if not db.query(DimDomain).filter_by(domain_id=1).first():
+            db.add(DimDomain(domain_id=1, domain_name="Telecommunications", domain_code="digital_infra"))
+            db.commit()
     yield
 
 
 # ─── App ──────────────────────────────────────────────────────────────────────
 
 app = FastAPI(
-    title="OmniKPI — SDG 9 Infrastructure Intelligence API",
+    title="OmniKPI — Telco KPI Intelligence API",
     description=(
-        "Agentic Infrastructure & Industrial KPI Intelligence Platform — Tri-Agent System\n\n"
-        "**UN SDG 9 Mandate:** Resilient Infrastructure & Sustainable Industrialization\n\n"
-        "**Domains:** `1` = Digital Infrastructure (SDG 9.c), `2` = Sustainable Industry (SDG 9.4)\n\n"
-        "**Agents:** Harvester (ETL) · ML Heatmap Engine · RCA Diagnostic Agent (LLM-grounded)"
+        "Telecommunications KPI Intelligence Platform — Tri-Agent System\n\n"
+        "**UN SDG 9 Mandate:** Resilient Telecommunications Infrastructure\n\n"
+        "**Domain:** `1` = Telecommunications (SDG 9.c), ITASE 7.0\n\n"
+        "**Workflow:** Division reports → reviewed mappings → unified target dashboard → division feedback → RCA draft"
     ),
     version="0.1.0",
     lifespan=lifespan,
@@ -72,6 +77,10 @@ app.include_router(kpi_router)
 app.include_router(anomaly_router)
 app.include_router(rca_router)
 app.include_router(harvest_router)
+app.include_router(submissions_router)
+from routers.demo import router as demo_router, workspace as demo_workspace
+app.include_router(demo_router)
+app.mount('/api/demo/workspace', demo_workspace)
 
 
 # ─── Root Endpoints ───────────────────────────────────────────────────────────
@@ -79,16 +88,16 @@ app.include_router(harvest_router)
 @app.get("/api/v1/health", tags=["System"])
 def health_check():
     """Liveness probe. Returns app version and status."""
-    return {"status": "ok", "version": "0.1.0", "app": "OmniKPI/PlantIntel"}
+    return {"status": "ok", "version": "0.1.0", "app": "OmniKPI"}
 
 
 @app.get("/api/v1/domains", tags=["System"])
 def list_domains(db: Session = Depends(get_db)):
     """
-    List available domains. Used by the frontend domain switcher.
-    Returns domain_id, domain_name, domain_code for all seeded domains.
+    List the active telecommunications domain.
+    Returns domain_id, domain_name, domain_code for the active telco domain.
     """
-    domains = db.query(DimDomain).all()
+    domains = db.query(DimDomain).filter(DimDomain.domain_id == 1).all()
     return [
         {
             "domain_id":   d.domain_id,

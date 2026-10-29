@@ -37,7 +37,7 @@ async def harvest_excel(
 
     Human-in-the-loop: this endpoint never writes to the database.
     The UI should show the mapping report to the user for confirmation before ingestion.
-    This satisfies Purdue Model / ISA-95 read-only advisory constraints.
+    This satisfies network engineer review read-only advisory constraints.
     """
     if not file.filename or not file.filename.endswith((".xlsx", ".xls")):
         raise HTTPException(

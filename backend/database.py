@@ -1,9 +1,9 @@
 """
-database.py — SQLAlchemy models and database initialization for OmniKPI / PlantIntel.
+database.py — SQLAlchemy models and database initialization for OmniKPI.
 
 Star Schema:
-    dim_domain   (tenant isolation: 1=telco, 2=petrochemical)
-    dim_kpi      (KPI definitions, sourced from ISO 22400 + TM Forum / industry practice)
+    dim_domain   (active domain: 1=telecommunications)
+    dim_kpi      (telecommunications KPI definitions and source metadata)
     dim_location (adjacency list, hierarchy-agnostic; rollup via WITH RECURSIVE CTE)
     dim_period   (daily time periods)
     fact_kpi     (central fact table with pre-computed Z-scores and anomaly flags)
@@ -19,7 +19,7 @@ All FastAPI routes enforce domain_id via Depends() at router level — see main.
 import os
 from sqlalchemy import (
     create_engine, Column, Integer, String, Float, Boolean,
-    ForeignKey, Text, text,
+    ForeignKey, Text, text, UniqueConstraint,
 )
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
@@ -42,36 +42,34 @@ Base = declarative_base()
 class DimDomain(Base):
     """
     Tenant isolation table.
-    domain_id 1 = Telecommunications (ITASE track)
-    domain_id 2 = Petrochemical       (CALIBER track)
+    domain_id 1 = Telecommunications (ITASE 7.0)
     All routes enforce domain_id via FastAPI Depends() — never filter manually per-endpoint.
     """
     __tablename__ = "dim_domain"
 
     domain_id   = Column(Integer, primary_key=True)
     domain_name = Column(String(100), nullable=False)
-    domain_code = Column(String(50),  nullable=False)   # "telco" | "petrochemical"
+    domain_code = Column(String(50),  nullable=False)   # "digital_infra"
 
 
 class DimKPI(Base):
     """
-    KPI definitions across both domains.
-    kpi_archetype maps each KPI to one of 5 structural archetypes derived from two
-    independent standards: ISO 22400 (petrochemical) and TM Forum / industry practice (telco).
-    This shared archetype taxonomy enables cross-domain queries via a single schema.
+    Telecommunications KPI definitions.
+    kpi_archetype groups KPIs into Availability, Performance, Quality and Reliability.
+    Source labels describe telecommunications operations references for review.
     """
     __tablename__ = "dim_kpi"
 
     kpi_id              = Column(Integer, primary_key=True, autoincrement=True)
     kpi_name            = Column(String(200), nullable=False)
     kpi_archetype       = Column(String(50),  nullable=False)
-    # Archetypes: Availability | Performance | Quality | Reliability | Composite
+    # Archetypes: Availability | Performance | Quality | Reliability
     domain_id           = Column(Integer, ForeignKey("dim_domain.domain_id"), nullable=False)
     formula_description = Column(Text)
     unit                = Column(String(50))
     target_threshold    = Column(Float)
     higher_is_better    = Column(Boolean, default=True)
-    source_standard     = Column(String(200))   # "ISO 22400" | "TM Forum/Industry" | "Domain Practice"
+    source_standard     = Column(String(200))   # "TM Forum/Industry" | "Industry Practice"
 
     domain = relationship("DimDomain")
 
@@ -83,13 +81,12 @@ class DimLocation(Base):
     (anchor: NOT EXISTS child) to prevent double-counting at all hierarchy levels.
 
     Telco:         Nasional → Regional → Witel → District
-    Petrochemical: Plant → Unit
     """
     __tablename__ = "dim_location"
 
     location_id        = Column(Integer, primary_key=True, autoincrement=True)
     location_name      = Column(String(200), nullable=False)
-    location_type      = Column(String(50),  nullable=False)   # national | regional | witel | district | plant | unit
+    location_type      = Column(String(50),  nullable=False)   # national | regional | witel | district
     parent_location_id = Column(Integer, ForeignKey("dim_location.location_id"), nullable=True)
     domain_id          = Column(Integer, ForeignKey("dim_domain.domain_id"),     nullable=False)
 
@@ -120,7 +117,7 @@ class FactKPI(Base):
             (returns reason = "insufficient_historical_data")
 
     Z-scores stored here are pre-computed at seed time over a 30-day window.
-    The anomaly detection endpoint (Step 2) recomputes dynamically from this table.
+    The anomaly detection endpoint reads these stored results.
     Confidence scores in RCA Agent are derived from Z-score — not LLM-generated.
     """
     __tablename__ = "fact_kpi"
@@ -171,6 +168,54 @@ class ShiftLog(Base):
 
     location = relationship("DimLocation")
     domain   = relationship("DimDomain")
+
+
+class Submission(Base):
+    """Reviewed report intake. Raw JSON is staged locally until confirmation."""
+    __tablename__ = "submissions"
+    submission_id = Column(String(36), primary_key=True)
+    domain_id = Column(Integer, nullable=False, index=True)
+    division = Column(String(100), nullable=False)
+    filename = Column(String(255), nullable=False)
+    report_date = Column(String(10), nullable=False)
+    sheet_name = Column(String(200), nullable=False)
+    fingerprint = Column(String(64), nullable=False, index=True)
+    status = Column(String(20), nullable=False, default="draft")
+    created_at = Column(String(30), nullable=False)
+    confirmed_at = Column(String(30))
+    raw_json = Column(Text, nullable=False)
+    mapping_json = Column(Text, nullable=False)
+    row_count = Column(Integer, default=0)
+
+
+class ReadingSource(Base):
+    """Source attribution without altering the existing demo fact table."""
+    __tablename__ = "reading_sources"
+    fact_id = Column(Integer, ForeignKey("fact_kpi.fact_id"), primary_key=True)
+    submission_id = Column(String(36), ForeignKey("submissions.submission_id"), nullable=False)
+    division = Column(String(100), nullable=False)
+    source_row = Column(Integer, nullable=False)
+
+
+class MappingMemory(Base):
+    __tablename__ = "mapping_memory"
+    memory_id = Column(Integer, primary_key=True)
+    domain_id = Column(Integer, nullable=False)
+    division = Column(String(100), nullable=False)
+    signature = Column(String(64), nullable=False)
+    mapping_json = Column(Text, nullable=False)
+    __table_args__ = (UniqueConstraint('domain_id', 'division', 'signature'),)
+
+
+class DivisionFeedback(Base):
+    """Explanation supplied for an exact KPI/location/period, not inferred from nearby logs."""
+    __tablename__ = "division_feedback"
+    feedback_id = Column(Integer, primary_key=True)
+    fact_id = Column(Integer, ForeignKey("fact_kpi.fact_id"), nullable=False, index=True)
+    division = Column(String(100), nullable=False)
+    explanation = Column(Text, nullable=False)
+    corrective_action = Column(Text, nullable=False)
+    created_at = Column(String(30), nullable=False)
 
 
 # ─── Initialization ───────────────────────────────────────────────────────────

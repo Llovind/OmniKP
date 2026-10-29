@@ -1,0 +1,59 @@
+{
+  "synthetic": true,
+  "date": "2026-06-30",
+  "readings": 180,
+  "kpis": 90,
+  "units": {
+    "ED": {
+      "kpis": 13,
+      "readings": 26,
+      "meeting": 17,
+      "missing": 9
+    },
+    "BGES & OLO": {
+      "kpis": 41,
+      "readings": 82,
+      "meeting": 55,
+      "missing": 27
+    },
+    "NETOP OSP": {
+      "kpis": 8,
+      "readings": 16,
+      "meeting": 11,
+      "missing": 5
+    },
+    "AIM": {
+      "kpis": 2,
+      "readings": 4,
+      "meeting": 3,
+      "missing": 1
+    },
+    "FBB": {
+      "kpis": 8,
+      "readings": 16,
+      "meeting": 11,
+      "missing": 5
+    },
+    "MBB": {
+      "kpis": 17,
+      "readings": 34,
+      "meeting": 23,
+      "missing": 11
+    },
+    "DEFA": {
+      "kpis": 1,
+      "readings": 2,
+      "meeting": 1,
+      "missing": 1
+    }
+  },
+  "sha256": {
+    "ed.xlsx": "8f35c686bb3f27521637787694d061660f657ac9a2a87ba4aeaedd77d9d3a498",
+    "bges-olo.xlsx": "7649438ce456c9abca0240a5034562b4f7ac363b962af5c7614fab9cf8178421",
+    "netop-osp.xlsx": "5881e3bd6a13e1b13baa4486240e27ae64b3e4d83af1e3d0e9561817ae638d00",
+    "aim.xlsx": "1028a6852a91a51c28448f16325742015d5e7628d03e26b212926b5e5cd16e28",
+    "fbb.xlsx": "21b0ccac7e80acf25fc34a75a1826e971f7b6d215ebf66c68f80c80b53d69b89",
+    "mbb.xlsx": "aaf540a3395227e665d8bc42b93c73a34070ca7248444ecb09b7a8ea93abfaa1",
+    "defa.xlsx": "16512da5eacc01ec1a74ab1e7a4dd1e2b8dfbca24a306f6383a5fd15bd87d2ab"
+  }
+}

@@ -12,6 +12,7 @@
   "dependencies": {
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.5",
     "recharts": "^3.10.1"
   },
   "devDependencies": {
@@ -19,11 +20,12 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^4.3.3",
-    "oxlint": "^1.79.0",
+    "oxlint": "1.79.0",
     "tailwindcss": "^4.3.3",
     "vite": "^5.4.11"
   },
   "optionalDependencies": {
+    "@oxlint/binding-win32-x64-msvc": "1.79.0",
     "@rolldown/binding-win32-x64-msvc": "^1.2.5"
   }
 }

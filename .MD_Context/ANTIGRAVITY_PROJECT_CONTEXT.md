@@ -1,78 +1,90 @@
-# PROJECT CONTEXT: OMNIKPI / PLANTINTEL
+# OMNIKPI — CURRENT PRODUCT CONTEXT
 
-## 1. ORIGIN & INSPIRATION
+## User-confirmed motivation
 
-Project ini terinspirasi dari KPI WISA Dashboard — dashboard KPI telco yang dibangun selama internship di Infranexia (PT Telkom Infrastruktur Indonesia), yang mengolah 90+ KPI dari 32 file Excel wide-format via ETL pipeline.
+During a Performance & Support Network internship at Infranexia, the user's team
+received KPI reports from divisions such as Mobile Broadband, Fiber Connectivity
+and Core Network. The supervisor spent substantial effort collecting scattered
+reports and compiling one Excel performance view for analysis and stakeholders.
+RCA explanations came from division feedback, not an assumed shift-log pipeline.
 
-**PENTING — batasan data:** OmniKPI/PlantIntel TIDAK menggunakan data, angka, atau struktur internal Infranexia secara langsung. Yang diadopsi hanya konsep umum (dashboard KPI dengan anomaly detection dan RCA), digeneralisasi ke struktur yang berbasis standar industri publik (lihat Section 4). Semua data yang dipakai di demo adalah data sintetis yang di-generate, bukan data operasional riil dari perusahaan manapun.
+The product now focuses on divisional Excel submissions becoming a unified
+central dataset and performance view. Layouts can change but are usually stable,
+so reviewed mappings can be reused. Keep scope appropriate for a competition
+demonstration, rather than expanding into enterprise deployment or procurement.
+Do not invent measured productivity or accuracy results.
 
-Tech stack dan arsitektur project ini adalah pivot penuh dari versi awal (Flask + Next.js), atas rekomendasi mentor internship (Bu Metha), menjadi stack yang lebih ringan dan agentic-friendly untuk kebutuhan dual-track competition.
+## Implemented competition workflow
 
-## 2. TECH STACK
+Upload .xlsx/.csv → propose/edit mappings → validate → confirm → consolidated
+dashboard → obtain division feedback → advisory RCA draft with source references.
 
-- **Frontend:** React (Vite) + TailwindCSS + Recharts. Strict rule: NO Next.js, NO SSR — SPA murni.
-- **Backend:** Python + FastAPI.
-- **Database:** SQLite via SQLAlchemy, Star Schema.
-- **AI/LLM:** Diakses via OpenRouter/NineRouter (atau router sejenis) menggunakan model gratis/free-credit tier, bukan API OpenAI/Claude berbayar langsung — RAG/prompting saja, TIDAK training model dari nol (lihat Section 3, aturan kompetisi). Client kompatibel format OpenAI SDK, tinggal ganti `base_url` dan `api_key` ke endpoint router. Siapkan fallback ke provider berbayar untuk Final Stage CALIBER (hackathon 24 jam, live) kalau free-tier kena rate limit di hari-H.
-- **Architecture style:** Monorepo, frontend-backend decoupled via REST API.
+The Harvester supports tidy records and location columns, selected worksheet,
+one to three header levels, explicit reporting dates, exact-layout mapping memory,
+and optional LLM suggestions using headers and bounded sample values. No report
+data is sent for AI mapping unless the upload checkbox is enabled.
 
-## 3. DUAL-TRACK COMPETITION COMPLIANCE
+Confirmation persists facts with division, filename and source-row attribution.
+Missing values and incompatible definitions block import; duplicates do not
+overwrite existing readings. No replacement/revision workflow is implemented.
 
-Codebase yang sama menyasar dua kompetisi dengan requirement berbeda. Semua keputusan desain harus valid untuk KEDUANYA secara simultan.
+Dashboard colors reflect target attainment using KPI direction and per-reading
+targets. Statistical Z-scores are separate context, computed causally for imported
+series from prior points in 30 calendar days (minimum ten). History shows up to
+thirty readings and their applicable targets. Views filter by division and exact
+report date; datasets separate imported reports from legacy synthetic seed data.
 
-### ITASE 7.0 — AI Innovation Challenge (Telco / SDG 9)
-- Diselenggarakan oleh HIMA Sistem Informasi, Telkom University Kampus Purwokerto.
-- Wajib pilih 1 dari 3 fokus SDG: SDG 3, SDG 8, atau **SDG 9 (Industry, Innovation and Infrastructure)** — dipilih.
-- **Aturan keras:** Peserta TIDAK boleh membangun/melatih model AI dari awal. Wajib pakai model AI yang sudah tersedia (LLM, dll), dengan menjelaskan mekanisme kerja, alasan pemilihan, dan peran AI dalam solusi.
-- Kriteria penilaian: Identifikasi Permasalahan (15%), Inovasi Solusi (25%), Pemanfaatan AI (25%), Kelayakan Implementasi (20%), Kontribusi SDGs (15%).
-- Deliverable: Proposal (BAB I-V sesuai template resmi) — deadline submit **17-18 Oktober 2026**.
-- Final: presentasi 10 menit + tanya jawab 10 menit, online, 5 tim finalis, **7 November 2026**.
+Division feedback is stored against the exact fact_id, which determines KPI,
+location and date. With no feedback, the RCA endpoint returns Bukti Tidak Cukup
+without an LLM call. Feedback-present drafts may use the configured provider and
+must cite recognized feedback IDs. Provider errors or invalid citations fall back
+to verbatim attributed feedback. Citation validity is not proof of causal truth.
+The old confidence percentage is not part of this endpoint or UI.
 
-### CALIBER 2026 — Chandra Asri (Petrochemical/Manufacturing)
-- Wajib pilih 1 dari 2 use case, **Case 2 dipilih: "Manufacturing Intelligence"** (Unified Dashboard, AI Insight, Root Cause Analysis, Follow-up Action Recommendation) — mengatasi data performa manufaktur yang fragmented di banyak dashboard/sistem, sulit monitor plant performance, identify root cause, prioritize alert, track follow-up.
-- (Case 1 — Knowledge Hub — TIDAK dipilih, jangan campur narasi ke arah tacit knowledge/knowledge base.)
-- **Semua materi submission wajib Bahasa Inggris** — deck, video, mock-up, semuanya.
-- Preliminary Stage butuh 3 deliverable, total gabungan **maksimal 10MB**:
-  1. Mock-up/prototype (Figma, HTML, atau setara yang bisa dinavigasi panitia).
-  2. Video demo 3 menit.
-  3. Deck PDF maksimal 7 slide (termasuk cover, tidak termasuk appendix), mengikuti struktur wajib: Cover → Background & Problem Statement → Solution → Business Impact → Feasibility & Roadmap → Conclusion → Team Profile.
-- Kriteria penilaian: Problem Understanding & Business Impact, Solution Design & Prototype Quality, Presentation Quality, Feasibility & Roadmap, **Chemical Domain Relevance**.
-- Timeline: Registrasi tutup **6 September 2026**, proposal submission **4 Oktober 2026 23:59 WIB**, pengumuman lolos final 23 Oktober 2026.
-- **Final Stage BUKAN lanjutan proposal ini** — top 10 tim akan diberi use case BARU yang sama sekali berbeda, dikerjakan dalam 24 jam on-site di Jakarta, presentasi Bahasa Inggris. (Tanggal final: guidebook menyebut dua tanggal berbeda — 28-29 Oktober di satu bagian, 4-5 November di bagian lain — perlu diklarifikasi ke panitia sebelum planning kehadiran.)
-- Wajib punya dosen pembimbing terdaftar.
-- Penggunaan AI tools untuk proses development diperbolehkan asal outputnya divalidasi — tidak ada larangan eksplisit soal training model custom di guidebook CALIBER (beda dari ITASE), tapi tetap ikuti pendekatan non-training demi konsistensi satu codebase.
+Two synthetic CSV samples in frontend/public/demo demonstrate six Mobile Broadband
+readings and four Fiber Connectivity readings, unified on 2026-10-02. Do not copy
+user-provided company workbooks into public demo assets.
 
-## 4. DATA STRUCTURE
+## Architecture and limits
 
-### Star Schema
-`dim_kpi`, `dim_location`, `dim_period`, `dim_domain`, `fact_kpi`, plus `shift_logs`/`incident_notes` untuk RCA retrieval.
+React/Vite SPA + Tailwind/Recharts; FastAPI; SQLAlchemy/SQLite. Domain 1 is telco.
+New tables: submissions (local staged JSON and confirmed ledger), reading_sources,
+mapping_memory and division_feedback. Existing facts and local DB are preserved.
+Startup creates missing tables and a telco domain; the seed command remains a
+deliberate destructive reset, not an upgrade step.
 
-### `dim_domain`
-Isolasi tenant antar kompetisi: `1 = telco (ITASE)`, `2 = petrochemical (CALIBER)`. Semua route FastAPI wajib enforce `domain_id` via `Depends()` di level router, bukan manual per-endpoint.
+The prototype has no authentication. Division identity and feedback authorship
+are not verified. No network-control integration, causal-discovery model, prediction,
+arbitrary Excel formula evaluation or universal ingestion capability is claimed.
+Complicated templates may need manual header selection/mapping or conversion to
+rows, especially for location-specific targets. New categories must be supplied
+or use the disclosed default Performance grouping.
 
-### `dim_kpi` — berbasis 5 arketipe generic (BUKAN framework yang dikarang sendiri)
-KPI dikategorikan ke 5 arketipe struktural, disourced dari dua standar independen: **ISO 22400** (manufacturing/petrochemical) dan **TM Forum/praktik industri telco**:
-1. **Availability** — Equipment Availability (petrochemical) / Network Availability (telco)
-2. **Performance/Throughput** — Throughput Rate / Data Throughput
-3. **Quality/Integrity** — Scrap Ratio / Packet Loss Rate
-4. **Reliability/Maintenance** — MTBF, MTTR (kedua domain)
-5. **Composite/Effectiveness** — OEE (petrochemical only; telco tidak punya padanan formal, ini disclosure yang disengaja, bukan generalisasi dipaksakan)
+The legacy Harvester route and log-retrieval helper remain for old experiments.
+The main UI uses the new intake endpoints and feedback-based RCA. Legacy seed
+statistics are historical artifacts and do not prove the new workflow's accuracy.
 
-Kolom `dim_kpi`: `kpi_id`, `kpi_name`, `kpi_archetype`, `domain_id`, `formula_description`, `unit`, `target_threshold`, `higher_is_better`, `source_standard`.
+## Competition context
 
-### `dim_location` — Adjacency List, hierarchy-agnostic
-`location_id`, `location_name`, `location_type`, `parent_location_id` (self-referencing FK), `domain_id`. Rollup pakai `WITH RECURSIVE` CTE dengan anchor base case di leaf node (`NOT EXISTS` child) — mencegah double-counting di semua level hierarki, baik telco (Nasional-Regional-Witel-District) maupun petrochemical (Plant-Unit-Line). Nama lokasi di seed data pakai nama geografis generik, bukan struktur organisasi internal satu perusahaan spesifik.
+One telco product targets ITASE 7.0 and the UiPath–Indosat Automation Hackathon.
+UiPath is not integrated yet; the hackathon requires it to be the core automation.
+Do not describe this prototype as already meeting that requirement.
 
-### Anomaly Detection
-Z-score/IQR terhadap historical window (30 hari, minimum 10 sample point sebelum dianggap valid — di bawah itu return `is_anomaly: false, reason: "insufficient_historical_data"`). Threshold `|Z| > 2.0`. Confidence score di RCA Agent diturunkan dari Z-score aktual, LLM hanya menarasikan — bukan menghasilkan angka sendiri.
+The Documents folder contains the submitted 31-page proposal, guidebook and
+event-day images. Preserve these historical source files. Latest ITASE images:
+deck deadline 6 November 2026 23:59 WIB, PDF/PPTX; online final 7 November;
+ten minutes presentation plus ten minutes Q&A. Required deck content: cover,
+problem, solution innovation, AI use, design/workflow, feasibility, SDGs, conclusion.
+Final rubric: deck completeness 20%, presentation 50%, Q&A 30%.
 
-### RCA Retrieval
-`shift_logs` table dengan SQLite FTS5 + SQL metadata filter (domain_id + location_id + timestamp), bukan vector DB — dijustifikasi karena volume data kecil dan terstruktur.
+Automation Hackathon: submission 25 November 2026 23:59 WIB, PPTX + source ZIP +
+MP4 (maximum 100 MB); final showcase 7 December. Final materials must match the
+submitted version. Both competitions use pretrained AI; no custom training is
+needed for the current product.
 
-## 5. TRI-AGENT ARCHITECTURE
-1. **Harvester Agent** — ingest Excel, column mapping via rapidfuzz (fuzzy matching lokal), fallback ke LLM kalau confidence < 80%.
-2. **ML Heatmap Engine** — render dashboard KPI matrix, highlight anomali berdasarkan Z-score (bukan threshold binary sederhana).
-3. **RCA Agent** — LLM menarasikan root cause dari data historis + shift logs yang di-retrieve, output: root cause, confidence score (dari Z-score), prescriptive action — bersifat advisory, human-in-the-loop, TIDAK eksekusi otomatis (Purdue Model / ISA-95 compliance, read-only terhadap OT).
+## Verification
 
-## 6. SEED DATA STATUS
-Dua skenario demo (Golden Flow) sudah dirancang: KPI Network Availability drop (telco) dan Equipment Availability/OEE drop (petrochemical), lengkap dengan shift log entries dan expected RCA Agent JSON output. Generator untuk histori 30-hari (buat baseline Z-score) masih perlu dibuat — belum ada di codebase.
+backend/test_product_flow.py exercises isolated DB workflows and mocked provider
+outputs, not empirical industry accuracy. Keep claims about API integration,
+sample demos and provider validation distinct. The proposal's E1–E4 benchmarks,
+incident grouping and broader roadmap are not completed by these smoke checks.

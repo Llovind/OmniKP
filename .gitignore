@@ -66,3 +66,14 @@ frontend/dist-ssr/
 *.sln
 *.sw?
 Thumbs.db
+desktop.ini
+
+# Private source material and local review artifacts
+KPI_data/
+Documents/
+Reference.jpeg
+backend/evidence/*.png
+backend/evidence/*lighthouse*.json
+backend/evidence/division-demo/*.png
+backend/evidence/division-demo/*.inspect.ndjson
+backend/evidence/division-demo/initial-build-data.json
