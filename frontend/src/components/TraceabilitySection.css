@@ -1,0 +1,49 @@
+/* Local provenance composition; semantic tokens keep both themes consistent. */
+#traceability .trace-layout { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); align-items:start; gap:clamp(40px,6vw,88px); }
+#traceability .trace-copy { padding-top:24px; min-width:0; }
+#traceability h2 { max-width:12ch; margin-bottom:24px; font-size:clamp(32px,3.2vw,44px); line-height:1.14; text-wrap:balance; }
+#traceability h2 span { color:var(--accent); }
+#traceability .trace-copy>p { max-width:43ch; margin:0; font-size:17px; line-height:1.75; text-wrap:pretty; }
+#traceability .validation-download { gap:14px; flex-wrap:nowrap; width:fit-content; max-width:100%; margin-top:28px; padding:14px 18px; min-height:64px; border:1px solid var(--control-line); border-radius:10px; background:var(--surface); color:var(--ink); transition:background-color 160ms ease,border-color 160ms ease; }
+#traceability .validation-download>svg { flex-shrink:0; color:var(--accent); }
+#traceability .trace-download-copy { display:flex; flex-direction:column; gap:2px; text-decoration:none; }
+#traceability .trace-download-copy>span { color:var(--accent); font-size:14px; font-weight:600; text-decoration:underline; text-underline-offset:4px; }
+#traceability .trace-download-copy>small { color:var(--muted); font-size:12px; font-weight:400; }
+#traceability .validation-download:hover { background:var(--subtle); border-color:var(--accent); text-decoration:none; }
+#traceability .validation-download:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+#traceability .trace-card { min-width:0; width:100%; margin:0; padding:32px; border:1px solid var(--line); border-radius:16px; background:var(--page); box-shadow:none; }
+#traceability .trace-card figcaption { display:flex; align-items:center; gap:10px; font-size:13px; line-height:1.5; color:var(--muted); }
+#traceability .trace-card figcaption svg { color:var(--accent); flex-shrink:0; }
+#traceability .trace-card h3 { margin:20px 0 24px; max-width:30ch; font-size:20px; line-height:1.4; letter-spacing:-.015em; }
+#traceability .trace-metric { padding:24px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+#traceability .trace-value { color:var(--ink); font-size:clamp(48px,4.3vw,60px); line-height:1; font-weight:600; letter-spacing:-.035em; gap:0; }
+#traceability .trace-unit { font-size:30px; margin-left:4px; }
+#traceability .trace-target { flex-basis:100%; margin:12px 0 0; color:var(--muted); font-size:14px; line-height:1.5; letter-spacing:0; }
+#traceability .trace-delta { display:flex; align-items:center; gap:7px; width:fit-content; max-width:100%; margin:14px 0 0; padding:6px 10px; border-radius:6px; background:var(--subtle); color:var(--amber); font-size:12px; line-height:1.5; font-weight:500; }
+#traceability .trace-delta svg { flex-shrink:0; }
+#traceability .trace-card dl { margin:12px 0 0; font-size:13px; line-height:1.6; }
+#traceability .trace-card dl>div { display:grid; grid-template-columns:minmax(96px,.8fr) minmax(0,1.2fr); align-items:baseline; gap:16px; padding:12px 0; border:0; border-bottom:1px solid var(--line); }
+#traceability .trace-card dl>div:last-child { border-bottom:0; padding-bottom:0; }
+#traceability .trace-card dt { color:var(--muted); }
+#traceability .trace-card dd { margin:0; color:var(--ink); text-align:right; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; font-weight:500; }
+@media(max-width:900px) {
+  #traceability .trace-layout { grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:32px; }
+  #traceability .trace-copy { padding-top:12px; }
+  #traceability h2 { font-size:32px; }
+  #traceability .trace-copy>p { font-size:16px; }
+  #traceability .trace-card { padding:24px; }
+  #traceability .trace-card dl>div { grid-template-columns:minmax(80px,.8fr) minmax(0,1.2fr); gap:12px; }
+}
+@media(max-width:680px) {
+  #traceability .trace-layout { grid-template-columns:minmax(0,1fr); gap:32px; }
+  #traceability .trace-copy { padding-top:0; }
+  #traceability h2 { max-width:18ch; margin-bottom:20px; }
+  #traceability .validation-download { margin-top:24px; }
+  #traceability .trace-card { padding:24px 20px; }
+  #traceability .trace-card h3 { margin-bottom:20px; }
+  #traceability .trace-metric { padding-block:20px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #traceability [data-trace-motion] { transform:none!important; opacity:1!important; }
+  #traceability .validation-download { transition:none; }
+}

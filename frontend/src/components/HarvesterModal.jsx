@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import Dialog from './Dialog';
 
 const fields = [
   ['ignore', 'Ignore'], ['kpi_name', 'KPI name'], ['actual_value', 'Actual value'],
@@ -11,7 +12,7 @@ const fields = [
 function PreviewTable({rows}) {
   if (!rows?.length) return null;
   const keys = Object.keys(rows[0]).filter(k => k !== 'notes');
-  return <div className="overflow-auto max-h-60"><table className="report-table">
+  return <div className="table-region max-h-60" role="region" aria-label="Report values preview" tabIndex={0}><table className="report-table">
     <thead><tr>{keys.map(k => <th key={k}>{k.replaceAll('_', ' ')}</th>)}</tr></thead>
     <tbody>{rows.map((row, i) => <tr key={i}>{keys.map(k => <td key={k}>{String(row[k] ?? '—')}</td>)}</tr>)}</tbody>
   </table></div>;
@@ -79,13 +80,12 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
     catch (err) { setError(err.message); setValidation(null); }
     finally { setBusy(''); }
   };
-  return <div className="modal-backdrop">
-    <section role="dialog" aria-modal="true" aria-labelledby="intake-title" className="glass modal-content max-w-5xl">
+  return <Dialog onClose={onClose} labelledBy="intake-title" busy={!!busy} className="intake-dialog">
       <header className="p-5 border-b border-white/10 flex justify-between items-start gap-4">
         <div><p className="text-xs text-indigo-300 uppercase tracking-wider">Harvester Agent</p>
           <h2 id="intake-title" className="display-font text-xl font-semibold mt-1">Submit a division report</h2>
           <p className="text-sm text-slate-400 mt-2">Interpret the file, review its meaning, then confirm what enters the shared dataset.</p></div>
-        <button className="btn-ghost" disabled={!!busy} onClick={onClose} aria-label="Close upload">✕</button>
+        <button className="btn-ghost icon-button" disabled={!!busy} data-dialog-close aria-label="Close upload"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
       </header>
       <div className="p-5 overflow-auto space-y-5">
         {!result ? <form onSubmit={interpret} className="space-y-4">
@@ -129,7 +129,7 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
           </section>
         </form> : <>
           <div className="flex flex-wrap justify-between gap-3 items-center">
-            <div><p className="font-medium">{result.division} · {result.filename}</p>
+            <div className="intake-file-summary"><p className="font-medium">{result.division} · {result.filename}</p>
               <p className="text-xs text-slate-400 mt-1">{result.rows_parsed} source rows · {result.sheet_name} · header starts at row {result.header_row}</p></div>
             <button className="btn-ghost" disabled={!!busy} onClick={() => {setResult(null); setValidation(null);}}>Change file / settings</button>
           </div>
@@ -137,9 +137,10 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
           <div>
             <h3 className="font-semibold mb-2">Review column meanings</h3>
             <p className="text-xs text-slate-400 mb-3">For a wide report, choose “Actual for one location” for each measurement column and enter its location. Ignore ACH / achievement columns.</p>
-            <div className="overflow-auto max-h-80"><table className="report-table"><thead><tr><th>Source column</th><th>Meaning</th><th>Suggestion source</th></tr></thead>
+            <p className="table-scroll-hint" id="mapping-scroll-help">Scroll the table to review every column and its meaning.</p>
+            <div className="table-region max-h-80" role="region" aria-label="Column mapping" aria-describedby="mapping-scroll-help" tabIndex={0}><table className="report-table mapping-table"><thead><tr><th scope="col">Source column</th><th scope="col">Meaning</th><th scope="col">Suggestion source</th></tr></thead>
               <tbody>{result.columns.map(col => <tr key={col}><td className="max-w-xs break-words">{col}</td><td>
-                <select className="field-input" value={mapping[col]?.startsWith('location:') ? 'wide_location' : mapping[col]} onChange={e => update(col, e.target.value === 'wide_location' ? 'location:'+col.split('|')[0].trim() : e.target.value)}>
+                <select aria-label={'Mapping for '+col} className="field-input" value={mapping[col]?.startsWith('location:') ? 'wide_location' : mapping[col]} onChange={e => update(col, e.target.value === 'wide_location' ? 'location:'+col.split('|')[0].trim() : e.target.value)}>
                   {fields.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                 </select>
                 {mapping[col]?.startsWith('location:') && <input aria-label={'Location for '+col} className="field-input mt-2" value={mapping[col].slice(9)} onChange={e => update(col, 'location:'+e.target.value)} />}
@@ -169,6 +170,5 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
         </>}
         {error && <div role="alert" className="notice-error">{error}</div>}
       </div>
-    </section>
-  </div>;
+  </Dialog>;
 }

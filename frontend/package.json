@@ -3,29 +3,47 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
+    "dev:audit": "node scripts/dev-audit.mjs",
     "build": "vite build",
+    "build:ui": "node scripts/build-ui.mjs",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "test": "node --test scripts/api-contract.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "preview:audit": "node scripts/preview-audit.mjs"
   },
   "dependencies": {
+    "@hugeicons/core-free-icons": "4.4.0",
+    "@hugeicons/react": "1.1.10",
+    "@radix-ui/react-slot": "1.5.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "1.67.0",
+    "motion": "^14.9.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.5",
-    "recharts": "^3.10.1"
+    "recharts": "^3.10.1",
+    "tailwind-merge": "3.7.0",
+    "three": "0.187.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "6.2.1",
     "oxlint": "1.79.0",
     "tailwindcss": "^4.3.3",
-    "vite": "^5.4.11"
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
   },
   "optionalDependencies": {
     "@oxlint/binding-win32-x64-msvc": "1.79.0",
-    "@rolldown/binding-win32-x64-msvc": "^1.2.5"
+    "@rolldown/binding-win32-x64-msvc": "1.2.16"
   }
 }

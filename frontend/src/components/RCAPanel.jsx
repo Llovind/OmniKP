@@ -21,11 +21,11 @@ export default function RCAPanel({domainId, selectedCell, rcaData, loading, erro
     } catch (err) { setFeedbackError(err.message); }
     finally { setSaving(false); }
   };
-  return <aside className="glass border border-white/10 overflow-hidden">
+  return <aside className="investigation-panel glass border border-white/10 overflow-hidden">
     <header className="p-4 border-b border-white/10 flex justify-between items-start gap-3">
       <div><p className="text-xs text-indigo-300 uppercase tracking-wider">Performance investigation</p><h2 className="font-semibold mt-1">{selectedCell.kpi_name}</h2>
         <p className="text-xs text-slate-400 mt-1">{selectedCell.location_name} · {selectedCell.date}</p></div>
-      <button className="btn-ghost !p-2" aria-label="Close investigation" onClick={onClose}>✕</button>
+      <button className="btn-ghost icon-button" aria-label="Close investigation" onClick={onClose}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
     </header>
     <div className="p-4 space-y-4 text-sm">
       <div className="grid grid-cols-2 gap-3">
@@ -33,7 +33,7 @@ export default function RCAPanel({domainId, selectedCell, rcaData, loading, erro
         <div className="glass-sm p-3"><span className="text-xs text-slate-400 block">Target / limit</span><strong>{selectedCell.target_value ?? 'Not supplied'} {selectedCell.unit}</strong></div>
       </div>
       <div className="flex flex-wrap gap-2 text-xs">
-        <span className={selectedCell.status === 'RED' ? 'text-red-300' : 'text-emerald-300'}>{selectedCell.status === 'RED' ? 'Missing target' : selectedCell.status === 'GREEN' ? 'Meeting target' : 'Target unavailable'}</span>
+        <span className={selectedCell.status === 'RED' ? 'text-red-300' : selectedCell.status === 'YELLOW' ? 'text-yellow-300' : 'text-emerald-300'}>{selectedCell.status === 'RED' ? 'Missing target' : selectedCell.status === 'GREEN' ? 'Meeting target' : 'Target unavailable'}</span>
         {selectedCell.attainment_pct != null && <span className="text-slate-400">· {selectedCell.attainment_pct}% attainment</span>}
       </div>
       <p className="text-xs text-slate-400">{selectedCell.higher_is_better ? 'Higher' : 'Lower'} is better.
@@ -42,7 +42,7 @@ export default function RCAPanel({domainId, selectedCell, rcaData, loading, erro
         <p className="font-semibold text-slate-200">{selectedCell.division}</p>
         <p className="mt-1">{selectedCell.source_file} · source row {selectedCell.source_row}</p>
       </div>}
-      <div className="flex gap-2">
+      <div className="investigation-actions">
         <button className="btn-ghost flex-1 text-xs" onClick={onViewHistory}>View recent history</button>
         <button className="btn-primary flex-1 text-xs" disabled={loading} onClick={() => onTriggerRCA(selectedCell)}>Review / draft RCA</button>
       </div>

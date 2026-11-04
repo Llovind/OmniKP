@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -9,6 +9,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { api } from '../api/client';
+import Dialog from './Dialog';
 
 export default function KPIDetailModal({
   domainId,
@@ -58,28 +59,26 @@ export default function KPIDetailModal({
     })) || [];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-      <div className="glass w-full max-w-3xl border border-white/15 shadow-2xl rounded-xl overflow-hidden flex flex-col max-h-[90vh]">
+    <Dialog onClose={onClose} labelledBy="history-title" className="history-dialog">
         {/* Modal Header */}
-        <div className="p-5 border-b border-white/10 bg-slate-950/70 flex items-center justify-between">
+        <div className="dialog-header p-5 border-b border-white/10 bg-slate-950/70 flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="history-meta">
               <span className="text-xs font-mono uppercase text-indigo-400 font-semibold tracking-wider">
                 {selectedCell.kpi_archetype}
               </span>
-              <span className="text-slate-600">&bull;</span>
               <span className="text-xs text-slate-400">{selectedCell.location_name}</span>
             </div>
-            <h2 className="display-font text-lg font-bold text-white mt-0.5">
+            <h2 id="history-title" className="display-font text-lg font-bold text-white mt-0.5">
               {selectedCell.kpi_name}
             </h2>
           </div>
 
           <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+            data-dialog-close aria-label="Close history"
+            className="btn-ghost icon-button"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden="true" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -88,7 +87,7 @@ export default function KPIDetailModal({
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
           {/* Quick Metrics Header */}
-          <div className="grid grid-cols-4 gap-3">
+          <div className="history-metrics grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="glass-sm p-3 border border-white/5">
               <span className="text-[10px] text-slate-400 block uppercase font-mono">Selected Reading</span>
               <span className="display-font text-lg font-bold text-slate-100">
@@ -124,23 +123,30 @@ export default function KPIDetailModal({
 
           {/* Historical Trend Chart */}
           <div className="glass-sm p-4 border border-white/10 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-mono">
+            <div className="history-chart-heading">
+              <h3>
                 Recent Readings &amp; Applicable Targets (up to 30)
-              </h4>
+              </h3>
               <span className="text-[11px] text-slate-400">
                 Unit: <strong className="text-slate-200">{selectedCell.unit}</strong>
               </span>
             </div>
 
+            <div className="history-chart-legend" aria-label="Trend legend">
+              <span>Actual reading</span><span>Applicable target</span>
+            </div>
             {loading ? (
-              <div className="h-64 flex flex-col items-center justify-center gap-3">
+              <div role="status" className="h-64 flex flex-col items-center justify-center gap-3">
                 <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
-                <span className="text-xs text-slate-400">Rendering telemetry series...</span>
+                <span className="text-xs text-slate-400">Rendering telemetry series…</span>
               </div>
             ) : error ? (
-              <div className="h-64 flex items-center justify-center text-xs text-red-400">
+              <div role="alert" className="py-8 text-center text-sm text-red-400">
                 {error}
+              </div>
+            ) : !chartPoints.length ? (
+              <div role="status" className="py-8 text-sm text-slate-400 text-center">
+                No recent readings are available.
               </div>
             ) : (
               <div className="h-64 w-full">
@@ -149,16 +155,16 @@ export default function KPIDetailModal({
                     data={chartPoints}
                     margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
                     <XAxis
                       dataKey="date"
-                      stroke="#64748b"
-                      fontSize={11}
+                      stroke="var(--muted)"
+                      fontSize={12}
                       tickLine={false}
                     />
                     <YAxis
-                      stroke="#64748b"
-                      fontSize={11}
+                      stroke="var(--muted)"
+                      fontSize={12}
                       tickLine={false}
                       domain={['auto', 'auto']}
                     />
@@ -186,11 +192,12 @@ export default function KPIDetailModal({
                         return null;
                       }}
                     />
-                    <Line type="stepAfter" dataKey="target" name="Applicable target" stroke="#f97316" strokeDasharray="4 4" dot={false} connectNulls={false} />
+                    <Line isAnimationActive={false} type="stepAfter" dataKey="target" name="Applicable target" stroke="var(--amber)" strokeDasharray="4 4" dot={false} connectNulls={false} />
                     <Line
                       type="monotone"
+                      isAnimationActive={false}
                       dataKey="actual"
-                      stroke="#6366f1"
+                      stroke="var(--accent)"
                       strokeWidth={2.5}
                       dot={(props) => {
                         const { cx, cy, payload } = props;
@@ -201,8 +208,8 @@ export default function KPIDetailModal({
                               cx={cx}
                               cy={cy}
                               r={5}
-                              fill="#ef4444"
-                              stroke="#ffffff"
+                              fill="var(--red)"
+                              stroke="var(--surface)"
                               strokeWidth={1.5}
                             />
                           );
@@ -213,22 +220,32 @@ export default function KPIDetailModal({
                             cx={cx}
                             cy={cy}
                             r={2.5}
-                            fill="#6366f1"
+                            fill="var(--accent)"
                           />
                         );
                       }}
-                      activeDot={{ r: 6, fill: '#38bdf8' }}
+                      activeDot={{ r: 6, fill: 'var(--accent)' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             )}
           </div>
+          {!loading && !error && <details className="history-readings">
+            <summary>View readings as a table</summary>
+            <div className="table-region" role="region" aria-label="Historical readings" tabIndex={0}>
+              <table className="report-table"><caption className="sr-only">Recent KPI readings and applicable targets</caption>
+                <thead><tr><th scope="col">Date</th><th scope="col">Actual</th><th scope="col">Target</th><th scope="col">Status</th></tr></thead>
+                <tbody>{chartPoints.map((point, index) => <tr key={point.date+'-'+index}><th scope="row">{point.date}</th><td>{point.actual} {selectedCell.unit}</td><td>{point.target ?? 'Not supplied'}</td><td>{point.status}</td></tr>)}</tbody>
+              </table>
+              {!chartPoints.length && <p>No recent readings are available.</p>}
+            </div>
+          </details>}
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-white/10 bg-slate-950/70 flex items-center justify-between">
-          <button onClick={onClose} className="btn-ghost text-xs">
+        <div className="dialog-footer p-4 border-t border-white/10 flex items-center justify-between">
+          <button data-dialog-close className="btn-ghost text-xs">
             Close Detail View
           </button>
 
@@ -239,13 +256,12 @@ export default function KPIDetailModal({
             }}
             className="btn-primary text-xs flex items-center gap-2"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             Review / draft RCA
           </button>
         </div>
-      </div>
-    </div>
+    </Dialog>
   );
 }
