@@ -40,8 +40,17 @@ class ProductFlow(unittest.TestCase):
         self.client.__enter__()
         self.no_ai = patch.object(feedback_rca, 'OPENROUTER_API_KEY', '')
         self.no_ai.start()
+        self.mapping_key = patch.object(harvester, 'OPENROUTER_API_KEY', 'mock-provider')
+        self.mapping_key.start()
+        async def simulate_model(**kwargs):
+            context = json.loads(kwargs['messages'][1]['content'])
+            return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({col['header']:col['suggestion'] for col in context})))])
+        self.mapping_model = patch.object(harvester._client.chat.completions, 'create', new=AsyncMock(side_effect=simulate_model))
+        self.mapping_model.start()
 
     def tearDown(self):
+        self.mapping_model.stop()
+        self.mapping_key.stop()
         self.no_ai.stop()
         self.client.__exit__(None, None, None)
 
@@ -112,7 +121,7 @@ class ProductFlow(unittest.TestCase):
             self.assertEqual(sum(len(l['kpis']) for l in view['locations']), entry['readings'])
         self.assertEqual(len(self.client.get('/api/v1/domains/1/submissions').json()), 7)
 
-    def test_ai_wide_report_batches_and_partial_fallback(self):
+    def test_ai_wide_report_aborts_on_failed_batch(self):
         from services.intake import ai_mapping, suggest_mapping
         columns = [f'Demo {i} | Actual' for i in range(121)]
         report = {'columns': columns, 'rows': [{'values': dict.fromkeys(columns, 95)}]}
@@ -120,14 +129,9 @@ class ProductFlow(unittest.TestCase):
         last = {columns[-1]: 'location:Demo 120'}
         response = lambda payload: SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(payload)))])
         with patch.object(harvester, 'OPENROUTER_API_KEY', 'test'), patch.object(harvester._client.chat.completions, 'create', new=AsyncMock(side_effect=[response(first), RuntimeError('provider failure'), response(last)])) as call:
-            mapping, message, trace = asyncio.run(ai_mapping(report, suggest_mapping(columns)))
-        self.assertEqual(call.await_count, 3)
-        self.assertEqual(sum(m['method'] == 'llm' for m in mapping.values()), 61)
-        self.assertEqual(trace['mode'], 'live')
-        self.assertEqual(trace['batches'], 3)
-        self.assertEqual(trace['fallback_batches'], 1)
-        self.assertIn('1 batch(es) failed and kept local rules', message)
-        self.assertEqual(len(mapping), 121)
+            with self.assertRaises(RuntimeError):
+                asyncio.run(ai_mapping(report, suggest_mapping(columns)))
+        self.assertEqual(call.await_count, 2)
 
     def test_validation_pack_failure_exercises(self):
         fixtures = Path(__file__).resolve().parents[1]/'frontend/public/demo/divisions'
@@ -165,9 +169,10 @@ class ProductFlow(unittest.TestCase):
         self.accept(first)
         duplicate = self.client.post('/api/v1/domains/1/submissions/preview',
             files={'file': ('input.csv', csv)}, data={'division': 'Mobile Broadband', 'report_date': '2026-10-02'})
-        self.assertEqual(duplicate.status_code, 422)
+        self.assertEqual(duplicate.status_code, 200)
+        self.assertFalse(duplicate.json()['can_confirm'])
         next_report = self.stage(csv, day='2026-10-03')
-        self.assertTrue(all(m['method'] == 'approved_memory' for m in next_report['column_mapping'].values()))
+        self.assertTrue(all(m['method'] == 'llm' for m in next_report['column_mapping'].values()))
         self.accept(next_report)
         cross_division = self.stage(csv, division='Core Network')
         self.assertEqual(cross_division['conflict_count'], 1)
@@ -178,13 +183,13 @@ class ProductFlow(unittest.TestCase):
         altered = self.stage(csv.replace(b'North', b' north '), division='Another division')
         self.assertEqual(altered['conflict_count'], 1)
 
-    def test_opt_in_ai_uses_samples_and_requires_review(self):
+    def test_ai_cannot_be_disabled_and_requires_review(self):
         proposed = {'Metric label': 'kpi_name', 'Observed figure': 'actual_value',
                     'Limit': 'target_value', 'Area name': 'location_name', 'Unit': 'unit', 'Direction': 'higher_is_better'}
         fake = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(proposed)))])
         with patch.object(harvester, 'OPENROUTER_API_KEY', 'test'), patch.object(
                 harvester._client.chat.completions, 'create', new_callable=AsyncMock, return_value=fake) as mock:
-            report = self.stage(b'Metric label,Observed figure,Limit,Area name,Unit,Direction\nSynthetic metric,90,95,North,%,Higher better\n', use_ai='true')
+            report = self.stage(b'Metric label,Observed figure,Limit,Area name,Unit,Direction\nSynthetic metric,90,95,North,%,Higher better\n', use_ai='false')
             mock.assert_awaited_once()
             self.assertIn('Synthetic metric', mock.call_args.kwargs['messages'][1]['content'])
             self.assertTrue(all(v['method'] == 'llm' for v in report['column_mapping'].values()))
@@ -201,6 +206,15 @@ class ProductFlow(unittest.TestCase):
         self.assertEqual(cells['Zero incidents']['attainment_pct'], 100)
         self.assertIsNone(cells['Latency demo']['z_score'])
 
+    def test_missing_provider_blocks_intake_without_rule_fallback(self):
+        with patch.object(harvester, 'OPENROUTER_API_KEY', ''):
+            response = self.client.post('/api/v1/domains/1/submissions/preview',
+                files={'file': ('input.csv', b'KPI,Actual\nExample,90\n')},
+                data={'division':'ED','report_date':'2026-06-30','use_ai':'false'})
+        self.assertEqual(response.status_code,503)
+        with SessionLocal() as db:
+            self.assertEqual(db.query(FactKPI).count(),0)
+
     def test_feedback_is_exact_and_missing_feedback_never_calls_llm(self):
         report = self.stage(b'KPI,Actual,Target,Location,Unit,Direction\nExample availability,90,99,North,%,Higher better\nExample latency,65,50,North,ms,Lower better\n')
         self.accept(report)
@@ -216,8 +230,8 @@ class ProductFlow(unittest.TestCase):
             'corrective_action': 'Inspect the link and report findings.'})
         self.assertEqual(response.status_code, 200, response.text)
         feedback_id = response.json()['feedback_id']
-        answer = self.client.post('/api/v1/domains/1/rca', json=payload(first)).json()
-        self.assertEqual(answer['cited_feedback_ids'], [feedback_id])
+        answer = self.client.post('/api/v1/domains/1/rca', json=payload(first))
+        self.assertEqual(answer.status_code, 503)
         other = self.client.post('/api/v1/domains/1/rca', json=payload(second)).json()
         self.assertEqual(other['evidence_status'], 'awaiting_feedback')
         # Reject fabricated source references instead of displaying an unsupported AI draft.
@@ -226,9 +240,30 @@ class ProductFlow(unittest.TestCase):
             'cited_feedback_ids': [999]})))])
         with patch.object(feedback_rca, 'OPENROUTER_API_KEY', 'test'), patch.object(
                 feedback_rca._client.chat.completions, 'create', new_callable=AsyncMock, return_value=fake):
-            answer = self.client.post('/api/v1/domains/1/rca', json=payload(first)).json()
-            self.assertNotIn('Invented explanation', answer['root_cause'])
-            self.assertIn('invalid citations', answer['llm_model'])
+            answer = self.client.post('/api/v1/domains/1/rca', json=payload(first))
+            self.assertEqual(answer.status_code, 503)
+            self.assertNotIn('Invented explanation', answer.text)
+        valid = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({
+            'root_cause': f'Division reports a damaged link [F{feedback_id}]',
+            'prescriptive_action': f'Inspect the link [F{feedback_id}]',
+            'cited_feedback_ids':[feedback_id]})))])
+        with patch.object(feedback_rca, 'OPENROUTER_API_KEY', 'test'), patch.object(
+                feedback_rca._client.chat.completions,'create',new=AsyncMock(return_value=valid)):
+            answer=self.client.post('/api/v1/domains/1/rca',json=payload(first))
+            self.assertEqual(answer.status_code,200,answer.text)
+            self.assertEqual(answer.json()['evidence_status'],'ai_draft')
+            self.assertTrue(answer.json()['ai_invoked'])
+            self.assertTrue(answer.json()['grounding']['citation_verified'])
+            self.assertNotIn('ungrounded_claims', answer.json()['grounding'])
+        insufficient = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(
+            content=json.dumps({'insufficient_evidence':True})))])
+        with patch.object(feedback_rca, 'OPENROUTER_API_KEY', 'test'), patch.object(
+                feedback_rca._client.chat.completions,'create',new=AsyncMock(return_value=insufficient)) as called:
+            answer=self.client.post('/api/v1/domains/1/rca',json=payload(first)).json()
+            self.assertEqual(called.await_count,1)
+            self.assertTrue(answer['ai_invoked'])
+            self.assertFalse(answer['grounding']['citation_verified'])
+            self.assertEqual(answer['evidence_status'],'insufficient_evidence')
 
     def test_xlsx_multilevel_headers_and_excel_percent_scale(self):
         book = Workbook()
@@ -247,6 +282,21 @@ class ProductFlow(unittest.TestCase):
         values = [k['actual_value'] for l in self.dashboard()['locations'] for k in l['kpis']]
         self.assertEqual(values, [96, 99.9])
         self.assertEqual(report['column_mapping']['North | ACH']['target'], 'ignore')
+
+    def test_worksheet_selection_single_sheet_and_ambiguous_workbooks(self):
+        fixture=Path(__file__).resolve().parents[1]/'frontend/public/demo/divisions/ed.xlsx'
+        for requested in ['ED',' report ','REPORT','']:
+            report=read_report(fixture.read_bytes(),'ed.xlsx',requested,4,1)
+            self.assertEqual(report['sheet'],'Report')
+        book=Workbook()
+        book.active.title='Report'
+        book.active.append(['KPI','Actual'])
+        book.active.append(['Example',90])
+        book.create_sheet('History').append(['KPI','Actual'])
+        output=io.BytesIO();book.save(output)
+        self.assertEqual(read_report(output.getvalue(),'multi.xlsx',' report ',1,1)['sheet'],'Report')
+        with self.assertRaisesRegex(ValueError,'worksheet tab name'):
+            read_report(output.getvalue(),'multi.xlsx','ED',1,1)
 
     def test_causal_statistics_and_backfilled_dates(self):
         header = 'KPI,Actual,Target,Location,Unit,Direction,Date\n'

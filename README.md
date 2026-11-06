@@ -11,19 +11,18 @@ central dashboard → division feedback → evidence-linked RCA draft**.
 
 - **Division intake:** .xlsx and UTF-8 .csv, one worksheet per upload. Supports
   rows per reading and wide location columns, with one to three header levels.
-- **Schema interpretation:** local header aliases and fuzzy matching; opt-in
-  pretrained AI uses headers plus up to three bounded sample values per column.
+- **Schema interpretation:** every report uses live pretrained AI, with local
+  aliases as context, headers and up to three bounded sample values per column.
   Review and correct every proposed meaning before confirmation.
 - **Auditable AI suggestions:** each proposal carries a short reason, and every
-  response includes the trace actually used — mode (`live`, `recorded`, `skipped`),
-  model, column and sample scope, batches and latency. With no provider key, the
-  seven demo layouts replay recorded suggestions that are labelled
-  “AI suggestion · recorded”; recorded output is never presented as a live call.
+  response includes the live model, column/sample scope, batches and latency.
+  Missing configuration, incomplete output or provider failure blocks interpretation
+  with a retryable error. Archived outputs are benchmark evidence, not a fallback.
 - **Mapping evaluation:** `/evaluation` and `GET /api/v1/ai/evaluation` publish the
   synthetic five-layout comparison of local rules versus the configured provider.
   `GET /api/v1/ai/status` reports what the running build will actually do.
-- **Mapping memory:** confirmed column mappings are reused for the same division
-  and exact ordered header signature. Changed layouts receive new suggestions.
+- **Mapping records:** confirmed mappings are retained; each new interpretation
+  still calls the model and requires analyst review.
 - **Validation:** missing/non-finite values, incompatible units/directions,
   invalid dates, duplicate readings and conflicts block the entire import.
   Nothing is written to fact_kpi until confirmation succeeds.
@@ -41,9 +40,9 @@ central dashboard → division feedback → evidence-linked RCA draft**.
 - **RCA:** feedback belongs to an exact KPI/location/date reading. Without it the
   server returns “Bukti Tidak Cukup” without calling an LLM. With feedback, it can
   generate an advisory draft that cites feedback IDs. Invalid/missing citations or
-  provider failure fall back to attributed feedback excerpts. No numerical
-  confidence percentage is shown. Responses also state whether the model was
-  invoked and how many claims lacked a feedback reference.
+  provider failure return a visible error for retry. Responses state whether the
+  model was invoked, including when it reports insufficient evidence, and whether
+  citation IDs passed structural checks. No unmeasured claim-quality count is shown.
 
 ## Try the demo
 
@@ -166,8 +165,8 @@ Integration tests use an isolated temporary database and mock provider responses
 They cover multi-division imports, wide/multirow headers, Excel percentage scaling,
 manual/AI mapping review, memory reuse, atomic validation, duplicate protection,
 target direction, causal statistics, exact feedback scope and invalid citations.
-`test_ai_revision.py` also checks the recorded-fallback label, the skipped state for
-unknown layouts and the mapping-evaluation endpoint. These checks are not an industry
+`test_ai_revision.py` also checks live reasons/traces, rejection of incomplete
+responses, missing-provider handling and the mapping-evaluation endpoint. These checks are not an industry
 accuracy benchmark.
 
 ### Mapping benchmark and recorded suggestions

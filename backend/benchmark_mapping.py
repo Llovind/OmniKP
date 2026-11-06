@@ -7,6 +7,19 @@ import os
 from pathlib import Path
 import tempfile
 import time
+from unittest.mock import patch
+
+
+def preview_case(client, name, content, division, mode):
+    payload = {'division':division, 'report_date':'2026-10-02', 'use_ai':'true'}
+    if mode == 'rules':
+        async def rules_baseline(report, mapping):
+            return mapping, 'Offline rules benchmark', {'mode':'rules_benchmark'}
+        with patch('services.intake.ai_mapping', new=rules_baseline):
+            return client.post('/api/v1/domains/1/submissions/preview',
+                               files={'file':(name+'.csv',content)}, data=payload)
+    return client.post('/api/v1/domains/1/submissions/preview',
+                       files={'file':(name+'.csv',content)}, data=payload)
 
 
 def cases():
@@ -58,7 +71,7 @@ def run():
                     for repeat in range(args.repeats):
                         division = f'Benchmark {mode} {name} {repeat}'
                         start = time.perf_counter()
-                        response = client.post('/api/v1/domains/1/submissions/preview', files={'file': (name+'.csv', content)}, data={'division': division, 'report_date': '2026-10-02', 'use_ai': str(mode == 'ai').lower()})
+                        response = preview_case(client, name, content, division, mode)
                         response.raise_for_status()
                         staged = response.json()
                         preview_seconds = time.perf_counter() - start

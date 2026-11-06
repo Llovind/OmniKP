@@ -4,6 +4,20 @@
  */
 
 const BASE = new URLSearchParams(window.location.search).get('demo') === '1' ? '/api/demo/workspace/api/v1' : '/api/v1';
+let demoPreparation;
+
+async function ensureDemo() {
+  if (!BASE.includes('/demo/')) return;
+  if (!demoPreparation) {
+    demoPreparation = fetch('/api/demo/seed', {method: 'POST', signal: AbortSignal.timeout(180000)})
+      .then(async response => {
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.detail || 'Demo preparation failed.');
+        return body;
+      }).catch(error => { demoPreparation = null; throw error; });
+  }
+  return demoPreparation;
+}
 
 function query(options = {}) {
   const values = Object.entries(options).filter(([, value]) => value !== '' && value !== null && value !== undefined);
@@ -29,6 +43,7 @@ async function absolute(path) {
 }
 
 export const api = {
+  ensureDemo,
   getAIStatus:  ()                          => absolute('/api/v1/ai/status'),
   getMappingEvaluation: ()                  => absolute('/api/v1/ai/evaluation'),
   getDomains:   ()                          => request('/domains'),

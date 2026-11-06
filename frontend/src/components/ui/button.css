@@ -1,0 +1,7 @@
+.button-expand-icon { display:inline-flex; align-items:center; width:0; overflow:hidden; opacity:0; transition:width 160ms ease-out,opacity 160ms ease-out,transform 160ms ease-out,padding 160ms ease-out; }
+.button-expand-icon--right { transform:translateX(100%); }
+.button-expand-icon--left { transform:translateX(-100%); }
+.group:is(:hover,:focus-visible) .button-expand-icon { width:24px; opacity:1; transform:translateX(0); }
+.group:is(:hover,:focus-visible) .button-expand-icon--right { padding-left:8px; }
+.group:is(:hover,:focus-visible) .button-expand-icon--left { padding-right:8px; }
+@media(prefers-reduced-motion:reduce) { .button-expand-icon { width:24px; opacity:1; transform:none; transition:none; }.button-expand-icon--right { padding-left:8px; }.button-expand-icon--left { padding-right:8px; } }

@@ -27,12 +27,14 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
                 division=source.division if source else None, evidence=evidence,
                 shift_logs_retrieved=0, cited_feedback_ids=[], llm_model="not called",
                 ai_invoked=False,
-                grounding={"cited_feedback_ids": [], "ungrounded_claims": 0, "structural_check": True},
+                grounding={'cited_feedback_ids': [], 'structural_check': False, 'citation_verified': False},
                 estimated_impact=f"Actual {fact.actual_value:g} {kpi.unit or ''}; target {fact.target_value if fact.target_value is not None else 'not supplied'}. Customer or financial impact has not been established.")
     if not evidence:
         return dict(base, evidence_status="awaiting_feedback",
                     root_cause="Bukti Tidak Cukup — no division feedback has been supplied for this KPI, location and reporting period.",
                     prescriptive_action="Ask the responsible division for its explanation, supporting observations and proposed corrective action. KPI values alone do not establish a cause.")
+    if not OPENROUTER_API_KEY:
+        raise RuntimeError('AI drafting is unavailable. Configure the provider and retry.')
     cited = [f.feedback_id for f in feedback]
     root = "Division-reported explanation (not independently verified): " + " ".join(
         f"[F{f.feedback_id}] {f.explanation}" for f in feedback)
@@ -68,7 +70,7 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
                 return dict(base, evidence_status="insufficient_evidence",
                             root_cause="Bukti Tidak Cukup — submitted feedback does not establish a supported cause.",
                             prescriptive_action="Ask the division for specific observations linking the KPI shortfall to a cause.",
-                            llm_model=LLM_MODEL)
+                            llm_model=LLM_MODEL, ai_invoked=True)
             proposed = out.get('cited_feedback_ids')
             if not isinstance(proposed, list) or not proposed or any(type(i) is not int or i not in cited for i in proposed):
                 raise ValueError("Unrecognized feedback citation")
@@ -81,8 +83,8 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
             root, actions, cited = proposed_root, proposed_action, proposed
             model, status = LLM_MODEL, "ai_draft"
         except Exception:
-            model = "evidence summary (AI unavailable or invalid citations)"
+            raise RuntimeError('AI drafting failed or returned unsupported citations. Retry the AI draft; no generated explanation was substituted.') from None
     return dict(base, evidence_status=status, root_cause=root, prescriptive_action=actions,
                 cited_feedback_ids=cited, llm_model=model, ai_invoked=(status == "ai_draft"),
-                grounding={"cited_feedback_ids": cited, "ungrounded_claims": 0,
+                grounding={"cited_feedback_ids": cited,
                            "structural_check": True, "citation_verified": status == "ai_draft"})

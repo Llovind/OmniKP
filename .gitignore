@@ -25,6 +25,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+!frontend/src/lib/
+!frontend/src/lib/**
 parts/
 sdist/
 var/
@@ -81,3 +83,11 @@ backend/evidence/*lighthouse*.json
 backend/evidence/division-demo/*.png
 backend/evidence/division-demo/*.inspect.ndjson
 backend/evidence/division-demo/initial-build-data.json
+
+# Local AI tooling
+AGENTS.md
+.agents/
+.codex/
+.claude/
+.impeccable/
+skills-lock.json

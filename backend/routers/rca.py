@@ -36,12 +36,8 @@ async def trigger_rca(
 
     The agent reads feedback for the selected fact (exact KPI/location/period).
     No feedback means an insufficient-evidence result without an LLM call.
-    Otherwise an advisory draft cites recognized feedback IDs, with an attributed
-    excerpt fallback when the provider fails or returns invalid citations.
-
-    If the LLM is unavailable (rate limit, network error), a fallback
-    attributed division feedback is returned automatically.
-    This keeps the ITASE finalist demo usable when the LLM provider is unavailable.
+    Otherwise a live advisory draft must cite recognized feedback IDs.
+    Provider failures or invalid references return a visible retryable error.
     """
     try:
         result = await run_rca(
@@ -52,6 +48,8 @@ async def trigger_rca(
             fact_id=request.fact_id,
         )
         return RCAResponse(**result)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except Exception as exc:

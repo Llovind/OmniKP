@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import Dialog from './Dialog';
 
 const fields = [
   ['ignore', 'Ignore'], ['kpi_name', 'KPI name'], ['actual_value', 'Actual value'],
@@ -11,7 +12,7 @@ const fields = [
 function PreviewTable({rows}) {
   if (!rows?.length) return null;
   const keys = Object.keys(rows[0]).filter(k => k !== 'notes');
-  return <div className="overflow-auto max-h-60"><table className="report-table">
+  return <div className="table-region max-h-60" role="region" aria-label="Report values preview" tabIndex={0}><table className="report-table">
     <thead><tr>{keys.map(k => <th key={k}>{k.replaceAll('_', ' ')}</th>)}</tr></thead>
     <tbody>{rows.map((row, i) => <tr key={i}>{keys.map(k => <td key={k}>{String(row[k] ?? '—')}</td>)}</tr>)}</tbody>
   </table></div>;
@@ -34,7 +35,6 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
   const [sheet, setSheet] = useState('');
   const [headerRow, setHeaderRow] = useState(0);
   const [headerDepth, setHeaderDepth] = useState(1);
-  const [useAI, setUseAI] = useState(false);
   const [result, setResult] = useState(null);
   const [mapping, setMapping] = useState({});
   const [defaultDirection, setDefaultDirection] = useState('');
@@ -64,7 +64,7 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
     const form = new FormData();
     form.append('file', file); form.append('division', division); form.append('report_date', reportDate);
     form.append('sheet_name', sheet); form.append('header_row', headerRow);
-    form.append('header_depth', headerDepth); form.append('use_ai', useAI);
+    form.append('header_depth', headerDepth); form.append('use_ai', 'true');
     try {
       const data = await api.previewReport(domainId, form);
       setResult(data); setSheet(data.sheet_name);
@@ -88,13 +88,12 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
     catch (err) { setError(err.message); setValidation(null); }
     finally { setBusy(''); }
   };
-  return <div className="modal-backdrop">
-    <section role="dialog" aria-modal="true" aria-labelledby="intake-title" className="glass modal-content max-w-5xl">
+  return <Dialog onClose={onClose} labelledBy="intake-title" busy={!!busy} className="intake-dialog">
       <header className="p-5 border-b border-white/10 flex justify-between items-start gap-4">
         <div><p className="text-xs text-indigo-300 uppercase tracking-wider">Harvester Agent</p>
           <h2 id="intake-title" className="display-font text-xl font-semibold mt-1">Submit a division report</h2>
           <p className="text-sm text-slate-400 mt-2">Interpret the file, review its meaning, then confirm what enters the shared dataset.</p></div>
-        <button className="btn-ghost" disabled={!!busy} onClick={onClose} aria-label="Close upload">✕</button>
+        <button className="btn-ghost icon-button" disabled={!!busy} data-dialog-close aria-label="Close upload"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
       </header>
       <div className="p-5 overflow-auto space-y-5">
         {!result ? <form onSubmit={interpret} className="space-y-4">
@@ -116,16 +115,12 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
           <details className="glass-sm p-3">
             <summary className="text-sm cursor-pointer">Worksheet and header settings</summary>
             <div className="grid sm:grid-cols-3 gap-3 mt-3">
-              <label className="field-label">Worksheet name <input className="field-input" value={sheet} placeholder="First worksheet" onChange={e => setSheet(e.target.value)} /></label>
+              <label className="field-label">Excel worksheet tab <input className="field-input" value={sheet} placeholder="Automatic for a single worksheet" onChange={e => setSheet(e.target.value)} /><span className="text-xs text-slate-500">Use the tab name inside Excel, not the division. ED demo uses Report. A single-sheet workbook is selected automatically.</span></label>
               <label className="field-label">First header row <input className="field-input" type="number" min="0" max="50" value={headerRow} onChange={e => setHeaderRow(e.target.value)} /><span className="text-xs text-slate-500">0 detects the row automatically</span></label>
               <label className="field-label">Header levels <select className="field-input" value={headerDepth} onChange={e => setHeaderDepth(e.target.value)}><option value="1">1 row</option><option value="2">2 rows</option><option value="3">3 rows</option></select></label>
             </div>
           </details>
-          <label className="flex items-start gap-3 text-sm text-slate-300">
-            <input type="checkbox" checked={useAI} onChange={e => setUseAI(e.target.checked)} className="mt-1" />
-            <span>Use the configured AI to interpret headers and sample values.
-              <span className="block text-xs text-slate-500 mt-1">Sends column headers and up to three sample values per column to your configured provider. Leave off for local rules and manual mapping.</span></span>
-          </label>
+          <p className="text-sm text-slate-300">AI interprets every report using its column headers and up to three sample values per column. Review the proposed meanings before importing.</p>
           <p className="text-xs text-slate-500">Demo limits: 10 MB, 5,000 rows, 300 columns. Formula cells need values saved by Excel. This reads one worksheet at a time.</p>
           <button className="btn-primary" disabled={!!busy || !file}>{busy || 'Interpret report'}</button>
           <section className="space-y-3">
@@ -138,7 +133,7 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
           </section>
         </form> : <>
           <div className="flex flex-wrap justify-between gap-3 items-center">
-            <div><p className="font-medium">{result.division} · {result.filename}</p>
+            <div className="intake-file-summary"><p className="font-medium">{result.division} · {result.filename}</p>
               <p className="text-xs text-slate-400 mt-1">{result.rows_parsed} source rows · {result.sheet_name} · header starts at row {result.header_row}</p></div>
             <button className="btn-ghost" disabled={!!busy} onClick={() => {setResult(null); setValidation(null);}}>Change file / settings</button>
           </div>
@@ -151,12 +146,17 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
               {result.ai_trace.duration_ms ? ' · '+result.ai_trace.duration_ms+' ms' : ''}</p>
             {result.ai_trace.recorded_from && <p>Recorded on {result.ai_trace.recorded_from}. Replayed provider output, not a live call.</p>}
           </div>}
+          <p className="text-sm">Worksheet: <strong>{result.sheet_name}</strong> · Header row: {result.header_row}</p>
+          <p role="status" className="notice-info">{Object.values(result.column_mapping).filter(item => item.method === 'llm').length > 0
+            ? `AI supplied ${Object.values(result.column_mapping).filter(item => item.method === 'llm').length} of ${Object.keys(result.column_mapping).length} column suggestions. Review each meaning below.`
+            : 'AI interpretation did not complete. Retry report interpretation.'}</p>
           <div>
             <h3 className="font-semibold mb-2">Review column meanings</h3>
             <p className="text-xs text-slate-400 mb-3">For a wide report, choose “Actual for one location” for each measurement column and enter its location. Ignore ACH / achievement columns.</p>
-            <div className="overflow-auto max-h-80"><table className="report-table"><thead><tr><th>Source column</th><th>Meaning</th><th>Suggestion source</th></tr></thead>
+            <p className="table-scroll-hint" id="mapping-scroll-help">Scroll the table to review every column and its meaning.</p>
+            <div className="table-region max-h-80" role="region" aria-label="Column mapping" aria-describedby="mapping-scroll-help" tabIndex={0}><table className="report-table mapping-table"><thead><tr><th scope="col">Source column</th><th scope="col">Meaning</th><th scope="col">Suggestion source</th></tr></thead>
               <tbody>{result.columns.map(col => <tr key={col}><td className="max-w-xs break-words">{col}</td><td>
-                <select className="field-input" value={mapping[col]?.startsWith('location:') ? 'wide_location' : mapping[col]} onChange={e => update(col, e.target.value === 'wide_location' ? 'location:'+col.split('|')[0].trim() : e.target.value)}>
+                <select aria-label={'Mapping for '+col} className="field-input" value={mapping[col]?.startsWith('location:') ? 'wide_location' : mapping[col]} onChange={e => update(col, e.target.value === 'wide_location' ? 'location:'+col.split('|')[0].trim() : e.target.value)}>
                   {fields.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                 </select>
                 {mapping[col]?.startsWith('location:') && <input aria-label={'Location for '+col} className="field-input mt-2" value={mapping[col].slice(9)} onChange={e => update(col, 'location:'+e.target.value)} />}
@@ -187,6 +187,5 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
         </>}
         {error && <div role="alert" className="notice-error">{error}</div>}
       </div>
-    </section>
-  </div>;
+  </Dialog>;
 }

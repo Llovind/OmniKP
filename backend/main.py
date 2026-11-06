@@ -45,12 +45,6 @@ async def lifespan(app: FastAPI):
         if not db.query(DimDomain).filter_by(domain_id=1).first():
             db.add(DimDomain(domain_id=1, domain_name="Telecommunications", domain_code="digital_infra"))
             db.commit()
-    # Seed the isolated demo workspace so /app?demo=1 works on a fresh container.
-    try:
-        from routers.demo import seed as seed_demo_workspace
-        await seed_demo_workspace()
-    except Exception as exc:
-        print(f"Demo workspace seed skipped: {exc}")
     yield
 
 
@@ -124,7 +118,8 @@ def list_domains(db: Session = Depends(get_db)):
 
 _dist = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 if _dist.is_dir():
-    app.mount("/assets", StaticFiles(directory=_dist / "assets"), name="assets")
+    if (_dist / 'assets').is_dir():
+        app.mount("/assets", StaticFiles(directory=_dist / "assets"), name="assets")
 
     @app.get("/{path:path}", include_in_schema=False)
     def serve_spa(path: str):

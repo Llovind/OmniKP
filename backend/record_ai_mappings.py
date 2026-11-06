@@ -1,6 +1,6 @@
 """Record provider mapping suggestions for the seven demo workbooks.
 
-The output is replayed as a clearly labelled fallback when no provider key is configured.
+The output is historical evidence; runtime intake requires live interpretation.
 Only headers and up to three sample values per column leave this machine, exactly like intake.
 """
 import asyncio
@@ -32,7 +32,7 @@ async def run():
     for entry, content in demo_reports():
         report = read_report(content, entry['filename'], entry['sheet'], entry['header_row'], entry['header_depth'])
         rules = suggest_mapping(report['columns'])
-        mapping, message, trace = await ai_mapping(report, rules)
+        mapping, message, trace = await ai_mapping(report, {col: dict(value) for col, value in rules.items()})
         if trace['mode'] != 'live':
             print(f"skip {entry['filename']}: {trace['mode']} — {message}")
             continue
@@ -63,8 +63,7 @@ async def run():
             'recorded_at': datetime.now(timezone.utc).date().isoformat(),
             'samples_per_column': 3,
             'script': 'backend/record_ai_mappings.py',
-            'note': ('Recorded provider output for exact ordered header signatures. Replayed only when no '
-                     'provider key is configured, and labelled as recorded in the interface.'),
+            'note': 'Historical provider output for exact ordered header signatures; not a runtime fallback.',
         },
         'mappings': mappings,
     }

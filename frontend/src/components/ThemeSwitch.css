@@ -1,0 +1,10 @@
+.theme-switch { position:relative; gap:8px; }
+.theme-switch--icon { width:44px; min-width:44px; height:44px; padding:0; border-radius:12px; }
+.theme-switch__icons { position:relative; display:grid; width:20px; height:20px; place-items:center; }
+.theme-switch__icon { position:absolute; display:grid; width:20px; height:20px; place-items:center; }
+@media (hover:hover) and (pointer:fine) { .workspace-header .theme-switch:hover { background:#254e7d; } }
+/* The new appearance wipes from left to right; only the snapshot is animated. */
+html[data-theme-transition="right"]::view-transition-old(root),
+html[data-theme-transition="right"]::view-transition-new(root) { animation:none; mix-blend-mode:normal; }
+html[data-theme-transition="right"]::view-transition-new(root) { z-index:1; }
+@media(prefers-reduced-motion:reduce) { .theme-switch__icon { transform:none!important; filter:none!important; } }

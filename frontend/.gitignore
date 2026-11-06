@@ -22,3 +22,44 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local agents and AI tooling
+AGENTS.md
+**/AGENTS.md
+.agents/
+.codex/
+.claude/
+.impeccable/
+.aws/
+.ssh/
+skills-lock.json
+.local-maintenance/
+CLEANUP_REPORT.md
+
+# Reproducible outputs, not source or fixtures
+artifacts/
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+blob-report/
+.cache/
+.vite/
+*.tsbuildinfo
+*.tmp
+*.bak
+
+# Local environment and credentials;
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+credentials.json
+service-account*.json
+id_rsa
+id_ed25519

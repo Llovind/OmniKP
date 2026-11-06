@@ -1,11 +1,12 @@
-"""Checks for provider suggestions, recorded fallback labelling, and AI evidence endpoints."""
+"""Live interpretation, provenance, and historical evaluation contracts."""
 import asyncio
 import json
 import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
+from types import SimpleNamespace
 
 _TEMP = tempfile.TemporaryDirectory(prefix='omnikpi-ai-tests-')
 os.environ['DATABASE_URL'] = 'sqlite:///' + (Path(_TEMP.name) / 'test.db').as_posix()
@@ -26,34 +27,52 @@ def demo_report():
                               entry['header_depth'])
 
 
-class RecordedFallback(unittest.TestCase):
-    def test_recorded_suggestions_are_applied_and_labelled(self):
+class LiveInterpretation(unittest.TestCase):
+    def test_recorded_demo_layout_cannot_bypass_missing_provider(self):
         report = demo_report()
         mapping = intake.suggest_mapping(report['columns'])
         with patch.object(harvester, 'OPENROUTER_API_KEY', ''):
-            mapping, message, trace = asyncio.run(intake.ai_mapping(report, mapping))
-        self.assertEqual(trace['mode'], 'recorded')
-        self.assertIn('not a live model call', message)
-        self.assertTrue(trace['model'])
-        recorded = {column: value for column, value in mapping.items() if value['method'] == 'llm_recorded'}
-        self.assertTrue(recorded)
-        self.assertTrue(all(value.get('reason') for value in recorded.values()))
+            with self.assertRaisesRegex(RuntimeError, 'unavailable'):
+                asyncio.run(intake.ai_mapping(report, mapping))
 
-    def test_unknown_layout_without_key_is_skipped_honestly(self):
+    def test_unknown_layout_without_key_requires_provider(self):
         report = {'columns': ['Totally Unknown Header'], 'rows': [{'values': {'Totally Unknown Header': 'x'}}]}
         with patch.object(harvester, 'OPENROUTER_API_KEY', ''):
+            with self.assertRaises(RuntimeError):
+                asyncio.run(intake.ai_mapping(report, intake.suggest_mapping(report['columns'])))
+
+    def test_structured_reasons_and_trace_describe_live_call(self):
+        report = {'columns': ['Observed result'], 'rows': [{'values': {'Observed result': 97.8}}]}
+        response = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({
+            'Observed result': {'field': 'actual_value', 'reason': 'Observed measurement: 97.8'}
+        })))])
+        with patch.object(harvester, 'OPENROUTER_API_KEY', 'test'), patch.object(
+                harvester._client.chat.completions, 'create', new=AsyncMock(return_value=response)) as call:
             mapping, message, trace = asyncio.run(intake.ai_mapping(report, intake.suggest_mapping(report['columns'])))
-        self.assertEqual(trace['mode'], 'skipped')
-        self.assertIn('no recorded suggestion', message)
-        self.assertEqual(mapping['Totally Unknown Header']['target'], 'ignore')
+        self.assertEqual(call.await_count, 1)
+        self.assertEqual(mapping['Observed result']['reason'], 'Observed measurement: 97.8')
+        self.assertEqual(trace['mode'], 'live')
+        self.assertEqual(trace['columns'], 1)
+        self.assertEqual(trace['fallback_batches'], 0)
+        self.assertIn('97.8', call.call_args.kwargs['messages'][1]['content'])
+
+    def test_partial_model_response_is_rejected(self):
+        report = {'columns': ['Metric', 'Actual'], 'rows': [{'values': {'Metric': 'KPI', 'Actual': 90}}]}
+        response = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content='{"Metric":"kpi_name"}'))])
+        with patch.object(harvester, 'OPENROUTER_API_KEY', 'test'), patch.object(
+                harvester._client.chat.completions, 'create', new=AsyncMock(return_value=response)):
+            with self.assertRaises(RuntimeError):
+                asyncio.run(intake.ai_mapping(report, intake.suggest_mapping(report['columns'])))
 
 
 class EvidenceEndpoints(unittest.TestCase):
-    def test_status_reports_recorded_mode_without_key(self):
+    def test_status_requires_provider_even_with_recordings(self):
         with patch.object(harvester, 'OPENROUTER_API_KEY', ''):
             body = ai_router.ai_status()
         self.assertFalse(body['configured'])
-        self.assertEqual(body['mode'], 'recorded')
+        self.assertEqual(body['mode'], 'unavailable')
+        self.assertTrue(body['required'])
+        self.assertFalse(body['recorded_replay_enabled'])
         self.assertGreater(body['recorded_suggestions'], 0)
         self.assertTrue(body['recorded_provenance']['model'])
 

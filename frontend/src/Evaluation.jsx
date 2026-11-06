@@ -6,8 +6,7 @@ const pct = (value) => value == null ? '—' : `${(value * 100).toFixed(1)}%`;
 
 const modeText = {
   live: 'Live provider call configured',
-  recorded: 'Recorded suggestions only (no provider key)',
-  unavailable: 'No provider and no recorded suggestions',
+  unavailable: 'Live AI unavailable; configure the provider to process reports',
 };
 
 export default function Evaluation() {
@@ -42,11 +41,11 @@ export default function Evaluation() {
         </p>
         <p className="text-xs text-slate-400">
           Input is limited to column headers plus up to {status.samples_per_column} sample values per column.
-          {status.recorded_suggestions ? ` ${status.recorded_suggestions} recorded header signature(s) are available as a labelled fallback.` : ''}
+          {status.recorded_suggestions ? ` ${status.recorded_suggestions} historical header signature(s) are archived as evaluation evidence.` : ''}
         </p>
         {status.recorded_provenance && <p className="text-xs text-slate-500">
           Recorded with {status.recorded_provenance.model} on {status.recorded_provenance.recorded_at}.
-          Replayed output is marked “AI suggestion · recorded” and is not a live call.
+          These archived suggestions are not used to replace live interpretation.
         </p>}
       </section>}
 
@@ -56,7 +55,7 @@ export default function Evaluation() {
         <div className="overflow-auto">
           <table className="report-table">
             <thead><tr>
-              <th>Layout</th><th>Local rules</th><th>AI + review</th><th>AI columns</th>
+              <th>Layout</th><th>Local rules</th><th>AI proposal accuracy</th><th>AI columns</th>
               <th>Rules preview</th><th>AI preview</th>
             </tr></thead>
             <tbody>{evaluation.cases.map(item => <tr key={item.case}>

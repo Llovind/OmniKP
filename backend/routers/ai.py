@@ -43,7 +43,7 @@ def _case_summary(rows):
 
 @router.get('/status')
 def ai_status():
-    """What the running build will do when a user opts into AI mapping."""
+    """Live provider configuration; recorded files are evaluation evidence only."""
     from agents.harvester import LLM_MODEL, OPENROUTER_API_KEY, OPENROUTER_BASE_URL
 
     configured = bool(OPENROUTER_API_KEY)
@@ -51,8 +51,6 @@ def ai_status():
     recorded_count = len(recorded.get('mappings', {}))
     if configured:
         mode = 'live'
-    elif recorded_count:
-        mode = 'recorded'
     else:
         mode = 'unavailable'
     return {
@@ -61,6 +59,8 @@ def ai_status():
         'model': LLM_MODEL,
         'provider': OPENROUTER_BASE_URL,
         'samples_per_column': 3,
+        'required': True,
+        'recorded_replay_enabled': False,
         'recorded_suggestions': recorded_count,
         'recorded_provenance': recorded.get('provenance'),
         'evaluation_available': (EVIDENCE_DIR / 'mapping-benchmark-live.json').exists(),
@@ -88,7 +88,7 @@ def mapping_evaluation():
             'Five author-labelled synthetic layouts; the unfamiliar and reordered cases share vocabulary '
             'and are not independent samples.',
             'No held-out real-report accuracy, analyst review time or production claim is supported.',
-            'Recorded suggestions are replayed provider output, not a live call.',
+            'Archived suggestions are historical provider output, not active inference.',
         ]))
     return {
         'synthetic': True,
