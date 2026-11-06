@@ -5,6 +5,7 @@ node_modules/
 
 # Local deploy/review scratch (not part of the submission)
 .deploy/
+CHANGELOG_AI_REVISION.md
 
 # Python
 __pycache__/
