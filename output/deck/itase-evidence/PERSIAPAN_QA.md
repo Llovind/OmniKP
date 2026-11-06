@@ -22,7 +22,15 @@ Aturan alias dan fuzzy matching bisa menjadi baseline yang baik untuk istilah ya
 
 ## Model apa yang dipakai?
 
-Konfigurasi lokal yang diperiksa menggunakan alias `gemini-flash-lite-latest` melalui API kompatibel OpenAI. Tim tidak melatih foundation model. Alias `latest` dapat berubah; jangan mengklaim versi underlying tertentu atau hasil studi komparatif model yang belum dilakukan. Periksa `/api/v1/ai/status` lagi sebelum presentasi jika konfigurasi berubah. Jangan tampilkan API key.
+Konfigurasi yang diuji dan dideploy memakai `google/gemini-2.5-flash-lite` melalui API kompatibel OpenAI (OpenRouter). Tim tidak melatih foundation model. Periksa `GET /api/v1/ai/status` lagi sebelum presentasi: endpoint itu melaporkan mode (`live`, `recorded`, `skipped`) dan model aktif. Jangan tampilkan API key. Jangan mengklaim versi underlying tertentu atau hasil studi komparatif model yang belum dilakukan.
+
+## Bagaimana kalau kunci AI tidak ada saat demo?
+
+Aplikasi menyatakan mode, bukan berpura-pura live. Tanpa kunci, tujuh layout demo memakai usulan tercatat dan UI memberi label “AI suggestion · recorded” beserta model dan tanggal perekaman; layout tidak dikenal berstatus skipped. Dengan kunci, jejaknya `live` dan menampilkan latensi. Ini fallback yang disengaja, bukan hasil inferensi baru, dan harus disebut begitu jika terjadi.
+
+## Apakah hasil benchmark ini akurasi AI pada laporan nyata?
+
+Tidak. `backend/evidence/mapping-benchmark-live.json` berisi lima layout sintetis tulisan tim, tiga pengulangan, memakai satu model. Aturan lokal memetakan 7/7 pada header konvensional dan Indonesia, 9/9 pada wide, tetapi 0/7 pada header tak dikenal dan 0/7 pada header reorder. Model memetakan 7/7 pada layout tak dikenal dan 6/7 pada reorder, dengan latensi sekitar 1,5–2 detik. Dua layout berbagi kosakata sehingga tidak independen. Koreksi analis, waktu end-to-end, dan akurasi laporan nyata belum diukur.
 
 ## Apakah data industri membuktikan masalah Infranexia?
 

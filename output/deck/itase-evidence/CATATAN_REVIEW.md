@@ -29,6 +29,19 @@ Palet navy, royal blue, dan sky, header berpanel, section navigation, serta foot
 | 17 | Bagian wajib dipetakan ke slide; rubrik final dibedakan dari seleksi proposal. |
 | 18 | Penutup dengan link repository dan navigasi kembali ke appendix. |
 
+## Revisi 6 November 2026 (AI evidence)
+
+Perubahan teks pada slide 5, 7, 11, dan 16, ditambah notes dan narasi pembicara.
+
+- **Slide 5:** keluaran AI sekarang menyebut “arti kolom + alasan”; sumber menyebut model aktif `google/gemini-2.5-flash-lite` dan `GET /api/v1/ai/status`. Notes mengoreksi klaim lama bahwa seluruh laporan selalu melalui model; AI bersifat opt-in dan memiliki fallback tercatat berlabel.
+- **Slide 7:** sumber menambahkan penanda `ai_invoked`. Narasi mengoreksi perilaku kegagalan provider: ringkasan feedback beratribusi, bukan error tanpa pengganti.
+- **Slide 11:** subtitle memuat hasil sintetis terukur (5 layout × 3 repeat; tak dikenal 0/7→7/7, reorder 0/7→6/7). Notes dan narasi memisahkan hasil sintetis dari metrik laporan nyata yang belum diukur.
+- **Slide 16:** perilaku provider gagal diperjelas (usulan tercatat berlabel pada intake; ringkasan feedback pada RCA).
+
+Pemeriksaan render: PDF dibuat ulang lewat PowerPoint COM, PNG 18 slide dibuat ulang lewat Poppler. Slide 5, 11, dan 16 diperiksa visual pada 110 dpi; tidak ada teks terpotong atau tumpang tindih pada kotak yang diubah. Slide lain hanya berubah pada notes.
+
+File cadangan sebelum revisi: `.deploy/omniKPI_ITASE_Evidence_Story.original.pptx` (tidak termasuk paket).
+
 ## Batas penggunaan
 
 - Tidak ditemukan defect clipping/overlap pada render akhir yang diperiksa. Hasil visual bisa berubah jika font atau aplikasi pembuka berbeda; gunakan PDF sebagai acuan visual.

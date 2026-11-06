@@ -18,6 +18,20 @@ The live option sends generated synthetic headers and sample values to the confi
 - Reviewed import time: validation and confirmation after automatically supplying the ground truth. Human review time is excluded.
 - Import check: each case must import exactly 100 readings after correction. This verifies counts, not every normalized cell value.
 
+## Committed live result (6 November 2026)
+
+`mapping-benchmark-live.json` records three repeats with
+`google/gemini-2.5-flash-lite` through an OpenAI-compatible router. Local rules:
+7/7 standard, 7/7 indonesian, 0/7 unfamiliar, 0/7 reordered, 9/9 wide. Provider:
+7/7, 7/7, 7/7, 6/7, 9/9, at roughly 1.5–2 s per preview. The single reordered
+failure is “Reporting area” proposed as `ignore`. The live file still contains the
+rules rows for the same run; `GET /api/v1/ai/evaluation` separates them by mode.
+
+`recorded-ai-mappings.json` stores provider output for the seven demo header
+signatures so the interface can replay a clearly labelled fallback when no key is
+configured. Two signatures cover all seven workbooks because the headers repeat.
+Recorded output is not inference and must never be described as a live call.
+
 Five author-labelled synthetic CSV layouts cover conventional English, Indonesian aliases, unfamiliar semantic headers, reordered unfamiliar headers, and wide Actual/ACH columns. All have synthetic values. The unfamiliar and reordered cases share vocabulary and are not independent samples. No held-out real-world generalization claim is supported. Do not change rules against this suite and present the same suite as independent validation.
 
 LLM columns record whether the provider actually supplied suggestions. A fallback run must remain in reliability results but must not be described as successful AI interpretation. Record model and repeat distribution. Temperature zero does not guarantee repeatability.

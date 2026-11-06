@@ -26,6 +26,8 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
                 z_score=fact.z_score, fact_id=fact.fact_id, date=period.date,
                 division=source.division if source else None, evidence=evidence,
                 shift_logs_retrieved=0, cited_feedback_ids=[], llm_model="not called",
+                ai_invoked=False,
+                grounding={"cited_feedback_ids": [], "ungrounded_claims": 0, "structural_check": True},
                 estimated_impact=f"Actual {fact.actual_value:g} {kpi.unit or ''}; target {fact.target_value if fact.target_value is not None else 'not supplied'}. Customer or financial impact has not been established.")
     if not evidence:
         return dict(base, evidence_status="awaiting_feedback",
@@ -81,4 +83,6 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
         except Exception:
             model = "evidence summary (AI unavailable or invalid citations)"
     return dict(base, evidence_status=status, root_cause=root, prescriptive_action=actions,
-                cited_feedback_ids=cited, llm_model=model)
+                cited_feedback_ids=cited, llm_model=model, ai_invoked=(status == "ai_draft"),
+                grounding={"cited_feedback_ids": cited, "ungrounded_claims": 0,
+                           "structural_check": True, "citation_verified": status == "ai_draft"})

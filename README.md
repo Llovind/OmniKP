@@ -14,6 +14,14 @@ central dashboard → division feedback → evidence-linked RCA draft**.
 - **Schema interpretation:** local header aliases and fuzzy matching; opt-in
   pretrained AI uses headers plus up to three bounded sample values per column.
   Review and correct every proposed meaning before confirmation.
+- **Auditable AI suggestions:** each proposal carries a short reason, and every
+  response includes the trace actually used — mode (`live`, `recorded`, `skipped`),
+  model, column and sample scope, batches and latency. With no provider key, the
+  seven demo layouts replay recorded suggestions that are labelled
+  “AI suggestion · recorded”; recorded output is never presented as a live call.
+- **Mapping evaluation:** `/evaluation` and `GET /api/v1/ai/evaluation` publish the
+  synthetic five-layout comparison of local rules versus the configured provider.
+  `GET /api/v1/ai/status` reports what the running build will actually do.
 - **Mapping memory:** confirmed column mappings are reused for the same division
   and exact ordered header signature. Changed layouts receive new suggestions.
 - **Validation:** missing/non-finite values, incompatible units/directions,
@@ -34,7 +42,8 @@ central dashboard → division feedback → evidence-linked RCA draft**.
   server returns “Bukti Tidak Cukup” without calling an LLM. With feedback, it can
   generate an advisory draft that cites feedback IDs. Invalid/missing citations or
   provider failure fall back to attributed feedback excerpts. No numerical
-  confidence percentage is shown.
+  confidence percentage is shown. Responses also state whether the model was
+  invoked and how many claims lacked a feedback reference.
 
 ## Try the demo
 
@@ -107,7 +116,8 @@ a provider automatically.
 
 ## Interpretation boundaries
 
-This is a local competition demo without authentication or production deployment
+This is a competition prototype that can also be hosted as a public demo. Even when
+deployed, it has no authentication, division verification or production deployment
 controls. Division identity is selected by the user, not verified. Confirmation
 records review of mappings; RCA drafts remain advisory and are not automatically
 certified or executed. A citation check verifies source identity, not semantic truth.
@@ -146,7 +156,7 @@ for historical experiments; the UI uses /submissions and feedback-based /rca.
 
 ~~~powershell
 cd backend
-python -m unittest test_product_flow -v
+python -m unittest test_product_flow test_demo test_ai_revision -v
 cd ../frontend
 npm run lint
 npm run build
@@ -156,7 +166,25 @@ Integration tests use an isolated temporary database and mock provider responses
 They cover multi-division imports, wide/multirow headers, Excel percentage scaling,
 manual/AI mapping review, memory reuse, atomic validation, duplicate protection,
 target direction, causal statistics, exact feedback scope and invalid citations.
-These checks are not an industry accuracy benchmark.
+`test_ai_revision.py` also checks the recorded-fallback label, the skipped state for
+unknown layouts and the mapping-evaluation endpoint. These checks are not an industry
+accuracy benchmark.
+
+### Mapping benchmark and recorded suggestions
+
+~~~powershell
+cd backend
+python benchmark_mapping.py --repeats 3                                   # local rules baseline
+python benchmark_mapping.py --live-ai --repeats 3 --output evidence/mapping-benchmark-live.json
+python record_ai_mappings.py                                              # refresh recorded suggestions
+~~~
+
+The live run writes one row per layout and repeat. In the committed run
+(`evidence/mapping-benchmark-live.json`, `google/gemini-2.5-flash-lite`), local rules
+scored 7/7 on conventional and Indonesian headers, 0/7 on unfamiliar and reordered
+headers, and 9/9 on the wide layout. The provider reached 7/7 on the unfamiliar
+layout and 6/7 on the reordered layout, with roughly 1.5–2 s per preview. Five
+synthetic author-labelled layouts are not held-out real-report evidence.
 
 The stack remains React/Vite, Tailwind CSS, Recharts, FastAPI, SQLAlchemy, SQLite,
 openpyxl and an OpenAI-compatible model router. No model is trained from scratch.

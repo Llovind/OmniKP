@@ -2,6 +2,7 @@
 import asyncio
 import json
 import hashlib
+import os
 from pathlib import Path
 from fastapi import APIRouter, FastAPI, HTTPException
 from sqlalchemy import create_engine
@@ -10,7 +11,7 @@ from database import Base, DimDomain, Submission, get_db
 from services.intake import stage, confirm, plain_mapping
 
 ROOT = Path(__file__).resolve().parents[2]
-engine = create_engine('sqlite:///' + (ROOT/'backend/omnikpi-demo.db').as_posix(), connect_args={'check_same_thread': False})
+engine = create_engine(os.getenv('DEMO_DATABASE_URL', 'sqlite:///' + (ROOT/'backend/omnikpi-demo.db').as_posix()), connect_args={'check_same_thread': False})
 Session = sessionmaker(bind=engine)
 lock = asyncio.Lock()
 router = APIRouter()

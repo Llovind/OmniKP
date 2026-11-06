@@ -1,0 +1,150 @@
+{
+  "provenance": {
+    "model": "google/gemini-2.5-flash-lite",
+    "provider": "https://openrouter.ai/api/v1",
+    "recorded_at": "2026-11-06",
+    "samples_per_column": 3,
+    "script": "backend/record_ai_mappings.py",
+    "note": "Recorded provider output for exact ordered header signatures. Replayed only when no provider key is configured, and labelled as recorded in the interface."
+  },
+  "mappings": {
+    "f8df167692a527488f7736223936f8c83d2b2d0347adae71685d0b24205bb237": {
+      "columns": {
+        "KPI WISA": {
+          "target": "kpi_name",
+          "reason": "Header 'KPI WISA' and examples like 'DEP-ALL-Compliance Deployment Supervision' indicate the name of the Key Performance Indicator.",
+          "rules_target": "kpi_name"
+        },
+        "SATUAN": {
+          "target": "unit",
+          "reason": "Header 'SATUAN' and examples like '%' clearly indicate the unit of measurement for the KPI.",
+          "rules_target": "unit"
+        },
+        "FORMULA": {
+          "target": "higher_is_better",
+          "reason": "Header 'FORMULA' and examples like 'HIGHER BETTER' specify whether a higher value is desirable for the KPI.",
+          "rules_target": "higher_is_better"
+        },
+        "TGT": {
+          "target": "target_value",
+          "reason": "Header 'TGT' and examples like '98.5' represent the target or goal value for the KPI.",
+          "rules_target": "target_value"
+        },
+        "Lokasi": {
+          "target": "location_name",
+          "reason": "Header 'Lokasi' and examples like 'Demo North' indicate the geographical location where the KPI is measured.",
+          "rules_target": "location_name"
+        },
+        "Realisasi": {
+          "target": "actual_value",
+          "reason": "Header 'Realisasi' and examples like '97.8' represent the actual achieved value for the KPI.",
+          "rules_target": "actual_value"
+        },
+        "Keterangan": {
+          "target": "notes",
+          "reason": "Header 'Keterangan' and examples like 'SYNTHETIC DEMO: deployment completion was delayed...' provide additional context or remarks about the KPI measurement.",
+          "rules_target": "notes"
+        }
+      },
+      "files": [
+        {
+          "filename": "ed.xlsx",
+          "division": "ED",
+          "sheet": "Report",
+          "header_row": 4,
+          "header_depth": 1
+        },
+        {
+          "filename": "netop-osp.xlsx",
+          "division": "NETOP OSP",
+          "sheet": "Report",
+          "header_row": 4,
+          "header_depth": 1
+        },
+        {
+          "filename": "fbb.xlsx",
+          "division": "FBB",
+          "sheet": "Report",
+          "header_row": 4,
+          "header_depth": 1
+        },
+        {
+          "filename": "defa.xlsx",
+          "division": "DEFA",
+          "sheet": "Report",
+          "header_row": 4,
+          "header_depth": 1
+        }
+      ],
+      "conflicts": []
+    },
+    "0ff11a8e01044f428c9b70fdf68a6d59fe9fc5af9ff41693ad21ccb317e26cab": {
+      "columns": {
+        "KPI WISA": {
+          "target": "kpi_name",
+          "reason": "Header is 'KPI WISA' and examples are KPI names like 'ONM-ALL-Service Availability-WiFi'.",
+          "rules_target": "kpi_name"
+        },
+        "SATUAN": {
+          "target": "unit",
+          "reason": "Header is 'SATUAN' and examples are units like '%'.",
+          "rules_target": "unit"
+        },
+        "FORMULA": {
+          "target": "higher_is_better",
+          "reason": "Header is 'FORMULA' and examples indicate 'HIGHER BETTER'.",
+          "rules_target": "higher_is_better"
+        },
+        "TGT": {
+          "target": "target_value",
+          "reason": "Header is 'TGT' and examples are numerical target values like '98.5'.",
+          "rules_target": "target_value"
+        },
+        "Demo North | REAL": {
+          "target": "location:Demo North",
+          "reason": "Header indicates location 'Demo North' and 'REAL' suggests actual values.",
+          "rules_target": "location:Demo North"
+        },
+        "Demo North | ACH": {
+          "target": "ignore",
+          "reason": "Header contains 'ACH', indicating achievement percentage, which should be ignored.",
+          "rules_target": "ignore"
+        },
+        "Demo South | REAL": {
+          "target": "location:Demo South",
+          "reason": "Header indicates location 'Demo South' and 'REAL' suggests actual values.",
+          "rules_target": "location:Demo South"
+        },
+        "Demo South | ACH": {
+          "target": "ignore",
+          "reason": "Header contains 'ACH', indicating achievement percentage, which should be ignored.",
+          "rules_target": "ignore"
+        }
+      },
+      "files": [
+        {
+          "filename": "bges-olo.xlsx",
+          "division": "BGES & OLO",
+          "sheet": "Report",
+          "header_row": 4,
+          "header_depth": 1
+        },
+        {
+          "filename": "aim.xlsx",
+          "division": "AIM",
+          "sheet": "Report",
+          "header_row": 4,
+          "header_depth": 1
+        },
+        {
+          "filename": "mbb.xlsx",
+          "division": "MBB",
+          "sheet": "Report",
+          "header_row": 4,
+          "header_depth": 1
+        }
+      ],
+      "conflicts": []
+    }
+  }
+}

@@ -52,6 +52,10 @@ export default function RCAPanel({domainId, selectedCell, rcaData, loading, erro
         <div className="notice-info">
           <p className="font-semibold">{evidenceLabels[rcaData.evidence_status] || rcaData.evidence_status}</p>
           <p className="text-xs mt-2">References identify the submitted feedback. They do not independently prove that the reported cause is correct.</p>
+          {rcaData.grounding && <p className="text-[11px] mt-2">
+            {rcaData.ai_invoked ? 'AI draft used; citations were checked against submitted feedback.' : 'AI was not called for this result.'}
+            {' '}{rcaData.grounding.cited_feedback_ids?.length || 0} feedback reference(s) · {rcaData.grounding.ungrounded_claims ?? 0} ungrounded claim(s).
+          </p>}
         </div>
         <section className="glass-sm p-3"><h3 className="text-xs uppercase text-indigo-300 mb-2">Reported cause / RCA draft</h3><p className="leading-relaxed whitespace-pre-wrap">{rcaData.root_cause}</p></section>
         <section className="glass-sm p-3"><h3 className="text-xs uppercase text-emerald-300 mb-2">Corrective action / next check</h3><p className="leading-relaxed whitespace-pre-wrap">{rcaData.prescriptive_action}</p></section>

@@ -158,6 +158,8 @@ class RCAResponse(BaseModel):
     evidence_status: str
     evidence: list[dict] = []
     cited_feedback_ids: list[int] = []
+    ai_invoked: bool = False
+    grounding: dict = {}
     fact_id: int
     date: str
     division: Optional[str] = None
@@ -168,7 +170,8 @@ class RCAResponse(BaseModel):
 class ColumnMappingResult(BaseModel):
     target: Optional[str]
     confidence: float
-    method: str          # "fuzzy" | "llm" | "none"
+    method: str          # "rules" | "llm" | "llm_recorded" | "approved_memory" | "fuzzy" | "none"
+    reason: Optional[str] = None
 
 
 class HarvestResponse(BaseModel):

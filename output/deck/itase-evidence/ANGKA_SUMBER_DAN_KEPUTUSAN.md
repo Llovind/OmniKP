@@ -67,6 +67,12 @@ Data industri eksternal ditambahkan atas instruksi terbaru pengguna. Angka indus
 | 50% | 17 | Aturan kompetisi | Briefing final 28 Oktober 2026: rubrik kelengkapan / presentasi / tanya jawab |
 | 30% | 17 | Aturan kompetisi | Briefing final 28 Oktober 2026: rubrik kelengkapan / presentasi / tanya jawab |
 | 15/25/25/20/15 | 17 | Aturan kompetisi | GUIDEBOOK ITASE 7.0.pdf hlm.16; seleksi proposal |
+| 0/7; 7/7 | 5, 11 | Hasil sintetis | mapping-benchmark-live.json: layout unfamiliar, rules vs provider |
+| 0/7; 6/7 | 11 | Hasil sintetis | mapping-benchmark-live.json: layout reordered, rules vs provider |
+| 7/7; 9/9 | 11 | Hasil sintetis | mapping-benchmark-live.json: standard, indonesian, wide |
+| ~1,5–2 dtk | 11 | Hasil sintetis | mapping-benchmark-live.json preview_seconds, provider |
+| 3 repeat | 11 | Parameter uji | benchmark_mapping.py --live-ai --repeats 3 |
+| google/gemini-2.5-flash-lite | 5, 11 | Konfigurasi | GET /api/v1/ai/status pada build yang diuji; bukan alias dan bukan model terlatih tim |
 
 ## Keputusan editorial untuk diverifikasi
 
@@ -75,8 +81,10 @@ Data industri eksternal ditambahkan atas instruksi terbaru pengguna. Angka indus
 - Menjadikan Rani persona ilustratif dari awal sampai kesimpulan; tidak mengklaim wawancara, kutipan nyata, atau endorsement Infranexia.
 - Menggunakan publikasi TM Forum 2025 untuk konteks silo data. Angka 2/87 bukan survei Excel atau estimasi Indonesia.
 - Memakai estimasi ITU 2025 hanya sebagai konteks pentingnya infrastruktur, bukan ukuran pasar omniKPI atau dampak SDG.
-- Diagram arsitektur dan ERD disusun ulang dari kode worktree C:/KPI_Dashboard_UI_Review, bukan menyalin modul rencana proposal sebagai fitur aktif.
-- Model disebut sesuai alias konfigurasi lokal gemini-flash-lite-latest. Tidak mengklaim versi underlying tetap, model terbaik, atau training sendiri.
+- Diagram arsitektur dan ERD disusun ulang dari kode di repositori (`backend/`), bukan menyalin modul rencana proposal sebagai fitur aktif.
+- Model disebut sesuai konfigurasi yang benar-benar diuji: `google/gemini-2.5-flash-lite` melalui router kompatibel OpenAI, diverifikasi lewat `GET /api/v1/ai/status`. Tidak mengklaim versi underlying tetap, model terbaik, atau training sendiri.
+- AI ditandai opt-in. Bila tidak ada kunci provider, tujuh layout demo memakai usulan tercatat dan diberi label “AI suggestion · recorded”; layout lain berstatus skipped. Rekaman tidak boleh disebut inferensi live.
+- Angka benchmark 0/7→7/7 dan 0/7→6/7 adalah hasil sintetis lima layout (3 repeat), bukan akurasi laporan nyata, bukan data held-out, dan bukan klaim penghematan waktu. Satu kolom pada layout reorder tetap salah.
 - Draft ED diparafrasekan ke Indonesia dari keluaran AI lokal dan diberi label sintetis; bukan hasil penyelidikan insiden nyata.
 - Primary SDG fit dipersempit ke arah Target 9.1. Indikator 9.1.1/9.1.2 resmi terkait transportasi tidak diukur; tidak mengklaim pengukuran indikator SDG. 9.c hanya konteks telco.
 - Sponsor fungsi performance, desain perbandingan manual/rules/AI, dan rencana pilot adalah usulan; tidak menyatakan ada mitra, kontrak, atau evaluasi selesai.

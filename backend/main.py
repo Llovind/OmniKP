@@ -14,9 +14,12 @@ API docs (auto-generated):
 """
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from database import DimDomain, get_db, init_db, SessionLocal
@@ -25,6 +28,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from routers.anomaly import router as anomaly_router
+from routers.ai import router as ai_router
 from routers.harvest import router as harvest_router
 from routers.kpi import router as kpi_router
 from routers.rca import router as rca_router
@@ -41,6 +45,12 @@ async def lifespan(app: FastAPI):
         if not db.query(DimDomain).filter_by(domain_id=1).first():
             db.add(DimDomain(domain_id=1, domain_name="Telecommunications", domain_code="digital_infra"))
             db.commit()
+    # Seed the isolated demo workspace so /app?demo=1 works on a fresh container.
+    try:
+        from routers.demo import seed as seed_demo_workspace
+        await seed_demo_workspace()
+    except Exception as exc:
+        print(f"Demo workspace seed skipped: {exc}")
     yield
 
 
@@ -75,6 +85,7 @@ app.add_middleware(
 
 app.include_router(kpi_router)
 app.include_router(anomaly_router)
+app.include_router(ai_router)
 app.include_router(rca_router)
 app.include_router(harvest_router)
 app.include_router(submissions_router)
@@ -106,3 +117,20 @@ def list_domains(db: Session = Depends(get_db)):
         }
         for d in domains
     ]
+
+
+# ─── Static frontend (production build) ──────────────────────────────────────
+# Registered last so API routes always win the match.
+
+_dist = Path(__file__).resolve().parents[1] / "frontend" / "dist"
+if _dist.is_dir():
+    app.mount("/assets", StaticFiles(directory=_dist / "assets"), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def serve_spa(path: str):
+        if path.startswith(("api/", "docs", "redoc", "openapi.json")):
+            raise HTTPException(status_code=404, detail="Not Found")
+        candidate = (_dist / path).resolve()
+        if path and candidate.is_file() and _dist in candidate.parents:
+            return FileResponse(candidate)
+        return FileResponse(_dist / "index.html")

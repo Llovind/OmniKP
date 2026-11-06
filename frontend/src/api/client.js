@@ -19,7 +19,18 @@ async function request(path, options = {}) {
   return res.json();
 }
 
+async function absolute(path) {
+  const res = await fetch(path);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(err.detail || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
 export const api = {
+  getAIStatus:  ()                          => absolute('/api/v1/ai/status'),
+  getMappingEvaluation: ()                  => absolute('/api/v1/ai/evaluation'),
   getDomains:   ()                          => request('/domains'),
   getKPIs:      (domainId)                  => request(`/domains/${domainId}/kpis`),
   getLocations: (domainId)                  => request(`/domains/${domainId}/locations`),

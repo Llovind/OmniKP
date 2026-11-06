@@ -47,7 +47,8 @@ Adjust slide count and timing to the presenter's delivery. A live demo should ha
 4. Open a reading and point out the source file and source row.
 5. Select a reading with feedback and request an RCA draft. Call it division-reported evidence, not a verified cause.
 6. If time permits, show a no-feedback reading returning insufficient evidence.
-7. Close on the analyst's role: confirm mappings and review the draft.
+7. Optional, if the AI slide needs proof: open `/evaluation`, state the synthetic five-layout result, then upload one demo workbook with the AI checkbox on and read the trace (mode, model, columns, samples, latency). Say out loud whether it says live or recorded.
+8. Close on the analyst's role: confirm mappings and review the draft.
 
 Do not upload the reconstructed inputs on top of the one-click demo's already seeded database. Use a clean workspace if demonstrating the seven-file import from scratch.
 

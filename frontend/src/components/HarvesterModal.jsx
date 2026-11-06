@@ -17,6 +17,15 @@ function PreviewTable({rows}) {
   </table></div>;
 }
 
+const sourceLabel = (meta) => meta?.method === 'llm' ? 'AI suggestion · live call'
+  : meta?.method === 'llm_recorded' ? 'AI suggestion · recorded'
+  : meta?.method === 'approved_memory' ? 'Approved mapping' : 'Local rules';
+
+const traceTitle = (trace) => trace.mode === 'live' ? 'AI trace · live provider call'
+  : trace.mode === 'recorded' ? 'AI trace · recorded suggestions (not a live call)'
+  : 'AI trace · no provider call';
+
+
 export default function HarvesterModal({domainId, onClose, onImported}) {
   const [file, setFile] = useState(null);
   const [division, setDivision] = useState('');
@@ -134,6 +143,14 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
             <button className="btn-ghost" disabled={!!busy} onClick={() => {setResult(null); setValidation(null);}}>Change file / settings</button>
           </div>
           <p className="notice-info">{result.message}</p>
+          {result.ai_trace && <div className="glass-sm p-3 text-xs text-slate-300 space-y-1">
+            <p className="font-semibold text-slate-100">{traceTitle(result.ai_trace)}</p>
+            <p>{result.ai_trace.model || 'No model called'} · {result.ai_trace.columns} columns · samples ≤{result.ai_trace.samples_per_column} per column
+              {result.ai_trace.batches ? ' · '+result.ai_trace.batches+' batch(es)' : ''}
+              {result.ai_trace.fallback_batches ? ' · '+result.ai_trace.fallback_batches+' fallback' : ''}
+              {result.ai_trace.duration_ms ? ' · '+result.ai_trace.duration_ms+' ms' : ''}</p>
+            {result.ai_trace.recorded_from && <p>Recorded on {result.ai_trace.recorded_from}. Replayed provider output, not a live call.</p>}
+          </div>}
           <div>
             <h3 className="font-semibold mb-2">Review column meanings</h3>
             <p className="text-xs text-slate-400 mb-3">For a wide report, choose “Actual for one location” for each measurement column and enter its location. Ignore ACH / achievement columns.</p>
@@ -143,7 +160,8 @@ export default function HarvesterModal({domainId, onClose, onImported}) {
                   {fields.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                 </select>
                 {mapping[col]?.startsWith('location:') && <input aria-label={'Location for '+col} className="field-input mt-2" value={mapping[col].slice(9)} onChange={e => update(col, 'location:'+e.target.value)} />}
-              </td><td className="text-xs text-slate-400">{result.column_mapping[col]?.method === 'llm' ? 'AI suggestion' : result.column_mapping[col]?.method === 'approved_memory' ? 'Approved mapping' : 'Local rules'}</td></tr>)}</tbody>
+                {result.column_mapping[col]?.reason && <p className="text-[11px] text-slate-500 mt-1">{result.column_mapping[col].reason}</p>}
+              </td><td className="text-xs text-slate-400">{sourceLabel(result.column_mapping[col])}</td></tr>)}</tbody>
             </table></div>
           </div>
           <details className="glass-sm p-3"><summary className="text-sm cursor-pointer">Original values (first five rows)</summary><PreviewTable rows={result.raw_preview} /></details>

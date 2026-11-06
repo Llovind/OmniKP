@@ -38,6 +38,6 @@ export default function Landing() {
       <section className="landing-section landing-container human-block reveal"><p className="section-label">Human in the loop</p><h2>Nothing enters the central dataset without analyst confirmation.</h2><p>Review mappings and validation results before importing your reports. RCA drafts remain attributed explanations for analyst review. The pre-reviewed synthetic fixtures let you explore this flow immediately.</p></section>
       <section className="landing-final"><div className="landing-container"><h2>See it with real structure,<br />synthetic data.</h2><p>Seven reconstructed division reports. One shared performance view.</p>{cta}</div></section>
     </main>
-    <footer className="landing-footer landing-container"><img src="/brand/omnikpi.png" width="515" height="460" alt="omniKPI" /><p>Built for ITASE 7.0 by Team Mejeuh Euy<br /><span>AI-assisted performance reporting prototype</span></p><a href="https://github.com/Llovind/OmniKP">View on GitHub</a><a href="/app">Open workspace</a></footer>
+    <footer className="landing-footer landing-container"><img src="/brand/omnikpi.png" width="515" height="460" alt="omniKPI" /><p>Built for ITASE 7.0 by Team Mejeuh Euy<br /><span>AI-assisted performance reporting prototype</span></p><a href="https://github.com/Llovind/OmniKP">View on GitHub</a><a href="/evaluation">Mapping evaluation</a><a href="/app">Open workspace</a></footer>
   </div>;
 }

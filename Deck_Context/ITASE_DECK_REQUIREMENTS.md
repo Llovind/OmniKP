@@ -34,7 +34,8 @@ The guidebook requires the solution to use AI as a core part of addressing the p
 - **Problem where AI helps:** divisional reports may use differing or unfamiliar column names.
 - **Input:** headers plus up to three sample values per column when an authorized user opts into AI mapping.
 - **Output:** proposed schema meanings for analyst review and correction.
-- **Model:** identify the provider and model configured for the live demo. The code default is `meta-llama/llama-3.1-70b-instruct` through an OpenAI-compatible router; environment configuration may override it. Verify the active value before presenting. Do not claim the code default is necessarily the live model.
+- **Model:** identify the provider and model configured for the live demo. Check `GET /api/v1/ai/status` before presenting; it reports the active mode (`live`, `recorded`, `skipped`) and model. The committed benchmark used `google/gemini-2.5-flash-lite`, but confirm the deployed value. Do not claim the code default is necessarily the live model.
+- **Honesty about the fallback:** if the deployed demo has no key, the interface replays recorded suggestions labelled “AI suggestion · recorded”. Say that explicitly instead of presenting replay as live inference.
 - **Why this class of model:** language models can interpret unfamiliar labels from context and return structured mapping suggestions; a pretrained model avoids training a bespoke model for this prototype. Do not imply a comparative model study established superiority.
 - **Control:** AI suggests; deterministic validation and an analyst's confirmation control import. RCA drafts use only attached division feedback, and the model may be unavailable.
 - **Data handling:** explain that AI mapping is opt-in and may send the bounded headers and sample values to the configured provider. Do not claim on-premise processing, masking or production privacy controls unless those are actually configured and tested.

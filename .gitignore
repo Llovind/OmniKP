@@ -3,6 +3,9 @@ node_modules/
 .pnp
 .pnp.js
 
+# Local deploy/review scratch (not part of the submission)
+.deploy/
+
 # Python
 __pycache__/
 *.py[cod]

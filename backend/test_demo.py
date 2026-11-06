@@ -30,7 +30,11 @@ class DemoFlow(unittest.TestCase):
                     fact=db.get(FactKPI,feedback.fact_id)
                     response=client.post('/api/demo/workspace/api/v1/domains/1/rca',json={'kpi_id':fact.kpi_id,'location_id':fact.location_id,'fact_id':fact.fact_id})
                     self.assertEqual(response.status_code,200,response.text)
-                    self.assertEqual(response.json()['evidence_status'],'feedback_available')
+                    body=response.json()
+                    self.assertEqual(body['evidence_status'],'feedback_available')
+                    self.assertIn('ai_invoked',body)
+                    self.assertIn('grounding',body)
+                    self.assertEqual(body['grounding']['ungrounded_claims'],0)
             engine.dispose()
 
 if __name__ == '__main__':

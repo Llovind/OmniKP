@@ -120,10 +120,13 @@ class ProductFlow(unittest.TestCase):
         last = {columns[-1]: 'location:Demo 120'}
         response = lambda payload: SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(payload)))])
         with patch.object(harvester, 'OPENROUTER_API_KEY', 'test'), patch.object(harvester._client.chat.completions, 'create', new=AsyncMock(side_effect=[response(first), RuntimeError('provider failure'), response(last)])) as call:
-            mapping, message = asyncio.run(ai_mapping(report, suggest_mapping(columns)))
+            mapping, message, trace = asyncio.run(ai_mapping(report, suggest_mapping(columns)))
         self.assertEqual(call.await_count, 3)
         self.assertEqual(sum(m['method'] == 'llm' for m in mapping.values()), 61)
-        self.assertIn('1 batches used local fallback', message)
+        self.assertEqual(trace['mode'], 'live')
+        self.assertEqual(trace['batches'], 3)
+        self.assertEqual(trace['fallback_batches'], 1)
+        self.assertIn('1 batch(es) failed and kept local rules', message)
         self.assertEqual(len(mapping), 121)
 
     def test_validation_pack_failure_exercises(self):

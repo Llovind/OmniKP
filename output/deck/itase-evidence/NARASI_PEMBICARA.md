@@ -1,4 +1,4 @@
-# Narasi dan sumber per slide
+﻿# Narasi dan sumber per slide
 
 ## Slide 1
 
@@ -39,7 +39,7 @@ Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupak
 
 SUMBER
 Documents/OMNIkpi.pdf, 31 halaman; khususnya hlm. 3-4, 7-16, 19-25, 30-31
-C:\KPI_Dashboard_UI_Review\frontend\public\demo\divisions\validation-summary.json
+frontend/public/demo/divisions/validation-summary.json
 
 ## Slide 4
 
@@ -52,21 +52,21 @@ Empat fase adalah pengelompokan journey, bukan pengukuran efisiensi; bukan perba
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
+backend
 
 ## Slide 5
 
 DURASI SASARAN: 65 detik.
 
-Di sinilah elemen AI pertama bekerja. Ambil ED sebagai contoh sintetis: KPI WISA memuat nama KPI, Realisasi adalah nilai aktual, dan TGT adalah target. FORMULA memuat arah HIGHER BETTER, bukan rumus Excel yang harus dihitung. Kemiripan teks saja tidak selalu cukup untuk mengenali istilah yang berbeda atau membedakan kolom aktual dengan target. Parser memilih worksheet dan header, lalu model menerima header, usulan aturan awal, serta maksimal tiga contoh nilai per kolom. Model mengembalikan pemetaan JSON ke field skema bersama. Pada versi lokal terbaru, seluruh laporan melalui interpretasi model; tidak ada pilihan untuk melewati AI. Model yang terkonfigurasi adalah alias gemini-flash-lite-latest, bukan model yang dilatih tim. Pilihan kelas LLM sesuai tugas interpretasi bahasa; kami belum melakukan studi yang membuktikan model ini paling unggul. Analis tetap meninjau hasilnya. Bagaimana kontrol ini ditempatkan di sistem?
+Di sinilah elemen AI pertama bekerja. Ambil ED sebagai contoh sintetis: KPI WISA memuat nama KPI, Realisasi adalah nilai aktual, dan TGT adalah target. FORMULA memuat arah HIGHER BETTER, bukan rumus Excel yang harus dihitung. Kemiripan teks saja tidak selalu cukup untuk mengenali istilah yang berbeda atau membedakan kolom aktual dengan target. Parser memilih worksheet dan header, lalu model menerima header, usulan aturan awal, serta maksimal tiga contoh nilai per kolom. Model mengembalikan arti kolom beserta alasan singkat per kolom. AI bersifat opsional lewat kotak centang saat unggah; tanpa kunci provider, aplikasi memakai usulan tercatat untuk tujuh layout demo dan memberi label "AI suggestion Â· recorded", sedangkan layout lain berstatus skipped. Setiap respons membawa jejak mode, model, jumlah kolom, batas sampel, batch, dan latensi. Model yang dikonfigurasi adalah google/gemini-2.5-flash-lite melalui router kompatibel OpenAI, bukan model yang dilatih tim. Pilihan kelas LLM sesuai tugas interpretasi bahasa; kami belum melakukan studi yang membuktikan model ini paling unggul. Analis tetap meninjau hasilnya. Bagaimana kontrol ini ditempatkan di sistem?
 
 JENIS DATA DAN BATAS KLAIM
-Parameter implementasi: maksimum 3 sampel per kolom. Data demo: contoh aktual 97,8%, target 98,5%, dari ED. Header literal diverifikasi pada ed.xlsx / Report / baris 4. Model alias terverifikasi melalui GET /api/v1/ai/status saat penyusunan.
+Parameter implementasi: maksimum 3 sampel per kolom. Data demo: contoh aktual 97,8%, target 98,5%, dari ED. Header literal diverifikasi pada ed.xlsx / Report / baris 4. Model dan mode diverifikasi melalui GET /api/v1/ai/status.
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
-C:\KPI_Dashboard_UI_Review\frontend\public\demo\divisions\validation-summary.json
+backend
+frontend/public/demo/divisions/validation-summary.json
 
 ## Slide 6
 
@@ -79,21 +79,21 @@ Tidak ada ukuran kinerja. Diagram menyederhanakan endpoint sebagai kelompok laya
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
+backend
 
 ## Slide 7
 
 DURASI SASARAN: 60 detik.
 
-Sekarang stakeholder bertanya mengapa Compliance Deployment Supervision berada pada sembilan puluh tujuh koma delapan persen, di bawah target sembilan puluh delapan koma lima persen. Semua nilai pada adegan ini sintetis. Rani membuka reading dan melihat ED, ed.xlsx, baris lima, lokasi Demo North, serta tanggal laporannya. Namun sumber angka belum menjelaskan penyebab. Feedback ED yang tertaut pada reading itu menyatakan jadwal akses lokasi berubah sehingga penyelesaian deployment tertunda. Komponen AI kedua mengubah feedback menjadi draft beratribusi dan mengutip F1. Dalam uji lokal, model menghasilkan draft dengan referensi itu; teks di slide diparafrasekan ke Indonesia. Tanpa feedback, sistem meminta bukti. Provider gagal atau sitasi tidak dikenal menghasilkan error yang terlihat, bukan penjelasan pengganti. Sitasi yang valid membuktikan identitas sumber, bukan kebenaran sebab. Jadi Rani tetap menilai kecukupan bukti dan tindakan.
+Sekarang stakeholder bertanya mengapa Compliance Deployment Supervision berada pada sembilan puluh tujuh koma delapan persen, di bawah target sembilan puluh delapan koma lima persen. Semua nilai pada adegan ini sintetis. Rani membuka reading dan melihat ED, ed.xlsx, baris lima, lokasi Demo North, serta tanggal laporannya. Namun sumber angka belum menjelaskan penyebab. Feedback ED yang tertaut pada reading itu menyatakan jadwal akses lokasi berubah sehingga penyelesaian deployment tertunda. Komponen AI kedua mengubah feedback menjadi draft beratribusi dan mengutip F1. Dalam uji lokal, model menghasilkan draft dengan referensi itu; teks di slide diparafrasekan ke Indonesia. Tanpa feedback, sistem meminta bukti dan tidak memanggil model. Bila provider gagal atau sitasi tidak valid, sistem menampilkan ringkasan feedback yang tetap beratribusi dan menandai bahwa AI tidak dipanggil, bukan mengarang draft pengganti. Sitasi yang valid membuktikan identitas sumber, bukan kebenaran sebab. Jadi Rani tetap menilai kecukupan bukti dan tindakan.
 
 JENIS DATA DAN BATAS KLAIM
 Data demo sintetis: aktual 97,8%; target 98,5%; baris sumber 5; tanggal 30 Juni 2026. F1 adalah ID feedback, bukan confidence score. Teks draft merupakan parafrasa Indonesia dari keluaran model lokal.
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
-C:\KPI_Dashboard_UI_Review\frontend\public\demo\divisions\validation-summary.json
+backend
+frontend/public/demo/divisions/validation-summary.json
 
 ## Slide 8
 
@@ -102,12 +102,12 @@ DURASI SASARAN: 55 detik.
 Inilah workspace yang benar-benar berjalan dengan data sintetis, bukan mockup layar. Paketnya berisi tujuh laporan divisional, sembilan puluh KPI, dua lokasi fiktif, dan seratus delapan puluh reading pada satu tanggal demo. Nama KPI, unit, arah, dan kelompok pengirim mengikuti struktur workbook referensi; nilai, target, lokasi, feedback, dan layout input direkonstruksi untuk demo. Hasil referensinya adalah seratus dua puluh satu reading memenuhi target dan lima puluh sembilan belum memenuhi, setara enam puluh tujuh koma dua dan tiga puluh dua koma delapan persen. Itu distribusi status demo, bukan akurasi AI. File input, expected readings, dan checksum memungkinkan hasilnya diperiksa. Panggilan model dan draft bersitasi juga terlihat pada aplikasi. Bukti ini menunjukkan keterhubungan alur, tetapi belum mengukur produktivitas analis atau dampak jaringan.
 
 JENIS DATA DAN BATAS KLAIM
-Data demo (a): 90 KPI, 180 readings, 7 unit, 2 lokasi, 121 memenuhi dan 59 belum. Turunan (b): 121/180×100=67,2%; 59/180×100=32,8%, pembulatan satu desimal. Screenshot dari aplikasi review lokal, bukan versi main/deployment.
+Data demo (a): 90 KPI, 180 readings, 7 unit, 2 lokasi, 121 memenuhi dan 59 belum. Turunan (b): 121/180Ã—100=67,2%; 59/180Ã—100=32,8%, pembulatan satu desimal. Screenshot dari aplikasi review lokal, bukan versi main/deployment.
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\frontend\public\demo\divisions\validation-summary.json
-C:\KPI_Dashboard_UI_Review\backend
+frontend/public/demo/divisions/validation-summary.json
+backend
 
 ## Slide 9
 
@@ -120,7 +120,7 @@ Tidak ada proyeksi pendapatan atau nilai finansial. Sponsor/pemilik anggaran mer
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
+backend
 
 ## Slide 10
 
@@ -140,15 +140,15 @@ https://www.itu.int/en/ITU-D/Statistics/Pages/facts/default.aspx
 
 DURASI SASARAN: 55 detik.
 
-Agar nilai AI tidak berhenti pada demo yang berhasil, kami mengusulkan perbandingan yang menjawab pekerjaan nyata. Gunakan laporan dengan struktur representatif, jawaban acuan yang diberi label, serta pemisahan layout pengembangan dan pengujian. Bandingkan pengerjaan manual, baseline aturan untuk evaluasi, dan workflow AI dengan review analis. Rules only adalah pembanding eksperimen, bukan pilihan untuk mematikan AI di produk. Ukur kolom yang dipetakan benar, jumlah koreksi analis, serta waktu end-to-end yang memasukkan upload, tunggu model, review, dan retry. Untuk draft RCA, nilai apakah klaim benar-benar didukung feedback, termasuk kasus tanpa bukti dan feedback yang tidak menjelaskan sebab. Simpan hasil gagal, bukan hanya yang berhasil. Dengan desain ini, kita bisa menilai apakah AI mengurangi pekerjaan secara nyata. Saat ini hasilnya belum tersedia; ini rencana validasi berikutnya.
+Agar nilai AI tidak berhenti pada klaim, kami sudah menjalankan benchmark sintetis lima layout dengan tiga pengulangan memakai google/gemini-2.5-flash-lite. Aturan lokal unggul pada header konvensional dan Indonesia, tetapi gagal total pada header tak dikenal dan header yang diacak. Model memetakan seluruh tujuh kolom pada layout tak dikenal dan enam dari tujuh pada layout reorder; satu kolom, Reporting area, tetap dipetakan sebagai ignore. Latensi pratinjau naik dari sekitar nol koma nol satu detik menjadi sekitar satu koma lima sampai dua detik. Artinya AI dipakai untuk kasus yang tidak bisa diselesaikan aturan, bukan untuk semuanya. Hasil ini tetap sintetis, berasal dari lima layout tulisan tim, bukan laporan divisi nyata dan bukan data held-out; dua layout berbagi kosakata sehingga tidak independen. Yang belum diukur adalah koreksi analis sesungguhnya, waktu end-to-end, dan dukungan klaim RCA pada laporan nyata. Rencana berikutnya memakai laporan representatif dengan jawaban acuan serta pemisahan data pengembangan dan pengujian.
 
 JENIS DATA DAN BATAS KLAIM
-Semua metrik pada slide merupakan rencana evaluasi, belum hasil. Rumus kualitas mapping = benar/dinilai; koreksi = diubah/dinilai; dukungan draft = klaim didukung/klaim dinilai. Tidak ada target numerik baru yang ditetapkan.
+Semua metrik pada slide tetap menjadi kerangka evaluasi untuk laporan nyata; yang sudah terukur hanya benchmark sintetis lima layout (tak dikenal 0/7 ke 7/7, reorder 0/7 ke 6/7, latensi sekitar 1,5 sampai 2 detik). Rumus kualitas mapping = benar/dinilai; koreksi = diubah/dinilai; dukungan draft = klaim didukung/klaim dinilai. Tidak ada klaim penghematan waktu.
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
 Documents/OMNIkpi.pdf, 31 halaman; khususnya hlm. 3-4, 7-16, 19-25, 30-31
-C:\KPI_Dashboard_UI_Review\backend
+backend
 
 ## Slide 12
 
@@ -161,8 +161,8 @@ Kesimpulan membedakan prototipe yang berjalan dari evaluasi yang masih diusulkan
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
-C:\KPI_Dashboard_UI_Review\frontend\public\demo\divisions\validation-summary.json
+backend
+frontend/public/demo/divisions/validation-summary.json
 
 ## Slide 13
 
@@ -176,7 +176,7 @@ Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupak
 
 SUMBER
 Documents/OMNIkpi.pdf, 31 halaman; khususnya hlm. 3-4, 7-16, 19-25, 30-31
-C:\KPI_Dashboard_UI_Review\backend
+backend
 
 ## Slide 14
 
@@ -189,7 +189,7 @@ Data demo (a): seluruh angka pada tabel dan seri chart berasal dari validation-s
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\frontend\public\demo\divisions\validation-summary.json
+frontend/public/demo/divisions/validation-summary.json
 
 ## Slide 15
 
@@ -202,20 +202,20 @@ Tidak ada metrik. ID dan nama tabel adalah struktur implementasi; diagram bukan 
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
+backend
 
 ## Slide 16
 
 APPENDIX: gunakan saat Q&A, tidak termasuk alokasi presentasi utama.
 
-Ada beberapa batas yang bisa dijelaskan secara konkret. Tanpa feedback, endpoint langsung mengembalikan permintaan bukti, sehingga LLM tidak diminta menebak. Bila provider gagal, UI menampilkan error dan retry, bukan menyajikan ringkasan deterministik seolah hasil AI. Draft harus mengandung ID feedback yang dikenal serta kutipan inline yang konsisten; jika tidak, draft ditolak. Pada intake, validasi dan penolakan duplikasi berjalan sebelum confirm. Tetapi pemeriksaan ID belum membuktikan setiap kalimat didukung sumber atau penyebabnya benar, sehingga review manusia tetap penting. Autentikasi, masking otomatis, dan kontrol produksi belum ada pada alur demo ini.
+Ada beberapa batas yang bisa dijelaskan secara konkret. Tanpa feedback, endpoint langsung mengembalikan permintaan bukti, sehingga LLM tidak diminta menebak. Bila provider gagal atau kunci tidak ada, intake memakai usulan tercatat yang diberi label "AI suggestion Â· recorded" dan menyatakan bahwa itu bukan panggilan live; bila layout tidak dikenal, statusnya skipped. Pada RCA, kegagalan provider atau sitasi tidak valid menghasilkan ringkasan feedback beratribusi, bukan draft model, dan respons menyatakan ai_invoked false. Draft yang sah harus memuat ID feedback yang dikenal serta kutipan inline yang konsisten. Pada intake, validasi dan penolakan duplikasi berjalan sebelum confirm. Tetapi pemeriksaan ID belum membuktikan setiap kalimat didukung sumber atau penyebabnya benar, sehingga review manusia tetap penting. Autentikasi, masking otomatis, dan kontrol produksi belum ada pada alur demo ini.
 
 JENIS DATA DAN BATAS KLAIM
 Tidak ada ukuran efektivitas guardrail. Pernyataan adalah perilaku implementasi, bukan klaim keamanan menyeluruh.
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
+backend
 
 ## Slide 17
 
@@ -242,4 +242,4 @@ Tidak ada metrik. Identitas universitas mengikuti materi tim yang disediakan.
 Nomor slide, kode SDG, versi produk, nomor referensi, dan urutan langkah merupakan identitas, bukan ukuran hasil.
 
 SUMBER
-C:\KPI_Dashboard_UI_Review\backend
+backend

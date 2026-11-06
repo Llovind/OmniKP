@@ -1,0 +1,29 @@
+.git
+.gitignore
+.github
+
+# Python
+**/__pycache__
+**/*.py[cod]
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/.venv
+**/venv
+
+# Node
+**/node_modules
+frontend/dist
+
+# Local secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local scratch / non-runtime material
+.MD_Context
+Deck_Context
+Deck_Example
+output
+skills
+.agents
