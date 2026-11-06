@@ -7,7 +7,7 @@ from fastapi import APIRouter, FastAPI, HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database import Base, DimDomain, Submission, get_db
-from services.intake import stage, confirm, plain_mapping
+from services.intake import stage, confirm, plain_mapping, read_report, suggest_mapping, ai_mapping
 
 ROOT = Path(__file__).resolve().parents[2]
 engine = create_engine('sqlite:///' + (ROOT/'backend/omnikpi-demo.db').as_posix(), connect_args={'check_same_thread': False})
@@ -35,21 +35,38 @@ async def seed(reset: bool = False):
         manifest = json.loads((fixtures/'manifest.json').read_text())
         if any(not (fixtures/e['filename']).exists() for e in manifest):
             raise HTTPException(503, 'The seven demo workbooks are missing.')
-        version = hashlib.sha256(b''.join((fixtures/e['filename']).read_bytes() for e in manifest)).hexdigest()[:16]
+        version = 'ai-' + hashlib.sha256(b''.join((fixtures/e['filename']).read_bytes() for e in manifest)).hexdigest()[:16]
         Base.metadata.create_all(engine)
         with Session() as existing:
             domain = existing.get(DimDomain, 1)
             reset = reset or bool(domain and domain.domain_code != 'demo-'+version)
+            if domain and not reset and db_count(existing) == len(manifest):
+                return {'date':'2026-06-30', 'readings':180, 'synthetic':True, 'ai_reports':len(manifest)}
+        proposals = []
+        try:
+            for entry in manifest:
+                report = read_report((fixtures/entry['filename']).read_bytes(), entry['filename'], entry['sheet'], entry['header_row'], entry['header_depth'])
+                proposals.append(await ai_mapping(report, suggest_mapping(report['columns'])))
+        except RuntimeError as exc:
+            raise HTTPException(503, str(exc))
         if reset:
             Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
         with Session() as db:
             if not db.query(DimDomain).filter_by(domain_id=1).first():
-                db.add(DimDomain(domain_id=1, domain_name='Telecommunications', domain_code='demo-'+version))
+                db.add(DimDomain(domain_id=1, domain_name='Telecommunications', domain_code='demo-pending'))
                 db.commit()
-            for e in manifest:
+            for e, proposal in zip(manifest, proposals):
                 if db.query(Submission).filter_by(division=e['division'], filename=e['filename'], status='confirmed').first():
                     continue
-                draft = await stage(db, 1, (fixtures/e['filename']).read_bytes(), e['filename'], e['division'], e['report_date'], e['sheet'], e['header_row'], e['header_depth'], False)
-                confirm(db, db.get(Submission, draft['submission_id']), plain_mapping(draft['column_mapping']))
-        return {'date':'2026-06-30', 'readings':180, 'synthetic':True}
+                draft = await stage(db, 1, (fixtures/e['filename']).read_bytes(), e['filename'], e['division'], e['report_date'], e['sheet'], e['header_row'], e['header_depth'], True, _ai_proposal=proposal)
+                try:
+                    confirm(db, db.get(Submission, draft['submission_id']), plain_mapping(draft['column_mapping']))
+                except ValueError:
+                    raise HTTPException(422, f"AI interpretation of {e['division']} needs review. Retry demo preparation.")
+            db.get(DimDomain, 1).domain_code = 'demo-'+version
+            db.commit()
+        return {'date':'2026-06-30', 'readings':180, 'synthetic':True, 'ai_reports':len(manifest)}
+
+def db_count(db):
+    return db.query(Submission).filter_by(status='confirmed').count()

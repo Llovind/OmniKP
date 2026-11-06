@@ -17,7 +17,7 @@ const navigationItems = [
   { label: 'Traceability', description: 'Every number knows where it came from.', links: [{ label: 'Traceability', href: '#traceability' }] },
 ];
 const glowColors = ['#0864c9', '#75b6ff', '#3888d8'];
-const DEMO_PREPARATION_TIMEOUT = 30_000;
+const DEMO_PREPARATION_TIMEOUT = 180_000;
 
 export default function Landing() {
   const [busy, setBusy] = useState(false);
@@ -35,13 +35,16 @@ export default function Landing() {
     try {
       const response = await fetch('/api/demo/seed', {method:'POST', signal: controller.signal});
       if (demoRequest.current !== controller) return;
-      if (!response.ok) throw new Error('The demo could not be prepared. Please try again.');
+      if (!response.ok) {
+        const detail = await response.json().catch(() => ({}));
+        throw new Error(detail.detail || 'AI could not prepare the reports. Please retry.');
+      }
       window.location.assign('/app?demo=1');
-    } catch {
+    } catch (err) {
       if (demoRequest.current !== controller) return;
       setError(timedOut
         ? 'Demo preparation is taking longer than expected. It may still finish. Open the workspace to check, or retry.'
-        : 'The demo could not be prepared. Check your connection and try again.');
+        : err.message || 'The demo could not be prepared. Check your connection and try again.');
       setBusy(false);
     } finally {
       clearTimeout(timeout);

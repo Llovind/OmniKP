@@ -106,3 +106,10 @@ def list_domains(db: Session = Depends(get_db)):
         }
         for d in domains
     ]
+
+
+@app.get('/api/v1/ai/status', tags=['System'])
+def ai_status():
+    from agents.harvester import OPENROUTER_API_KEY, LLM_MODEL
+    return {'configured': bool(OPENROUTER_API_KEY),
+            'model': LLM_MODEL if OPENROUTER_API_KEY else None}

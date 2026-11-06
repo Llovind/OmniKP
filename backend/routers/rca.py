@@ -52,6 +52,8 @@ async def trigger_rca(
             fact_id=request.fact_id,
         )
         return RCAResponse(**result)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except Exception as exc:

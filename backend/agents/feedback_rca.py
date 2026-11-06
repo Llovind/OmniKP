@@ -31,6 +31,8 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
         return dict(base, evidence_status="awaiting_feedback",
                     root_cause="Bukti Tidak Cukup — no division feedback has been supplied for this KPI, location and reporting period.",
                     prescriptive_action="Ask the responsible division for its explanation, supporting observations and proposed corrective action. KPI values alone do not establish a cause.")
+    if not OPENROUTER_API_KEY:
+        raise RuntimeError('AI drafting is unavailable. Configure the provider and retry.')
     cited = [f.feedback_id for f in feedback]
     root = "Division-reported explanation (not independently verified): " + " ".join(
         f"[F{f.feedback_id}] {f.explanation}" for f in feedback)
@@ -79,6 +81,6 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
             root, actions, cited = proposed_root, proposed_action, proposed
             model, status = LLM_MODEL, "ai_draft"
         except Exception:
-            model = "evidence summary (AI unavailable or invalid citations)"
+            raise RuntimeError('AI drafting failed or returned unsupported citations. Retry the AI draft; no generated explanation was substituted.') from None
     return dict(base, evidence_status=status, root_cause=root, prescriptive_action=actions,
                 cited_feedback_ids=cited, llm_model=model)

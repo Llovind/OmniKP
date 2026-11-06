@@ -8,14 +8,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:audit": "node scripts/dev-audit.mjs",
     "build": "vite build",
-    "build:ui": "node scripts/build-ui.mjs",
     "lint": "oxlint",
-    "test": "node --test scripts/api-contract.test.mjs",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview",
-    "preview:audit": "node scripts/preview-audit.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "4.4.0",

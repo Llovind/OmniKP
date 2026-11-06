@@ -115,7 +115,27 @@ button,a { touch-action:manipulation; }
 .matrix-head th { background:var(--surface); }
 .matrix-head .matrix-group { background:var(--subtle); }
 .matrix-head th[rowspan] { vertical-align:middle; }
-.matrix-head .kpi-column-name { width:100px; max-width:100%; margin-inline:auto; }
+.matrix-table .matrix-kpi-column { width:184px; min-width:184px; max-width:184px; vertical-align:top; }
+.matrix-head .kpi-column-name { width:160px; margin-inline:auto; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:36px; line-height:18px; overflow-wrap:normal; }
+.matrix-table .cell { width:176px; min-width:176px; height:56px; min-height:56px; flex-direction:row; justify-content:space-between; gap:12px; padding:10px 12px; }
+.matrix-table .cell-value { white-space:nowrap; flex-shrink:0; }
+.matrix-table .cell-context { font-size:12px; white-space:nowrap; }
+.matrix-table .cell:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.kpi-rows-scroll { max-height:70vh; }
+.kpi-rows-table { width:100%; table-layout:fixed; min-width:650px; }
+.kpi-rows-table thead { position:sticky; top:0; z-index:3; }
+.kpi-rows-table thead th { padding:16px; text-align:left; background:var(--surface); border-bottom:1px solid var(--line); }
+.kpi-rows-table .kpi-name-column { width:42%; padding:12px 16px; text-align:left; background:var(--surface); border-bottom:1px solid var(--line); font-weight:500; }
+.kpi-rows-table .kpi-name-column:first-child { position:sticky; left:0; z-index:1; }
+.kpi-rows-table thead .kpi-name-column:first-child { z-index:4; }
+.kpi-row-name { display:block; font-size:14px; line-height:1.45; overflow-wrap:anywhere; }
+.kpi-rows-table .matrix-unit { display:block; margin-top:4px; color:var(--muted); }
+.kpi-rows-table thead span { display:block; }
+.kpi-location-summary { margin-top:8px; font-size:12px; color:var(--muted); font-weight:400; }
+.kpi-category-row th { padding:10px 16px; background:var(--subtle); color:var(--muted); text-align:left; font-size:12px; font-weight:600; border-bottom:1px solid var(--line); }
+.kpi-reading-slot { padding:5px; border-bottom:1px solid var(--line); }
+.kpi-rows-table .cell { width:100%; min-width:0; height:56px; }
+.kpi-no-reading { display:block; padding:16px; color:var(--muted); font-size:12px; }
 .empty-ledger { color:var(--muted); font-size:14px; padding:24px 0; }
 .report-table td { font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
 .icon-button { width:44px; min-width:44px; padding:10px; flex-shrink:0; }

@@ -30,6 +30,9 @@ async def preview_report(domain_id: int, file: UploadFile = File(...), division:
     try:
         return await stage(db, domain_id, content, file.filename or '', division, report_date.isoformat(),
                            sheet_name, header_row, header_depth, use_ai)
+    except RuntimeError as exc:
+        db.rollback()
+        raise HTTPException(503, str(exc))
     except (ValueError, UnicodeError) as exc:
         db.rollback()
         raise HTTPException(422, str(exc))

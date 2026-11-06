@@ -39,7 +39,6 @@ CLEANUP_REPORT.md
 # Reproducible outputs, not source or fixtures
 artifacts/
 coverage/
-scripts/
 .nyc_output/
 playwright-report/
 test-results/

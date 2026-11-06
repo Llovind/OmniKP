@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import Header from './components/Header';
+import AIOverview from './components/AIOverview';
 import HeatmapMatrix from './components/HeatmapMatrix';
 import RCAPanel from './components/RCAPanel';
 const KPIDetailModal = lazy(() => import('./components/KPIDetailModal'));
@@ -27,6 +28,7 @@ export default function App() {
   const [history, setHistory] = useState(false);
   const [notice, setNotice] = useState('');
   const rcaRequest = useRef(0);
+  const demoInvestigationStarted = useRef(false);
 
   // Safari/WebKit does not focus buttons on pointer click. Focus the invoker before
   // opening so the shared dialog can restore it consistently after dismissal.
@@ -72,6 +74,17 @@ export default function App() {
     for (const key of ['total', 'red', 'yellow', 'green']) sum[key] += location.summary[key];
     return sum;
   }, {total: 0, red: 0, yellow: 0, green: 0});
+  useEffect(() => {
+    if (demoInvestigationStarted.current || !heatmap || new URLSearchParams(window.location.search).get('demo') !== '1') return;
+    for (const location of heatmap.locations) {
+      const reading = location.kpis.find(kpi => kpi.division === 'ED' && kpi.kpi_name.includes('Compliance Deployment Supervision') && kpi.status === 'RED');
+      if (reading) {
+        demoInvestigationStarted.current = true;
+        queueMicrotask(() => diagnose({...reading, location_id:location.location_id, location_name:location.location_name}));
+        break;
+      }
+    }
+  }, [heatmap]);
   const divisions = [...new Set(submissions.map(s => s.division))].sort();
   const visibleReports = submissions.filter(s => (!division || s.division === division) && s.report_date === heatmap?.date);
 
@@ -88,6 +101,7 @@ export default function App() {
         <button className="btn-primary" onClick={openUpload}>Upload report</button>
       </section>
       {notice && <div role="status" className="notice-success">{notice}</div>}
+      <AIOverview />
       {error && <div role="alert" className="notice-error">{error} <button className="underline ml-3" onClick={() => {setLoading(true); setRevision(n => n+1);}}>Retry</button></div>}
       <section className="summary-strip" aria-label="Reporting summary">
         {[
