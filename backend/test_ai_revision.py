@@ -65,6 +65,7 @@ class EvidenceEndpoints(unittest.TestCase):
         self.assertEqual(cases['unfamiliar']['ai']['accuracy'], 1)
         self.assertLess(cases['reordered']['ai']['accuracy'], 1)
         self.assertTrue(body['ai_model'])
+        self.assertEqual(body['ai_repeats'], 3)
         self.assertTrue(body['limitations'])
 
 

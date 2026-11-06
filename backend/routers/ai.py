@@ -95,7 +95,7 @@ def mapping_evaluation():
         'dataset': live.get('dataset') or rules.get('dataset'),
         'rules_model': 'local aliases and fuzzy matching',
         'ai_model': live.get('model'),
-        'ai_repeats': live.get('repeats') or (live_rows[0].get('repeat') + 1 if live_rows else None),
+        'ai_repeats': (max((row.get('repeat', 0) for row in live_rows), default=-1) + 1) or None,
         'recorded_provenance': (_read(RECORDED_MAPPING_FILE.name) or {}).get('provenance'),
         'cases': cases,
         'limitations': limitations,
