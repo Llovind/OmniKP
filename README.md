@@ -7,6 +7,21 @@ targets and prepare RCA with feedback from the responsible division.
 The implemented workflow is **upload → review mappings → validate → confirm →
 central dashboard → division feedback → evidence-linked RCA draft**.
 
+## VantageNet team handoff
+
+The product is now named **VantageNet**. Existing source names and API paths remain
+compatible with omniKPI. The UiPath workflow in the team documents is planned work,
+not an already completed integration.
+
+- [VantageNet: product, workflow, API contracts and delivery timeline](VantageNet/VANTAGENET.md)
+- [Lazuardi: UiPath and automation responsibilities](VantageNet/ROLE_LAZUARDI.md)
+- [Faizh: backend, AI and integration responsibilities](VantageNet/ROLE_FAIZH.md)
+- [Full application handoff and local setup](handoff.md)
+
+Local presentation builds, generated decks, private reference PDFs, databases and
+credentials are excluded from Git. Public synthetic workbooks, validation assets,
+application source and benchmark evidence remain part of the repository.
+
 ## What works now
 
 - **Division intake:** .xlsx and UTF-8 .csv, one worksheet per upload. Supports

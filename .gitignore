@@ -6,6 +6,14 @@ node_modules/
 # Local deploy/review scratch (not part of the submission)
 .deploy/
 CHANGELOG_AI_REVISION.md
+/.deck-*/
+/.MD_Context/
+/tmp/
+.local/
+
+# Generated presentation deliverables and private reference decks
+/output/
+/Deck_Example/*.pdf
 
 # Python
 __pycache__/
@@ -39,14 +47,15 @@ wheels/
 *.db
 *.sqlite
 *.sqlite3
+*.db-*
+*.sqlite-*
+*.sqlite3-*
 backend/omnikpi.db
 
 # Environment variables & secrets
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 *.pem
 *.key
 
@@ -83,6 +92,14 @@ backend/evidence/*lighthouse*.json
 backend/evidence/division-demo/*.png
 backend/evidence/division-demo/*.inspect.ndjson
 backend/evidence/division-demo/initial-build-data.json
+
+# Local legacy RCA experiments; retain product tests and published benchmarks
+/backend/run_live_tests.py
+/backend/measure_rca_retrieval.py
+/backend/evidence/harvester_mapping.json
+/backend/evidence/rca_latency.json
+/backend/evidence/rca_mttd.json
+/backend/evidence/rca_network_availability.json
 
 # Local AI tooling
 AGENTS.md
