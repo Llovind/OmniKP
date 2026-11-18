@@ -1,0 +1,5 @@
+{
+  "input_path": "independent-work.synthetic.json",
+  "delivery_mode": "draft_only",
+  "test_recipient": "ed-reviewer@example.invalid"
+}

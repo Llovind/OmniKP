@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>VantageNet narrative review</title>
+<style>body{font:17px system-ui;max-width:1000px;margin:30px auto;padding:20px;color:#172d3c;background:#f5f8fa}pre{white-space:pre-wrap;background:white;padding:16px;border:1px solid #ccd5dc}label{display:block;margin:18px 0}textarea{width:98%;min-height:130px}input,select,textarea,button{font:inherit;padding:8px}button{margin:16px 0}</style>
+<h1>Review synthetic report narrative</h1><p>SYNTHETIC LOCAL FIXTURE — no live AI/RCA. Provisional report template. Saving a decision does not generate or distribute a report.</p>
+<h2>Report scope, selected KPI and source</h2><pre id="scope"></pre>
+<h2>Feedback source and evidence references</h2><pre id="evidence"></pre>
+<h2>Original synthetic narrative</h2><pre id="original"></pre>
+<label>Reviewed narrative (edit as needed; maximum 600 characters and 10 wrapped lines in this provisional template)<textarea id="narrative" maxlength="600"></textarea></label>
+<pre id="binding"></pre>
+<label>Reviewer <input id="reviewer" maxlength="60" required></label><label>Rationale (one line, maximum 200 characters)<textarea id="reason" maxlength="200" required></textarea></label>
+<label>Decision <select id="decision" required><option value="" disabled selected>Choose explicitly</option><option value="approve">Approve reviewed narrative</option><option value="request_revision">Request revision</option><option value="reject">Reject report narrative</option></select></label>
+<button id="save">Save narrative decision JSON</button><p id="message" role="status"></p>
+<script>
+const data=/*NARRATIVE_DATA*/null;
+if(data){
+const {request:r,snapshot:s}=data;
+document.querySelector('#scope').textContent=JSON.stringify({period:s.report_date,division:s.division,run_id:s.run_id,submission_id:s.submission_id,reading:s.reading},null,2);
+document.querySelector('#evidence').textContent=JSON.stringify({feedback:s.feedback,references:s.narrative.references,origin:s.narrative.origin},null,2);
+document.querySelector('#original').textContent=s.narrative.draft;
+document.querySelector('#narrative').value=s.narrative.draft;
+document.querySelector('#binding').textContent=JSON.stringify({snapshot_sha256:r.snapshot_sha256,narrative_sha256:r.narrative_sha256,template_sha256:r.template_sha256,prepared_at:r.created_at},null,2);
+document.querySelector('#save').onclick=()=>{
+const reviewer=document.querySelector('#reviewer').value.trim(),reason=document.querySelector('#reason').value.trim(),decision=document.querySelector('#decision').value,reviewed_narrative=document.querySelector('#narrative').value;
+if(!reviewer||reviewer.length>60||reason.length>200||reason.includes('\n')||!reason||!decision||!reviewed_narrative.trim()||reviewed_narrative.length>600||reviewed_narrative.split('\n').reduce((n,line)=>n+Math.max(1,Math.ceil(line.length/60)),0)>10){document.querySelector('#message').textContent='Enter reviewer, one-line rationale, an explicit decision, and narrative within the provisional template limits.';return;}
+const d={run_id:r.run_id,submission_id:r.submission_id,snapshot_sha256:r.snapshot_sha256,narrative_sha256:r.narrative_sha256,template_sha256:r.template_sha256,reviewer,reason,decision,reviewed_narrative,decided_at:new Date().toISOString()};
+const url=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='narrative-decision-'+r.run_id+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);document.querySelector('#message').textContent='Decision saved locally. Supply its absolute path for UiPath review resume. No report has been generated or sent.';
+};}
+</script></html>

@@ -1,0 +1,10 @@
+{
+  "base_url": "http://127.0.0.1:8000",
+  "input_file": "../../../../frontend/public/demo/divisions/ed.xlsx",
+  "output_folder": "../Output",
+  "division": "ED",
+  "report_date": "2026-06-30",
+  "sheet_name": "Report",
+  "header_row": 4,
+  "header_depth": 1
+}

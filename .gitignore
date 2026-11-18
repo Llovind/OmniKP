@@ -108,3 +108,9 @@ AGENTS.md
 .claude/
 .impeccable/
 skills-lock.json
+
+# Local UiPath collaboration artifacts (scoped; existing ignore behavior retained)
+/automation/local-evidence/
+/decision*.json
+/narrative-decision*.json
+/.collaboration-review/

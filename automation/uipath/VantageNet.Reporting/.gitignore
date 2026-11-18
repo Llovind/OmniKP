@@ -1,0 +1,39 @@
+# Proposed collaboration copy: preserve source/templates, exclude machine state and outputs
+AGENTS.md
+CLAUDE.md
+.local/
+.codedworkflows/
+.claude/
+.codex/
+.agents/
+.settings/
+.tmh/
+Output/
+entry-points.json
+bindings_v2.json
+__pycache__/
+*.py[cod]
+*.log
+*.db
+*.db-*
+*.sqlite*
+*.nupkg
+*.tmp
+*.lock
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+credentials*.json
+.secrets/
+Tests/requests.jsonl
+decision*.json
+narrative-decision*.json
+# Data/provisional-report-template.pptx is intentional safe synthetic source.
+
+# Regenerated empty repository/package metadata; no selectors used by this project
+.objects/
+.project/

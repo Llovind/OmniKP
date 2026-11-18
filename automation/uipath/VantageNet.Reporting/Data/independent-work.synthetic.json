@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "origin": "synthetic-local-fixture",
+  "run_id": "offline-ed-report-001",
+  "submission_id": "synthetic-report-fixture-not-import-evidence",
+  "division": "ED",
+  "report_date": "2026-06-30",
+  "reading": {
+    "fact_id": "synthetic-fact-001",
+    "kpi_name": "Synthetic deployment KPI",
+    "location_name": "Demo North",
+    "date": "2026-06-30",
+    "division": "ED",
+    "actual_value": 97.8,
+    "target_value": 98.5,
+    "unit": "%",
+    "source_file": "synthetic-report-fixture.json",
+    "source_row": 1
+  },
+  "narrative": {
+    "origin": "synthetic-script-not-live-RCA",
+    "draft": "Synthetic review text: operator feedback is needed before drawing a causal conclusion.",
+    "references": [{"id": "F1", "text": "Synthetic fixture source, not actual operator feedback."}]
+  }
+}

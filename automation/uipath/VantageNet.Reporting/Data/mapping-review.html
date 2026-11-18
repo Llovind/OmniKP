@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>VantageNet Mapping Review</title>
+<style>body{font:16px system-ui;max-width:1200px;margin:32px auto;padding:20px;background:#f5f8fa;color:#172d3c}table{border-collapse:collapse;width:100%;background:white}td,th{padding:12px;border:1px solid #ccd5dc;text-align:left}input,select,textarea,button{font:inherit;padding:8px}button{margin:12px}pre{white-space:pre-wrap}label{display:block;margin:16px 0}</style>
+<style>select{appearance:auto;color:#172d3c;background:#fff;min-width:12rem}select option{color:#172d3c;background:#fff}</style>
+<h1>Review column meanings</h1><p>Local development review. Saving this form does not import anything. A separately resumed controlled workflow can import only after explicit approval and import authorization.</p><p id="context"></p>
+<p id="proposalSource" role="note"></p>
+<p id="approvalContext" role="note"></p>
+<table><thead><tr><th>Source column</th><th>Sample values</th><th>Proposal and reason</th><th>Reviewed target</th></tr></thead><tbody id="rows"></tbody></table>
+<h2>Backend validation (latest review when available)</h2><pre id="validation"></pre>
+<label>Reviewer <input id="reviewer" required></label><label>Rationale <textarea id="reason" required></textarea></label>
+<label>Default direction <select id="direction"><option value="">Unspecified</option><option>Higher better</option><option>Lower better</option></select></label>
+<label>Decision <select id="decision" required><option value="" selected disabled>Choose explicitly</option><option value="correct">Submit corrections for validation</option><option value="approve">Approve this mapping for validation</option><option value="reject">Reject proposal</option></select></label>
+<button id="save">Save decision JSON</button><p id="message" role="status"></p>
+<label>Disposable backend instance ID (from the development launcher) <input id="instance"></label>
+<label><input id="confirm" type="checkbox"> I explicitly authorize importing this exact mapping into the disposable ED test database after validation. Leave unchecked for review only.</label>
+<script>
+const data=/*REVIEW_DATA*/null;
+if(data){
+const {preview:p,manifest:m,request:r,fields}=data, inputs=new Map();
+const validated=data.validated_payload, approval=data.approval_context;
+document.querySelector('#proposalSource').textContent=p.ai_trace?.mode==='synthetic-test-not-AI'?'NON-AI TEST PROPOSAL: deterministic synthetic test input. No live AI interpretation was performed.':p.ai_trace?.mode==='live'?'Source: backend-reported live AI proposal. Human review is required.':'Proposal source is unverified. Do not describe this as live AI.';
+document.querySelector('#context').textContent=`${m.filename} | ${m.division} | ${m.report_date} | submission ${p.submission_id}`;
+document.querySelector('#approvalContext').textContent=approval?`Validated human mapping loaded. Expected readings: ${approval.expected_readings}. Target: LOCAL DISPOSABLE synthetic ED database at ${approval.base_url}. Backend instance: ${approval.backend_instance_id}. State: ${approval.state}. Validated payload SHA-256: ${approval.payload_sha256}. Original correction SHA-256: ${approval.decision_sha256}. Recheck all targets; select your own decision and separately authorize import only if intended.`:'No validated human mapping loaded. Review the original proposal.';
+const targets=[...new Set([...fields,...Object.values(p.column_mapping).map(proposal=>proposal.target),...Object.values(validated?.mapping||{})])];
+for(const col of p.columns){
+ const tr=document.createElement('tr'), proposal=p.column_mapping[col];
+ const values=[col,(p.raw_preview||[]).slice(0,5).map(row=>JSON.stringify(row[col])).join('\n'),`${proposal.target}\n${proposal.reason||'No reasoning provided'}`];
+ for(const v of values){const td=document.createElement('td');td.textContent=v;tr.append(td);}
+ const td=document.createElement('td'),input=document.createElement('select');
+ for(const target of targets){const option=document.createElement('option');option.value=target;option.textContent=target;input.append(option);}
+ input.value=validated?.mapping[col]??proposal.target;input.setAttribute('aria-label',`Reviewed target for ${col}`);td.append(input);tr.append(td);document.querySelector('#rows').append(tr);inputs.set(col,input);
+}
+document.querySelector('#direction').value=validated?.default_direction||'';
+const v=data.latest_review||p;document.querySelector('#validation').textContent=JSON.stringify({can_confirm:v.can_confirm,valid_readings:v.valid_readings,issues:v.issues,conflicts:v.conflicts,conflict_count:v.conflict_count,preview:v.preview},null,2);
+document.querySelector('#save').onclick=()=>{
+const reviewer=document.querySelector('#reviewer').value.trim(),reason=document.querySelector('#reason').value.trim(),decision=document.querySelector('#decision').value;
+if(!reviewer||!reason||!decision){document.querySelector('#message').textContent='Enter reviewer, rationale and an explicit decision.';return;}
+const mapping=Object.fromEntries([...inputs].map(([col,input])=>[col,input.value.trim()]));
+const authorize_confirm=document.querySelector('#confirm').checked===true;
+const backend_instance_id=document.querySelector('#instance').value.trim();
+if(authorize_confirm&&(decision!=='approve'||!backend_instance_id)){document.querySelector('#message').textContent='Import authorization requires Approve and the disposable backend instance ID.';return;}
+if(authorize_confirm&&approval&&backend_instance_id!==approval.backend_instance_id){document.querySelector('#message').textContent='Backend instance ID must match the displayed disposable target.';return;}
+const d={...r,reviewer,reason,decision,mapping,authorize_confirm,backend_instance_id,default_direction:document.querySelector('#direction').value||null,decided_at:new Date().toISOString()};
+const url=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=approval?'decision-import.json':'decision.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);document.querySelector('#message').textContent='Decision saved. Run ReviewMapping.cs with this file to validate it. Nothing has been imported.';
+};}
+</script></html>

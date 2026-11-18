@@ -1,0 +1,6 @@
+{
+  "Name": "VantageNet.Reporting",
+  "ProjectType": "Process",
+  "Description": "VantageNet Human-in-the-Loop Reporting Automation",
+  "MainFile": "Main.xaml"
+}

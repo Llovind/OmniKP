@@ -1,0 +1,23 @@
+// Read-only renderer regression; never invokes Save or creates a human decision.
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const html=fs.readFileSync(process.argv[2],'utf8');
+const elements=new Map(['scope','evidence','original','narrative','binding','reviewer','reason','decision','save','message'].map(id=>['#'+id,{value:'',textContent:''}]));
+const document={querySelector:id=>elements.get(id),createElement:()=>{throw Error('Save must never be invoked')}};
+const data=vm.runInNewContext(html.match(/<script>([\s\S]*)<\/script>/)[1]+';data',{document});
+assert.equal(elements.get('#narrative').value,data.snapshot.narrative.draft);
+assert.equal(elements.get('#original').textContent,data.snapshot.narrative.draft);
+for(const key of ['reviewer','reason','decision'])assert.equal(elements.get('#'+key).value,'');
+const scope=JSON.parse(elements.get('#scope').textContent);
+assert.equal(scope.reading.fact_id,data.snapshot.reading.fact_id);
+assert.equal(scope.period,data.snapshot.report_date);
+assert.equal(scope.division,data.snapshot.division);
+const evidence=JSON.parse(elements.get('#evidence').textContent);
+assert.equal(evidence.feedback.origin,'synthetic-fixture-not-human-feedback');
+assert.equal(evidence.references[0].id,'F1');
+const decisions=[...html.matchAll(/<option value="([^"]*)"/g)].map(m=>m[1]);
+assert.deepEqual(decisions,['','approve','request_revision','reject']);
+assert.match(html,/<option value="" disabled selected>/);
+assert.match(elements.get('#binding').textContent,/snapshot_sha256/);
+console.log('PASS: full synthetic scope/evidence, editable draft, original retained, three explicit decisions, blank human controls; Save never invoked.');
