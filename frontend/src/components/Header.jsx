@@ -42,7 +42,7 @@ export default function Header({ date, dataset }) {
     try { localStorage.setItem('omnikpi-theme', theme); } catch { /* Private browsing can disable storage. */ }
   }, [theme]);
   return <header className="workspace-header">
-    <a className="wordmark" href="#main">omni<strong>KPI</strong></a>
+    <a className="wordmark" href="#main">Vantage<strong>Net</strong></a>
     <span className="workspace-label">Performance workspace</span>
     <div className="header-actions" style={demo ? {flexWrap:'wrap', maxWidth:'100%'} : undefined}>
       <a href="/" style={{color:'inherit'}}>Home</a>

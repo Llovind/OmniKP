@@ -22,7 +22,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from database import DimDomain, get_db, init_db, SessionLocal
+from database import DimDomain, get_db, get_disposable_instance_info, init_db, SessionLocal
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -93,7 +93,13 @@ app.mount('/api/demo/workspace', demo_workspace)
 @app.get("/api/v1/health", tags=["System"])
 def health_check():
     """Liveness probe. Returns app version and status."""
-    return {"status": "ok", "version": "0.1.0", "app": "OmniKPI"}
+    return {"status": "ok", "version": "0.1.0", "app": "OmniKPI", "product": "VantageNet"}
+
+
+@app.get("/_development/instance", tags=["System"])
+def disposable_instance_identity():
+    """Report whether this process is running against an isolated disposable test database."""
+    return get_disposable_instance_info()
 
 
 @app.get("/api/v1/domains", tags=["System"])

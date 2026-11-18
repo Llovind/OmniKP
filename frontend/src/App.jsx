@@ -131,12 +131,12 @@ export default function App() {
         <p className="filter-help">Colors show target attainment. Z-scores provide separate historical context.</p>
       </div>
       {!loading && !error && !stats.total ? <section className="glass empty-workspace">
-        <img className="brand-art" src="/brand/omnikpi.png" width="515" height="460" alt="OMNIkpi: agentic infrastructure and industrial intelligence" />
+        <img className="brand-art" src="/brand/omnikpi.png" width="515" height="460" alt="VantageNet: telco KPI performance workspace" />
         <div className="space-y-4">
         <h2 className="display-font text-xl">Bring your reports into focus.</h2>
         <p className="text-sm text-slate-400">Upload a division report to build your shared performance view. Review the column mappings before any readings are added.</p>
         <button className="btn-primary" onClick={openUpload}>Upload your first report</button>
-        <p className="text-xs text-slate-400">Exploring omniKPI? Start with a synthetic sample.</p>
+        <p className="text-xs text-slate-400">Exploring VantageNet? Start with a synthetic sample.</p>
         <div className="flex flex-wrap gap-3">
           <button className="btn-ghost" onClick={openUpload}>Browse seven division workbooks</button>
         </div>

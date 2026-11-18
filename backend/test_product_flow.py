@@ -308,6 +308,160 @@ class ProductFlow(unittest.TestCase):
             self.assertIsNotNone(facts[10].z_score)
             self.assertTrue(all(f.status == 'RED' for f in facts))
 
+    def test_disposable_instance_identity_and_submission_reconciliation(self):
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop('VANTAGENET_DISPOSABLE', None)
+            os.environ.pop('VANTAGENET_DISPOSABLE_INSTANCE_ID', None)
+            os.environ.pop('DISPOSABLE_INSTANCE_ID', None)
+            default_info = self.client.get('/_development/instance')
+            self.assertEqual(default_info.status_code, 200)
+            self.assertFalse(default_info.json()['disposable'])
+            self.assertEqual(default_info.json()['instance_id'], '')
+        with patch.dict(os.environ, {'VANTAGENET_DISPOSABLE': '1', 'VANTAGENET_DISPOSABLE_INSTANCE_ID': 'ed-disposable-check'}):
+            enabled_info = self.client.get('/_development/instance')
+            self.assertEqual(enabled_info.status_code, 200)
+            self.assertEqual(enabled_info.json()['disposable'], True)
+            self.assertEqual(enabled_info.json()['instance_id'], 'ed-disposable-check')
+            self.assertEqual(enabled_info.json()['app'], 'VantageNet')
+
+        fixtures = Path(__file__).resolve().parents[1] / 'frontend/public/demo/divisions'
+        ed_bytes = (fixtures / 'ed.xlsx').read_bytes()
+        staged = self.stage(ed_bytes, division='ED', day='2026-06-30', filename='ed.xlsx', sheet_name='Report', header_row=4, header_depth=1)
+        sub_id = staged['submission_id']
+
+        draft_detail = self.client.get(f'/api/v1/domains/1/submissions/{sub_id}')
+        self.assertEqual(draft_detail.status_code, 200, draft_detail.text)
+        self.assertEqual(draft_detail.json()['status'], 'draft')
+        self.assertEqual(draft_detail.json()['readings'], [])
+
+        # Simulate corrected mapping validation before confirm.
+        mapping = {col: info['target'] for col, info in staged['column_mapping'].items()}
+        bad_mapping = {**mapping, 'Realisasi': 'ignore'}
+        invalid_review = self.client.post(f'/api/v1/domains/1/submissions/{sub_id}/review', json={'mapping': bad_mapping})
+        self.assertEqual(invalid_review.status_code, 422)
+
+        self.accept(staged, mapping)
+        confirmed_detail = self.client.get(f'/api/v1/domains/1/submissions/{sub_id}')
+        self.assertEqual(confirmed_detail.status_code, 200, confirmed_detail.text)
+        body = confirmed_detail.json()
+        self.assertEqual(body['status'], 'confirmed')
+        self.assertEqual(body['division'], 'ED')
+        self.assertEqual(body['filename'], 'ed.xlsx')
+        self.assertEqual(body['report_date'], '2026-06-30')
+        self.assertEqual(body['fingerprint'], '9ce70be76344f7839cb405c2053cd9e2b5ce750794ff53d84c61793903bd5b1c')
+        self.assertEqual(body['mapping'], mapping)
+        rows = body['readings']
+        self.assertEqual(len(rows), 26)
+        self.assertEqual(len({r['fact_id'] for r in rows}), 26)
+        self.assertTrue(all(r['submission_id'] == sub_id and r['division'] == 'ED' and r['source_file'] == 'ed.xlsx' and r['date'] == '2026-06-30' and r['source_row'] > 4 for r in rows))
+
+        # Re-importing the exact file is blocked with 409 and does not add readings.
+        dup_stage = self.stage(ed_bytes, division='ED', day='2026-06-30', filename='ed.xlsx', sheet_name='Report', header_row=4, header_depth=1)
+        self.assertFalse(dup_stage['can_confirm'])
+        dup_confirm = self.client.post(f"/api/v1/domains/1/submissions/{dup_stage['submission_id']}/confirm", json={'mapping': mapping})
+        self.assertEqual(dup_confirm.status_code, 409)
+        with SessionLocal() as db:
+            self.assertEqual(db.query(FactKPI).count(), 26)
+
+    def test_feedback_provenance_and_consistent_report_bundle_statuses(self):
+        fixtures = Path(__file__).resolve().parents[1] / 'frontend/public/demo/divisions'
+        ed_staged = self.stage((fixtures / 'ed.xlsx').read_bytes(), division='ED', day='2026-06-30', filename='ed.xlsx', sheet_name='Report', header_row=4, header_depth=1)
+        self.accept(ed_staged)
+        ed_detail = self.client.get(f"/api/v1/domains/1/submissions/{ed_staged['submission_id']}").json()
+        ed_red = next(r for r in ed_detail['readings'] if r['status'] == 'RED')
+        ed_fb = self.client.get('/api/v1/domains/1/feedback', params={'fact_id': ed_red['fact_id']})
+        self.assertEqual(ed_fb.status_code, 200, ed_fb.text)
+        self.assertGreaterEqual(ed_fb.json()['feedback_count'], 1)
+        self.assertEqual(ed_fb.json()['feedback'][0]['origin'], 'fixture-worksheet-notes')
+
+        # Second layout (MBB wide columns, no notes column -> awaiting_feedback -> operator-api feedback).
+        mbb_staged = self.stage((fixtures / 'mbb.xlsx').read_bytes(), division='MBB', day='2026-06-30', filename='mbb.xlsx', sheet_name='Report', header_row=4, header_depth=1)
+        self.assertEqual(self.accept(mbb_staged)['readings_imported'], 34)
+        anomalies = self.client.get('/api/v1/domains/1/anomalies', params={'dataset': 'submitted', 'division': 'MBB', 'date': '2026-06-30'}).json()
+        self.assertGreater(anomalies['total_anomalies'], 0)
+        mbb_fact = anomalies['anomalies'][0]
+        mbb_sub_id = mbb_staged['submission_id']
+
+        # Cross-submission lookup must be rejected.
+        cross = self.client.post('/api/v1/domains/1/report-bundles', json={
+            'submission_id': ed_staged['submission_id'], 'fact_id': mbb_fact['fact_id'], 'bundle_id': 'cross-check', 'revision': 'v1',
+        })
+        self.assertEqual(cross.status_code, 404)
+
+        with patch.dict(os.environ, {'VANTAGENET_DISPOSABLE': '1', 'VANTAGENET_DISPOSABLE_INSTANCE_ID': 'bundle-test-instance'}):
+            # 1. awaiting_feedback (no feedback on MBB reading; AI not invoked)
+            awaiting = self.client.post('/api/v1/domains/1/report-bundles', json={
+                'submission_id': mbb_sub_id, 'fact_id': mbb_fact['fact_id'], 'bundle_id': 'mbb-gap', 'revision': 'v1',
+            })
+            self.assertEqual(awaiting.status_code, 200, awaiting.text)
+            ab = awaiting.json()
+            self.assertEqual(ab['contract'], 'vantagenet.report-bundle')
+            self.assertEqual(ab['schema_version'], 2)
+            self.assertEqual(ab['source_kind'], 'backend-read-bundle')
+            self.assertEqual(ab['evidence_status'], 'awaiting_feedback')
+            self.assertFalse(ab['ai_invoked'])
+            self.assertEqual(ab['scope']['fact_id'], str(mbb_fact['fact_id']))
+            self.assertEqual(ab['producer']['instance_id'], 'bundle-test-instance')
+            self.assertIsNone(ab['snapshot']['narrative']['draft'])
+
+            # Add genuine operator feedback to MBB reading.
+            fb_post = self.client.post('/api/v1/domains/1/feedback', json={
+                'fact_id': mbb_fact['fact_id'],
+                'explanation': 'Synthetic test feedback: RAN to Core backhaul congestion during maintenance.',
+                'corrective_action': 'Re-route traffic and schedule capacity check.',
+            })
+            self.assertEqual(fb_post.status_code, 200, fb_post.text)
+            fb_id = fb_post.json()['feedback_id']
+            self.assertEqual(fb_post.json()['origin'], 'operator-api')
+            fb_list = self.client.get('/api/v1/domains/1/feedback', params={'fact_id': mbb_fact['fact_id']}).json()
+            self.assertEqual(fb_list['feedback'][0]['origin'], 'operator-api')
+
+            # 2. provider_unavailable (feedback exists, OPENROUTER_API_KEY empty)
+            unavailable = self.client.post('/api/v1/domains/1/report-bundles', json={
+                'submission_id': mbb_sub_id, 'fact_id': mbb_fact['fact_id'], 'bundle_id': 'mbb-gap', 'revision': 'v2',
+            })
+            self.assertEqual(unavailable.status_code, 200, unavailable.text)
+            ub = unavailable.json()
+            self.assertEqual(ub['evidence_status'], 'provider_unavailable')
+            self.assertFalse(ub['ai_invoked'])
+            self.assertIsNone(ub['snapshot']['narrative']['draft'])
+            self.assertTrue(ub['snapshot']['narrative']['error'])
+
+            # 3. insufficient_evidence (AI called, returns insufficient_evidence=true)
+            insufficient = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({'insufficient_evidence': True})))])
+            with patch.object(feedback_rca, 'OPENROUTER_API_KEY', 'test'), patch.object(
+                    feedback_rca._client.chat.completions, 'create', new=AsyncMock(return_value=insufficient)):
+                ins_resp = self.client.post('/api/v1/domains/1/report-bundles', json={
+                    'submission_id': mbb_sub_id, 'fact_id': mbb_fact['fact_id'], 'bundle_id': 'mbb-gap', 'revision': 'v3',
+                })
+                self.assertEqual(ins_resp.status_code, 200, ins_resp.text)
+                ib = ins_resp.json()
+                self.assertEqual(ib['evidence_status'], 'insufficient_evidence')
+                self.assertTrue(ib['ai_invoked'])
+                self.assertIsNone(ib['snapshot']['narrative']['draft'])
+
+            # 4. draft_ready (AI called, valid [F<id>] citation)
+            valid = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({
+                'root_cause': f'Division reported backhaul congestion [F{fb_id}].',
+                'prescriptive_action': f'Re-route traffic and schedule capacity check [F{fb_id}].',
+                'cited_feedback_ids': [fb_id],
+            })))])
+            with patch.object(feedback_rca, 'OPENROUTER_API_KEY', 'test'), patch.object(
+                    feedback_rca._client.chat.completions, 'create', new=AsyncMock(return_value=valid)):
+                ready_resp = self.client.post('/api/v1/domains/1/report-bundles', json={
+                    'submission_id': mbb_sub_id, 'fact_id': mbb_fact['fact_id'], 'bundle_id': 'mbb-gap', 'revision': 'v4',
+                })
+                self.assertEqual(ready_resp.status_code, 200, ready_resp.text)
+                rb = ready_resp.json()
+                self.assertEqual(rb['evidence_status'], 'draft_ready')
+                self.assertTrue(rb['ai_invoked'])
+                self.assertEqual(rb['snapshot']['feedback']['origin'], 'operator-api')
+                self.assertEqual(rb['snapshot']['narrative']['references'][0]['id'], f'F{fb_id}')
+                self.assertIn(f'[F{fb_id}]', rb['snapshot']['narrative']['draft'])
+                self.assertTrue(rb['snapshot']['narrative']['grounding']['citation_verified'])
+
+        self.assertEqual(self.client.get('/api/v1/domains/1/feedback', params={'fact_id': 999999}).status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()

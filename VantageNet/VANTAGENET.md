@@ -159,16 +159,20 @@ Prefix produk untuk MVP: `/api/v1/domains/1`.
 
 | Langkah | Method dan endpoint | Kontrak utama |
 |---|---|---|
+| Identitas uji | `GET /_development/instance` | Status `disposable`, `instance_id`, `domain_id`, `app`, `database` (tanpa secret) |
 | Cek server | `GET /api/v1/health` | Liveness; bukan bukti provider AI dapat dipakai |
 | Cek AI | `GET /api/v1/ai/status` | Konfigurasi live/model tanpa key; bukan pengganti satu panggilan AI nyata |
 | Interpretasi | `POST /api/v1/domains/1/submissions/preview` | Multipart: file, division, report_date, sheet_name, header_row, header_depth |
 | Validasi | `POST /api/v1/domains/1/submissions/{submission_id}/review` | JSON: mapping hasil review manusia dan default_direction jika diperlukan |
 | Import | `POST /api/v1/domains/1/submissions/{submission_id}/confirm` | JSON yang sama dengan versi mapping yang baru lolos review |
 | Ledger | `GET /api/v1/domains/1/submissions` | Submission yang sudah confirmed |
+| Detail & rekonsiliasi | `GET /api/v1/domains/1/submissions/{submission_id}` | Status submission (`draft`/`confirmed`), `mapping`, `fingerprint`, dan daftar `readings` beserta `fact_id` dan provenance |
 | Data laporan | `GET /api/v1/domains/1/heatmap?dataset=submitted&date=2026-06-30` | Filter date/division sesuai run; jangan memakai data latest tanpa sengaja |
 | Shortfall | `GET /api/v1/domains/1/anomalies?dataset=submitted&date=2026-06-30` | Reading gagal target; respons berisi fact_id, KPI, lokasi, tanggal dan division |
-| Feedback | `POST /api/v1/domains/1/feedback` | JSON: fact_id, explanation, corrective_action |
+| Baca feedback | `GET /api/v1/domains/1/feedback?fact_id={fact_id}` | Mengambil daftar feedback exact-fact beserta `origin` (`fixture-worksheet-notes` vs `operator-api`) |
+| Feedback | `POST /api/v1/domains/1/feedback` | JSON: fact_id, explanation, corrective_action (mengembalikan `feedback_id`, `reference`, `origin: "operator-api"`) |
 | Draft RCA | `POST /api/v1/domains/1/rca` | JSON: kpi_id, location_id, fact_id |
+| Bundle laporan (1-reading) | `POST /api/v1/domains/1/report-bundles` | JSON: `submission_id`, `fact_id`, `bundle_id`, `revision`; menghasilkan bundle konsisten `vantagenet.report-bundle` `schema_version: 2` (`source_kind: "backend-read-bundle"`), atau CLI `backend/export_report_bundle.py` |
 
 **Perbedaan bentuk mapping:** respons preview berisi objek per kolom, misalnya
 `column_mapping["Realisasi"].target`. Request review/confirm memerlukan dictionary
@@ -213,9 +217,7 @@ Contoh bentuk feedback dan RCA, dengan ID ilustratif yang harus diganti hasil AP
 kegagalan provider dapat berupa 503. HTTP 200 pada `/review` tetap harus diperiksa
 isi `can_confirm`, `issues`, dan `conflicts`-nya.
 
-Belum ada endpoint baru yang dijanjikan untuk export PPTX, mengambil detail draft,
-menyimpan approval, atau membuat snapshot. Faizh dan Lazuardi menyepakati bentuk
-adapter/bundle terkecil yang dibutuhkan, lalu mendokumentasikan implementasinya.
+Kontrak export PPTX langsung atau penyimpanan status approval Action Center di sisi backend belum diimplementasikan. Untuk batas data laporan 1-reading, backend kini menyediakan `GET /api/v1/domains/1/submissions/{submission_id}`, `GET /api/v1/domains/1/feedback?fact_id={fact_id}`, `POST /api/v1/domains/1/report-bundles`, dan CLI `backend/export_report_bundle.py` (`schema_version: 2`, `source_kind: "backend-read-bundle"`); detail implementasi dan catatan admission ada di [FAIZH_BACKEND_HANDOFF.md](FAIZH_BACKEND_HANDOFF.md). Adapter UiPath saat ini (`AdaptReportBundle.cs`) baru menerima `schema_version: 1` (`source_kind: "synthetic-fixture"`) dan masih memerlukan ekstensi terpisah di sisi UiPath untuk menerima `schema_version: 2`.
 
 ## 8. Data, AI dan aturan yang tidak boleh berubah
 

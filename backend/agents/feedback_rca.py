@@ -19,8 +19,10 @@ async def run_rca(db, domain_id, kpi_id, location_id, fact_id=None):
     source = db.query(ReadingSource).filter_by(fact_id=fact.fact_id).first()
     feedback = db.query(DivisionFeedback).filter_by(fact_id=fact.fact_id).order_by(
         DivisionFeedback.created_at.desc()).all()
-    evidence = [dict(feedback_id=f.feedback_id, reference=f"F{f.feedback_id}", division=f.division,
-                     explanation=f.explanation, corrective_action=f.corrective_action,
+    evidence = [dict(feedback_id=f.feedback_id, reference=f"F{f.feedback_id}", fact_id=f.fact_id,
+                     division=f.division, explanation=f.explanation,
+                     corrective_action=f.corrective_action,
+                     origin=getattr(f, "origin", "operator-api") or "operator-api",
                      created_at=f.created_at) for f in feedback]
     base = dict(kpi_name=kpi.kpi_name, location_name=loc.location_name, actual_value=fact.actual_value,
                 z_score=fact.z_score, fact_id=fact.fact_id, date=period.date,

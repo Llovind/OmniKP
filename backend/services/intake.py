@@ -409,7 +409,8 @@ def confirm(db, submission, mapping, default_direction=None):
                              division=submission.division, source_row=r['source_row']))
         if r['notes']:
             db.add(DivisionFeedback(fact_id=fact.fact_id, division=submission.division,
-                                    explanation=r['notes'], corrective_action='', created_at=now()))
+                                    explanation=r['notes'], corrective_action='',
+                                    origin='fixture-worksheet-notes', created_at=now()))
         affected.add((kpi.kpi_id, loc.location_id))
     db.flush()
     for kpi_id, location_id in affected:

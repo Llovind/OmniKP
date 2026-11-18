@@ -80,7 +80,7 @@ export default function RCAPanel({domainId, selectedCell, rcaData, loading, erro
         <button className="btn-primary w-full text-xs" disabled={saving || loading}>{saving ? 'Saving…' : 'Save feedback and draft RCA'}</button>
         <p className="text-[11px] text-slate-500">AI drafts use the selected reading and its division feedback. The draft must reference that feedback and remains subject to analyst review.</p>
       </form>}
-      <p className="text-xs text-slate-500 border-t border-white/10 pt-3">Advisory only. Network engineers review explanations and actions; OmniKPI does not execute network changes.</p>
+      <p className="text-xs text-slate-500 border-t border-white/10 pt-3">Advisory only. Network engineers review explanations and actions; VantageNet does not execute network changes.</p>
     </div>
   </aside>;
 }

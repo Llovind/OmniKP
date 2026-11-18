@@ -16,6 +16,7 @@ not an already completed integration.
 - [VantageNet: product, workflow, API contracts and delivery timeline](VantageNet/VANTAGENET.md)
 - [Lazuardi: UiPath and automation responsibilities](VantageNet/ROLE_LAZUARDI.md)
 - [Faizh: backend, AI and integration responsibilities](VantageNet/ROLE_FAIZH.md)
+- [Faizh: disposable backend startup, verification & report-bundle handoff](VantageNet/FAIZH_BACKEND_HANDOFF.md)
 - [Full application handoff and local setup](handoff.md)
 
 Local presentation builds, generated decks, private reference PDFs, databases and

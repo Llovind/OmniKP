@@ -37,6 +37,35 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+def get_disposable_instance_info() -> dict:
+    """Return disposable backend identity metadata without leaking secrets or host paths."""
+    flag = os.getenv("VANTAGENET_DISPOSABLE", "").strip().lower()
+    explicit_id = (
+        os.getenv("VANTAGENET_DISPOSABLE_INSTANCE_ID", "").strip()
+        or os.getenv("DISPOSABLE_INSTANCE_ID", "").strip()
+    )
+    if flag in ("0", "false", "no"):
+        disposable = False
+    elif flag in ("1", "true", "yes") or bool(explicit_id):
+        disposable = True
+    else:
+        db_name = os.path.basename(DATABASE_URL).lower()
+        disposable = "disposable" in db_name
+
+    instance_id = (explicit_id or "disposable-local-test") if disposable else ""
+    db_label = "sqlite"
+    if DATABASE_URL.startswith("sqlite:///"):
+        db_label = f"sqlite:{os.path.basename(DATABASE_URL.split('sqlite:///', 1)[1])}"
+
+    return {
+        "disposable": disposable,
+        "instance_id": instance_id,
+        "domain_id": 1,
+        "app": "VantageNet",
+        "database": db_label,
+    }
+
+
 # ─── Dimension Tables ─────────────────────────────────────────────────────────
 
 class DimDomain(Base):
@@ -215,6 +244,7 @@ class DivisionFeedback(Base):
     division = Column(String(100), nullable=False)
     explanation = Column(Text, nullable=False)
     corrective_action = Column(Text, nullable=False)
+    origin = Column(String(50), nullable=False, default="operator-api")
     created_at = Column(String(30), nullable=False)
 
 
@@ -229,6 +259,11 @@ def init_db() -> None:
     Base.metadata.create_all(bind=engine)
 
     with engine.connect() as conn:
+        cols = {row[1] for row in conn.execute(text("PRAGMA table_info(division_feedback)"))}
+        if cols and "origin" not in cols:
+            conn.execute(text(
+                "ALTER TABLE division_feedback ADD COLUMN origin VARCHAR(50) NOT NULL DEFAULT 'operator-api'"
+            ))
         # FTS5 virtual table: standalone (not content table) with UNINDEXED metadata
         # columns so we can filter by domain_id/location_id after a text MATCH.
         conn.execute(text("""
