@@ -20,9 +20,23 @@ namespace VantageNet.Reporting
             while (project != null && !File.Exists(Path.Combine(project.FullName, "project.json"))) project = project.Parent;
             NarrativeState.Require(project != null, "Snapshot must be within the existing project.");
             var s = NarrativeState.Read(snapshotPath);
-            NarrativeState.Require(NarrativeState.Text(s, "origin") == "synthetic-local-fixture" && NarrativeState.Text(s["narrative"]!, "origin") == "synthetic-script-not-live-RCA", "Only labeled synthetic report snapshots supported.");
             var run = NarrativeState.Text(s, "run_id");
             NarrativeState.Require(Regex.IsMatch(run, "^[A-Za-z0-9_-]{1,80}$"), "Invalid narrative run ID.");
+            var origin = NarrativeState.Text(s, "origin");
+            if (origin == "backend-confirmed-submission")
+            {
+                var staged = Path.Combine(project!.FullName, "Output", "ReportBundles", run);
+                NarrativeState.Require(string.Equals(snapshotPath, Path.Combine(staged, "snapshot.json"), StringComparison.OrdinalIgnoreCase), "Use the staged backend snapshot for narrative review.");
+                var state = NarrativeState.Read(Path.Combine(staged, "state.json"));
+                var binding = s["bundle_binding"]!;
+                NarrativeState.Require(NarrativeState.Text(state, "state") == "backend_snapshot_staged_requires_new_human_review" &&
+                    NarrativeState.Text(binding, "contract") == "vantagenet.report-bundle/2" &&
+                    NarrativeState.Text(binding, "bundle_sha256") == NarrativeState.FileHash(Path.Combine(staged, "bundle.json")) &&
+                    NarrativeState.Text(state, "bundle_sha256") == NarrativeState.Text(binding, "bundle_sha256") &&
+                    NarrativeState.Text(state, "snapshot_sha256") == NarrativeState.FileHash(snapshotPath), "Backend snapshot or bundle changed; stage a new revision.");
+            }
+            else
+                NarrativeState.Require(origin == "synthetic-local-fixture" && NarrativeState.Text(s["narrative"]!, "origin") == "synthetic-script-not-live-RCA", "Unsupported narrative snapshot provenance.");
             var reading = s["reading"]!;
             NarrativeState.Require(NarrativeState.Text(reading, "division") == NarrativeState.Text(s, "division") && NarrativeState.Text(reading, "date") == NarrativeState.Text(s, "report_date"), "Reading/report scope mismatch.");
             var folder = Path.Combine(project!.FullName, "Output", "NarrativeReview", run);

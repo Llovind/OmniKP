@@ -39,6 +39,7 @@ namespace VantageNet.Reporting
             }
             NarrativeState.Require(!File.Exists(Path.Combine(folder, "generation-intent.json")) && !File.Exists(output), "Incomplete or uncertain generation; inspect retained artifacts, do not overwrite.");
             var s = NarrativeState.Read(Path.Combine(folder, "snapshot.json"));
+            var backend = NarrativeState.Text(s, "origin") == "backend-confirmed-submission";
             var k = s["reading"]!;
             var text = NarrativeState.Text(d, "reviewed_narrative");
             NarrativeState.SaveNew(Path.Combine(folder, "generation-intent.json"), new JsonObject { ["decision_sha256"] = hash, ["snapshot_sha256"] = r["snapshot_sha256"]!.DeepClone(), ["template_sha256"] = r["template_sha256"]!.DeepClone() });
@@ -46,8 +47,13 @@ namespace VantageNet.Reporting
             File.Copy(NarrativeState.Text(r, "template_path"), temporary);
             using (var ppt = powerpoint.UsePresentationDocument(temporary, false))
             {
-                ppt.AddTextToSlide(1, "Scope", $"Period: {s["report_date"]} | Division: {s["division"]}\nRun: {run}\nSubmission: {s["submission_id"]}\nScope: one selected synthetic reading; not the 26-reading imported dataset", true);
-                ppt.AddTextToSlide(1, "KPI", $"{k["kpi_name"]}\nFact ID: {k["fact_id"]} | Location: {k["location_name"]}\nFixture shortfall label: {k["status"]}", true);
+                if (backend)
+                    for (var slide = 1; slide <= 3; slide++)
+                        ppt.AddTextToSlide(slide, "TestLabel", "PROVISIONAL REPORT | DISPOSABLE BACKEND", true);
+                var scope = backend ? "One selected confirmed reading" : "one selected synthetic reading; not the 26-reading imported dataset";
+                var statusLabel = backend ? "Target status" : "Fixture shortfall label";
+                ppt.AddTextToSlide(1, "Scope", $"Period: {s["report_date"]} | Division: {s["division"]}\nRun: {run}\nSubmission: {s["submission_id"]}\nScope: {scope}", true);
+                ppt.AddTextToSlide(1, "KPI", $"{k["kpi_name"]}\nFact ID: {k["fact_id"]} | Location: {k["location_name"]}\n{statusLabel}: {k["status"]}", true);
                 var actual = k["actual_value"]!.GetValue<double>();
                 var target = k["target_value"]!.GetValue<double>();
                 NarrativeState.Require(double.IsFinite(actual) && double.IsFinite(target) && actual >= 0 && target > 0, "Provisional chart supports finite nonnegative values and positive target only.");
@@ -57,7 +63,10 @@ namespace VantageNet.Reporting
                 ppt.AddTextToSlide(2, "Narrative", text, true);
                 ppt.AddTextToSlide(2, "Decision", $"Human-reviewed text; edits are not independently AI-validated.\nReviewer: {d["reviewer"]} | {d["decided_at"]}\nRationale: {d["reason"]}", true);
                 ppt.AddTextToSlide(3, "Source", $"{k["source_file"]}, row {k["source_row"]}\n{ k["division"]} | {k["date"]} | {k["location_name"]}\nSnapshot SHA-256: {r["snapshot_sha256"]}\nApproval SHA-256: {hash}", true);
-                ppt.AddTextToSlide(3, "References", s["narrative"]!["references"]!.ToJsonString() + "\nFeedback: " + s["feedback"]!.ToJsonString(), true);
+                var references = backend
+                    ? string.Join("\n", s["narrative"]!["references"]!.AsArray().Select(reference => $"{reference!["id"]} · {reference["origin"]}")) + $"\nBundle revision: {s["bundle_binding"]!["revision"]}"
+                    : s["narrative"]!["references"]!.ToJsonString() + "\nFeedback: " + s["feedback"]!.ToJsonString();
+                ppt.AddTextToSlide(3, "References", references, true);
             }
             File.Move(temporary, output);
             NarrativeState.SaveNew(receipt, new JsonObject { ["decision_sha256"] = hash, ["snapshot_sha256"] = r["snapshot_sha256"]!.DeepClone(), ["template_sha256"] = r["template_sha256"]!.DeepClone(), ["pptx_sha256"] = NarrativeState.FileHash(output), ["state"] = "generated_local_only", ["output_path"] = output });

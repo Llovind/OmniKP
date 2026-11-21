@@ -1,9 +1,9 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><title>VantageNet narrative review</title>
 <style>body{font:17px system-ui;max-width:1000px;margin:30px auto;padding:20px;color:#172d3c;background:#f5f8fa}pre{white-space:pre-wrap;background:white;padding:16px;border:1px solid #ccd5dc}label{display:block;margin:18px 0}textarea{width:98%;min-height:130px}input,select,textarea,button{font:inherit;padding:8px}button{margin:16px 0}</style>
-<h1>Review synthetic report narrative</h1><p>SYNTHETIC LOCAL FIXTURE — no live AI/RCA. Provisional report template. Saving a decision does not generate or distribute a report.</p>
+<h1>Review report narrative</h1><p id="provenance"></p>
 <h2>Report scope, selected KPI and source</h2><pre id="scope"></pre>
 <h2>Feedback source and evidence references</h2><pre id="evidence"></pre>
-<h2>Original synthetic narrative</h2><pre id="original"></pre>
+<h2>Original draft</h2><pre id="original"></pre>
 <label>Reviewed narrative (edit as needed; maximum 600 characters and 10 wrapped lines in this provisional template)<textarea id="narrative" maxlength="600"></textarea></label>
 <pre id="binding"></pre>
 <label>Reviewer <input id="reviewer" maxlength="60" required></label><label>Rationale (one line, maximum 200 characters)<textarea id="reason" maxlength="200" required></textarea></label>
@@ -13,6 +13,7 @@
 const data=/*NARRATIVE_DATA*/null;
 if(data){
 const {request:r,snapshot:s}=data;
+document.querySelector('#provenance').textContent=(s.origin==='backend-confirmed-submission'?'Disposable backend · AI draft from reading feedback.':'Synthetic local fixture · Scripted narrative.')+' Saving a decision records it locally.';
 document.querySelector('#scope').textContent=JSON.stringify({period:s.report_date,division:s.division,run_id:s.run_id,submission_id:s.submission_id,reading:s.reading},null,2);
 document.querySelector('#evidence').textContent=JSON.stringify({feedback:s.feedback,references:s.narrative.references,origin:s.narrative.origin},null,2);
 document.querySelector('#original').textContent=s.narrative.draft;

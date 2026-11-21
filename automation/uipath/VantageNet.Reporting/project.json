@@ -51,7 +51,13 @@
     {
       "filePath": "AdaptReportBundle.cs",
       "uniqueId": "1b61bd08-6aa2-4902-abcc-5ca264d40638",
-      "input": [{"name":"bundlePath","type":"System.String","required":true}],
+      "input": [{"name":"bundlePath","type":"System.String","required":true},{"name":"expectedInstanceId","type":"System.String","required":false}],
+      "output": [{"name":"Output","type":"System.String"}]
+    },
+    {
+      "filePath": "FetchReportBundle.cs",
+      "uniqueId": "d6545290-5385-4d21-ae65-106c31e96d59",
+      "input": [{"name":"manifestPath","type":"System.String","required":true},{"name":"factId","type":"System.Int32","required":true},{"name":"revision","type":"System.String","required":false}],
       "output": [{"name":"Output","type":"System.String"}]
     },
     {
