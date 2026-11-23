@@ -1,0 +1,363 @@
+#nullable enable
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading;
+using System.Threading.Tasks;
+using VantageNet.Reporting;
+
+// The offline harness compiles the entry point without launching a UiPath job.
+namespace UiPath.CodedWorkflows
+{
+    public class CodedWorkflow { }
+    public class WorkflowAttribute : Attribute { }
+}
+namespace UiPath.Core
+{
+    public class BusinessRuleException(string message) : Exception(message) { }
+}
+
+public static class OperatorFeedbackHarness
+{
+    private const string Origin = "http://127.0.0.1:8187";
+    private const string Instance = "vantagenet-acceptance-20261121-e63c";
+    private const string Submission = "aff04920-b5ee-4ddd-9786-9c94a7549d35";
+    private const string Label = "SYNTHETIC ACCEPTANCE SCENARIO";
+    private const string Explanation = "SYNTHETIC ACCEPTANCE SCENARIO — This is hypothetical test input, not a verified operational observation.\n\nThe Demo South deployment count is below its reporting target. For this test scenario, assume that several planned deployment activities are awaiting site-access coordination.";
+    private const string Action = "Review the pending deployment list, identify activities awaiting access approval, and coordinate revised execution schedules with the responsible teams.";
+    private const string LedgerPath = "/api/v1/domains/1/submissions/" + Submission;
+    private const string FeedbackPath = "/api/v1/domains/1/feedback";
+    private const string GetPath = FeedbackPath + "?fact_id=12";
+    private const string Created = "2026-12-01T13:20:00.123456+00:00";
+    private static readonly DateTimeOffset Now = new(2026, 12, 1, 13, 20, 0, TimeSpan.Zero);
+    private static readonly JsonSerializerOptions Wire = new() { WriteIndented = true };
+
+    public static async Task Run(string root, string projectSources)
+    {
+        await Case("success, receipt integrity and repeated invocation", async f =>
+        {
+            var html = await f.Prepare();
+            Check((await f.Prepare()) == html && f.Http.Posts == 0, "Repeat preparation must reuse the form");
+            var decision = f.Decision();
+            await Rejected(() => f.Run(decision), "authorizePost=true");
+            var result = await f.Run(decision, true);
+            JsonNode receipt = Read(result);
+            Check(Text(receipt, "state") == "verified" && Text(receipt, "scenario_label") == Label, "Expected synthetic verified receipt");
+            var feedback = receipt["feedback"]!;
+            Check(feedback["feedback_id"]!.GetValue<int>() == 6 && Text(feedback, "reference") == "F6"
+                && Text(feedback, "origin") == "operator-api" && Text(feedback, "created_at") == Created, "Receipt provenance");
+            Check(Text(feedback, "explanation") == Explanation && Text(feedback, "corrective_action") == Action, "Preserve exact text");
+            var postArchive = Path.Combine(f.Folder, "attempt", "feedback-post.json");
+            var getArchive = Path.Combine(Path.GetDirectoryName(result)!, "feedback-get.json");
+            CheckArchive(postArchive, f.Http.PostJsonBytes!, 200);
+            CheckArchive(getArchive, f.Http.LastGetBytes!, 200);
+            Check(Text(receipt, "post_archive_sha256") == Hash(postArchive) && Text(receipt, "get_archive_sha256") == Hash(getArchive),
+                "Receipt must hash both archives");
+            var intentPath = Path.Combine(f.Folder, "attempt", "write-intent.json");
+            Check(Text(Read(intentPath), "payload_sha256") == BackendBundleV2Digest.Sha256(f.Http.RequestBytes!), "Exact request hash");
+            Check(Text(Read(intentPath), "decision_sha256") == Hash(decision), "Decision must be bound before sending");
+            Check((await f.Run(decision, true)) != result && f.Http.Posts == 1, "Replay must use GET only");
+            Check(f.Http.Calls.Last() == "GET " + GetPath, "Feedback verification must use exact-fact GET");
+        });
+        await Case("reject wrong instance, ledger and reading", async f =>
+        {
+            foreach (var pair in new (JsonNode Node, string Key, JsonNode Replacement, string Error)[]
+            {
+                (f.Http.InstanceInfo, "instance_id", JsonValue.Create("disposable-wrong")!, "identity mismatch"),
+                (f.Http.InstanceInfo, "database", JsonValue.Create("sqlite:disposable_wrong.db")!, "identity mismatch"),
+                (f.Http.Ledger, "submission_id", JsonValue.Create("d4a77ab8-a4e1-4a8e-880e-764dc4a20c18")!, "confirmed submission"),
+                (f.Http.Ledger, "status", JsonValue.Create("draft")!, "confirmed submission"),
+                (f.Http.Reading, "fact_id", JsonValue.Create(11)!, "Exact fact"),
+                (f.Http.Reading, "kpi_name", JsonValue.Create("Wrong KPI")!, "acceptance fact"),
+                (f.Http.Reading, "location_id", JsonValue.Create(1)!, "acceptance fact"),
+                (f.Http.Reading, "actual_value", JsonValue.Create(547)!, "acceptance fact"),
+                (f.Http.Reading, "target_value", JsonValue.Create(601)!, "acceptance fact"),
+                (f.Http.Reading, "source_row", JsonValue.Create(17)!, "acceptance fact"),
+            })
+            {
+                var original = pair.Node[pair.Key]!.DeepClone();
+                pair.Node[pair.Key] = pair.Replacement;
+                await Rejected(f.Prepare, pair.Error);
+                pair.Node[pair.Key] = original;
+            }
+            Check(!Directory.Exists(Path.Combine(f.Folder, "review")) && f.Http.Posts == 0, "Invalid preflights must not prepare or POST");
+        });
+        await Case("reject stale and modified review", async f =>
+        {
+            await f.Prepare();
+            await Rejected(() => f.Run(f.Decision(d => d["request_sha256"] = new string('0', 64)), true), "different request");
+            await Rejected(() => f.Run(f.Decision(d => d["acknowledged"] = false), true), "different request");
+            await Rejected(() => f.Run(f.Decision(d => d["decided_at"] = Now.AddDays(-1).ToString("O")), true), "expired");
+            var decision = f.Decision();
+            File.AppendAllText(Path.Combine(f.Folder, "review", "operator-feedback-review.html"), "edited");
+            await Rejected(() => f.Run(decision, true), "form changed");
+            Check(f.Http.Posts == 0, "Invalid review must not POST");
+        });
+        await Case("block pre-existing feedback", async f =>
+        {
+            await f.Prepare();
+            f.Http.Persisted.Add(Record());
+            await Rejected(() => f.Run(f.Decision(), true), "already has feedback");
+            await Rejected(() => f.Run(f.Decision(), true), "already has feedback");
+            Check(f.Http.Posts == 0 && Directory.GetDirectories(f.Folder, "preflight-*").Length == 2, "Preserve baseline evidence");
+        });
+        await Case("timeout with committed feedback", async f =>
+        {
+            await f.Prepare();
+            f.Http.Outcome = "timeout-committed";
+            var receipt = Read(await f.Run(f.Decision(), true));
+            Check(Text(receipt, "state") == "reconciled_after_ambiguous_post", "Timeout must reconcile against the ledger");
+            var post = Read(Path.Combine(f.Folder, "attempt", "feedback-post.json"));
+            Check(post["http_status"] is null && Text(post, "error").Contains("timed out") && f.Http.Posts == 1, "Timeout evidence");
+        });
+        await Case("timeout without a row then GET-only recovery", async f =>
+        {
+            await f.Prepare();
+            f.Http.Outcome = "timeout-empty";
+            var decision = f.Decision();
+            await Rejected(() => f.Run(decision, true), "No matching feedback");
+            await Rejected(() => f.Run(decision, true), "No matching feedback");
+            f.Http.Persisted.Add(Record());
+            Check(Text(Read(await f.Run()), "state") == "reconciled_after_ambiguous_post", "Late row should reconcile");
+            Check(f.Http.Posts == 1, "Neither ambiguous nor recovered writes can be retried");
+        });
+        await Case("HTTP error preserves response and never retries", async f =>
+        {
+            await f.Prepare();
+            f.Http.Outcome = "error";
+            var decision = f.Decision();
+            await Rejected(() => f.Run(decision, true), "No matching feedback");
+            CheckArchive(Path.Combine(f.Folder, "attempt", "feedback-post.json"), f.Http.PostJsonBytes!, 422);
+            f.Http.Persisted.Add(Record());
+            await Rejected(() => f.Run(), "unexpected HTTP result");
+            Check(f.Http.Posts == 1, "HTTP errors also become GET-only");
+        });
+        await Case("reject bad HTTP 200 receipt fields", async f =>
+        {
+            var checks = new (string Key, JsonNode Value)[]
+            {
+                ("feedback_id", JsonValue.Create(7)!), ("reference", JsonValue.Create("F7")!),
+                ("fact_id", JsonValue.Create(11)!), ("division", JsonValue.Create("OTHER")!),
+                ("origin", JsonValue.Create("fixture-worksheet-notes")!), ("created_at", JsonValue.Create("bad timestamp")!),
+            };
+            foreach (var change in checks)
+            {
+                using var separate = new Fixture(Path.Combine(f.Project, change.Key), projectSources);
+                await separate.Prepare();
+                separate.Http.ChangeReceipt = receipt => receipt[change.Key] = change.Value;
+                await Rejected(() => separate.Run(separate.Decision(), true), change.Key == "created_at" ? "UTC feedback timestamp" : "receipt identity");
+                Check(separate.Http.Posts == 1, "Invalid receipt never re-POSTs");
+            }
+        });
+        await Case("reject mismatched GET provenance or ambiguous duplicates", async f =>
+        {
+            await f.Prepare();
+            f.Http.ChangeVerification = get => get["submission_id"] = "wrong";
+            await Rejected(() => f.Run(f.Decision(), true), "GET provenance");
+            f.Http.ChangeVerification = null;
+            var second = Record();
+            second["feedback_id"] = 7;
+            second["reference"] = "F7";
+            f.Http.Persisted.Add(second);
+            await Rejected(f.Prepare, "Multiple matching feedback rows");
+            Check(f.Http.Posts == 1, "Conflicts remain GET-only");
+        });
+        await Case("no response archive after write intent", async f =>
+        {
+            await f.Prepare();
+            f.Http.Outcome = "interrupted-after-commit";
+            var interrupted = false;
+            try { await f.Run(f.Decision(), true); }
+            catch (InvalidOperationException error) when (error.Message == "Simulated interruption") { interrupted = true; }
+            Check(interrupted && !File.Exists(Path.Combine(f.Folder, "attempt", "feedback-post.json")),
+                "Simulate interruption before the POST response archive");
+            var result = Read(await f.Run());
+            Check(Text(result, "state") == "reconciled_after_ambiguous_post"
+                && result["post_archive_sha256"] is null && f.Http.Posts == 1, "Recovery must tolerate missing POST response evidence");
+        });
+        await Case("downstream v2 identifies only labeled operator entries", f =>
+        {
+            var feedback = new JsonArray(Record());
+            var snapshot = new JsonObject { ["feedback"] = new JsonObject { ["records"] = feedback } };
+            Check(BackendNarrativeV2.ContainsSyntheticOperatorFeedback(Element(snapshot)), "Synthetic operator entry must be recognized");
+            var template = File.ReadAllText(Path.Combine(projectSources, "Data", "backend-narrative-review-v2.html"));
+            Check(BackendNarrativeV2.MarkSyntheticOperatorFeedback(template).Contains("<strong>" + Label + "</strong>"),
+                "Synthetic reviews must include a visible banner without changing the normal template.");
+            feedback[0]!["origin"] = "fixture-worksheet-notes";
+            Check(!BackendNarrativeV2.ContainsSyntheticOperatorFeedback(Element(snapshot)), "Worksheet source is distinct");
+            feedback[0]!["origin"] = "operator-api";
+            feedback[0]!["explanation"] = "Unlabeled feedback";
+            Check(!BackendNarrativeV2.ContainsSyntheticOperatorFeedback(Element(snapshot)), "Existing operator workflow remains distinct");
+            return Task.CompletedTask;
+        });
+        return;
+
+        async Task Case(string name, Func<Fixture, Task> test)
+        {
+            using var fixture = new Fixture(Path.Combine(root, Guid.NewGuid().ToString("N")), projectSources);
+            await test(fixture);
+            Console.WriteLine("PASS " + name);
+        }
+    }
+
+    private static JsonObject Record() => new()
+    {
+        ["feedback_id"] = 6, ["reference"] = "F6", ["fact_id"] = 12, ["division"] = "ED", ["origin"] = "operator-api",
+        ["created_at"] = Created, ["explanation"] = Explanation, ["corrective_action"] = Action,
+    };
+
+    private static void CheckArchive(string path, byte[] raw, int status)
+    {
+        var data = Read(path);
+        Check(Text(data, "scenario_label") == Label && data["http_status"]!.GetValue<int>() == status
+            && Convert.FromBase64String(Text(data, "body_base64")).SequenceEqual(raw)
+            && Text(data, "body_sha256") == BackendBundleV2Digest.Sha256(raw), "Exact HTTP archive");
+    }
+
+    private static async Task Rejected(Func<Task<string>> run, string error)
+    {
+        try { await run(); }
+        catch (InvalidDataException failure) when (failure.Message.Contains(error, StringComparison.Ordinal)) { return; }
+        throw new Exception("Expected rejection: " + error);
+    }
+
+    private static JsonNode Read(string path) => JsonNode.Parse(File.ReadAllBytes(path))!;
+    private static string Text(JsonNode node, string key) => node[key]!.GetValue<string>();
+    private static string Hash(string path) => BackendBundleV2Digest.Sha256(File.ReadAllBytes(path));
+    private static JsonElement Element(JsonNode node) => JsonSerializer.SerializeToElement(node);
+    private static void Check(bool condition, string error) { if (!condition) throw new Exception(error); }
+
+    private sealed class Fixture : IDisposable
+    {
+        internal string Project { get; }
+        internal string Folder => Path.Combine(Project, "Output", "OperatorFeedback", Instance, "gate3-ed-fact12");
+        internal MockBackend Http { get; } = new();
+        private readonly HttpClient client;
+        internal Fixture(string project, string projectSources)
+        {
+            Project = project;
+            Directory.CreateDirectory(Path.Combine(project, "Data"));
+            File.Copy(Path.Combine(projectSources, "Data", "operator-feedback-review.html"),
+                Path.Combine(project, "Data", "operator-feedback-review.html"));
+            File.WriteAllText(Path.Combine(project, "project.json"), """{"projectId":"a5ddfe29-5288-4542-85a4-72e9a6156a5d"}""");
+            client = new HttpClient(Http);
+        }
+        public void Dispose() => client.Dispose();
+        internal Task<string> Run(string file = "", bool authorize = false) =>
+            OperatorFeedbackAcceptance.Run(client, Project, file, authorize, new FixedTime());
+        internal Task<string> Prepare() => Run();
+        internal string Decision(Action<JsonObject>? change = null)
+        {
+            var request = Path.Combine(Folder, "review", "request.json");
+            var decision = new JsonObject
+            {
+                ["scenario_label"] = Label, ["decision"] = "submit_synthetic_feedback", ["acknowledged"] = true,
+                ["request_id"] = Text(Read(request), "request_id"), ["request_sha256"] = Hash(request), ["decided_at"] = Now.ToString("O"),
+            };
+            change?.Invoke(decision);
+            var path = Path.Combine(Project, Guid.NewGuid().ToString("N") + "-decision.json");
+            File.WriteAllText(path, decision.ToJsonString());
+            return path;
+        }
+    }
+
+    private sealed class FixedTime : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => Now;
+    }
+
+    private sealed class MockBackend : HttpMessageHandler
+    {
+        internal int Posts { get; private set; }
+        internal List<string> Calls { get; } = new();
+        internal List<JsonObject> Persisted { get; } = new();
+        internal string Outcome { get; set; } = "success";
+        internal Action<JsonObject>? ChangeReceipt { get; set; }
+        internal Action<JsonObject>? ChangeVerification { get; set; }
+        internal byte[]? RequestBytes { get; private set; }
+        internal byte[]? PostJsonBytes { get; private set; }
+        internal byte[]? LastGetBytes { get; private set; }
+        internal JsonObject InstanceInfo { get; } = new()
+        {
+            ["app"] = "VantageNet", ["disposable"] = true, ["domain_id"] = 1, ["instance_id"] = Instance,
+            ["database"] = "sqlite:disposable_vantagenet_acceptance_20261121_e63c.db",
+        };
+        internal JsonObject Ledger { get; }
+        internal JsonNode Reading => Ledger["readings"]![0]!;
+        internal MockBackend()
+        {
+            Ledger = new JsonObject
+            {
+                ["submission_id"] = Submission, ["status"] = "confirmed", ["domain_id"] = 1, ["row_count"] = 1,
+                ["division"] = "ED", ["report_date"] = "2026-06-30", ["filename"] = "ed.xlsx",
+                ["fingerprint"] = "9ce70be76344f7839cb405c2053cd9e2b5ce750794ff53d84c61793903bd5b1c",
+                ["confirmed_at"] = "2026-11-23T05:26:00.398744+00:00",
+                ["readings"] = new JsonArray(new JsonObject
+                {
+                    ["submission_id"] = Submission, ["division"] = "ED", ["source_file"] = "ed.xlsx", ["date"] = "2026-06-30",
+                    ["fact_id"] = 12, ["kpi_id"] = 6, ["kpi_name"] = "DEP-WHF-Deployment Alpro", ["location_id"] = 2,
+                    ["location_name"] = "Demo South", ["actual_value"] = 546.0, ["target_value"] = 600.0, ["unit"] = "Port",
+                    ["source_row"] = 16, ["higher_is_better"] = true, ["status"] = "RED",
+                }),
+            };
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var uri = request.RequestUri!;
+            Check(uri.GetLeftPart(UriPartial.Authority) == Origin, "Unpinned transport");
+            var path = uri.PathAndQuery;
+            Calls.Add(request.Method + " " + path);
+            if (request.Method == HttpMethod.Get)
+            {
+                if (path == "/_development/instance") return Reply(Bytes(InstanceInfo));
+                if (path == LedgerPath) return Reply(Bytes(Ledger));
+                Check(path == GetPath, "Unexpected GET");
+                var data = new JsonObject
+                {
+                    ["domain_id"] = 1, ["fact_id"] = 12, ["submission_id"] = Submission, ["division"] = "ED",
+                    ["source_file"] = "ed.xlsx", ["source_row"] = 16, ["feedback_count"] = Persisted.Count,
+                    ["feedback"] = new JsonArray(Persisted.Select(x => x.DeepClone()).ToArray()),
+                };
+                if (Posts > 0) ChangeVerification?.Invoke(data);
+                LastGetBytes = Bytes(data);
+                return Reply(LastGetBytes);
+            }
+            Check(request.Method == HttpMethod.Post && path == FeedbackPath && Posts == 0, "Unexpected or repeated POST");
+            Posts++;
+            Check(request.Content!.Headers.ContentType!.MediaType == "application/json", "Expected JSON content type");
+            RequestBytes = await request.Content.ReadAsByteArrayAsync(cancellationToken);
+            var payload = JsonNode.Parse(RequestBytes)!.AsObject();
+            Check(payload.Count == 3 && payload["fact_id"]!.GetValue<int>() == 12 && Text(payload, "explanation") == Explanation
+                && Text(payload, "corrective_action") == Action, "POST payload must exactly match the case and exclude caller identity and origin");
+            if (Outcome is "success" or "timeout-committed" or "interrupted-after-commit") Persisted.Add(Record());
+            if (Outcome == "interrupted-after-commit") throw new InvalidOperationException("Simulated interruption");
+            if (Outcome.StartsWith("timeout", StringComparison.Ordinal)) throw new TaskCanceledException();
+            if (Outcome == "error")
+            {
+                PostJsonBytes = Encoding.UTF8.GetBytes("""{"detail":"mock feedback rejected"}""");
+                return Reply(PostJsonBytes, HttpStatusCode.UnprocessableEntity);
+            }
+            var receipt = Record();
+            receipt.Remove("explanation");
+            receipt.Remove("corrective_action");
+            ChangeReceipt?.Invoke(receipt);
+            PostJsonBytes = Bytes(receipt);
+            return Reply(PostJsonBytes);
+        }
+
+        private static byte[] Bytes(JsonObject data) => JsonSerializer.SerializeToUtf8Bytes(data, Wire);
+        private static HttpResponseMessage Reply(byte[] bytes, HttpStatusCode status = HttpStatusCode.OK)
+        {
+            var content = new ByteArrayContent(bytes);
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            return new(status) { Content = content };
+        }
+    }
+}

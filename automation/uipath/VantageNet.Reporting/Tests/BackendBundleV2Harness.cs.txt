@@ -1,0 +1,79 @@
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using VantageNet.Reporting;
+
+if (args[0] == "digests")
+{
+    using var vectors = JsonDocument.Parse(File.ReadAllBytes(args[1]));
+    foreach (var vector in vectors.RootElement.EnumerateArray())
+        Console.WriteLine(BackendBundleV2Digest.Reading(vector.GetProperty("submission_fingerprint").GetString()!,
+            vector.GetProperty("reading"), vector.GetProperty("feedback")));
+    return;
+}
+
+using var config = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(args[1], "selection.json")));
+var input = config.RootElement;
+string ConfigText(string field) => input.GetProperty(field).GetString()!;
+using var handler = new FixtureTransport(args[1], ConfigText("origin"), ConfigText("submission"));
+using var client = new HttpClient(handler);
+try
+{
+    var selection = new BackendBundleV2Selection(ConfigText("origin"), input.GetProperty("domain").GetInt32(), ConfigText("instance"),
+        ConfigText("database"), ConfigText("submission"), input.GetProperty("fact").GetInt64(), ConfigText("bundle_id"), ConfigText("revision"));
+    using var transport = BackendBundleV2Admission.CreateTransport();
+    if (transport.AllowAutoRedirect || transport.UseProxy || transport.UseCookies)
+        throw new Exception("Unexpected production transport options.");
+    var path = await BackendBundleV2Admission.FetchAndStage(client, selection, Path.Combine(args[1], "project"), CancellationToken.None);
+    Console.WriteLine(JsonSerializer.Serialize(new { accepted = true, calls = handler.Calls, path }));
+}
+catch (Exception error) when (error is IOException or InvalidDataException)
+{
+    Console.WriteLine(JsonSerializer.Serialize(new { accepted = false, calls = handler.Calls, error = error.Message }));
+}
+
+sealed class FixtureTransport(string folder, string origin, string submission) : HttpMessageHandler
+{
+    public int Calls { get; private set; }
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        var path = request.RequestUri!.AbsolutePath;
+        if (request.RequestUri.GetLeftPart(UriPartial.Authority) != origin.TrimEnd('/'))
+            throw new Exception("Request escaped the pinned origin.");
+        var file = (++Calls, request.Method.Method, path) switch
+        {
+            (1, "GET", "/_development/instance") => "instance.json",
+            (2, "GET", var value) when value == "/api/v1/domains/1/submissions/" + submission => "ledger.json",
+            (3, "POST", "/api/v1/domains/1/report-bundles") => "bundle-wire.json",
+            _ => throw new Exception("Unexpected fixture request sequence."),
+        };
+        if (request.Method == HttpMethod.Post)
+        {
+            using var sent = JsonDocument.Parse(await request.Content!.ReadAsByteArrayAsync(cancellationToken));
+            using var selection = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(folder, "selection.json")));
+            var expected = selection.RootElement;
+            var json = sent.RootElement;
+            if (json.GetProperty("submission_id").GetString() != submission
+                || json.GetProperty("fact_id").GetInt64() != expected.GetProperty("fact").GetInt64()
+                || json.GetProperty("bundle_id").GetString() != expected.GetProperty("bundle_id").GetString()
+                || json.GetProperty("revision").GetString() != expected.GetProperty("revision").GetString())
+                throw new Exception("Export request lost its exact selection.");
+        }
+        var status = InputStatus(file);
+        var response = new HttpResponseMessage(status) { Content = new ByteArrayContent(File.ReadAllBytes(Path.Combine(folder, file))) };
+        response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+        if ((int)status >= 300 && (int)status < 400) response.Headers.Location = new Uri("http://127.0.0.1:8999/");
+        return response;
+    }
+
+    private HttpStatusCode InputStatus(string file)
+    {
+        var path = Path.Combine(folder, file + ".status");
+        return File.Exists(path) ? (HttpStatusCode)int.Parse(File.ReadAllText(path)) : HttpStatusCode.OK;
+    }
+}

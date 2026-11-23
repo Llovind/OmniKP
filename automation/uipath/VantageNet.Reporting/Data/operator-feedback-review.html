@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Review synthetic operator feedback · VantageNet</title>
+<style>
+body{font:16px system-ui;max-width:780px;margin:32px auto;padding:0 20px;background:#f5f8fa;color:#172d3c}
+h1{font-size:1.8rem}h2{font-size:1.2rem;margin:1.4rem 0 .6rem}
+aside,dl,pre{background:white;padding:1rem;border-radius:.25rem}
+aside{background:#fff3d2;border-left:.25rem solid #ad7100}aside p{margin:.4rem 0 0}
+dt{font-weight:650}dd{margin:0 0 .55rem;overflow-wrap:anywhere}
+pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}
+label{display:block;margin:1rem 0}button{font:inherit;background:#123e5c;color:white;border:0;border-radius:.2rem;padding:.65rem 1rem}
+button:disabled{opacity:.55}
+</style>
+</head>
+<body>
+<h1>Review operator feedback</h1>
+<aside>
+<strong>SYNTHETIC ACCEPTANCE SCENARIO</strong>
+<p>This is hypothetical test input. It does not represent an ED operator’s observations.</p>
+</aside>
+<h2>Confirmed reading</h2>
+<dl id="reading"></dl>
+<h2>Explanation</h2>
+<pre id="explanation"></pre>
+<h2>Proposed corrective action</h2>
+<pre id="action"></pre>
+<label><input id="ack" type="checkbox"> I reviewed the exact text and confirmed that it is labeled synthetic.</label>
+<button id="save" type="button" disabled>Save review decision</button>
+<p id="message" role="status">This form saves a local decision file. Submission requires separate authorization in UiPath.</p>
+<script>
+const data=/*OPERATOR_FEEDBACK_DATA*/null;
+if(data){
+  const {request,request_sha256}=data;
+  const {binding,reading,payload}=request;
+  const get=id=>document.getElementById(id);
+  const fields={
+    'Disposable instance':binding.instance_id,'Confirmed submission':binding.submission_id,
+    'Fact':binding.fact_id,'KPI':reading.kpi_name,'Location':reading.location_name,'Division':reading.division,
+    'Reporting date':reading.date,'Actual':reading.actual_value+' '+reading.unit,
+    'Target':reading.target_value+' '+reading.unit,'Shortfall':(reading.target_value-reading.actual_value)+' '+reading.unit,
+    'Source':reading.source_file+' / row '+reading.source_row
+  };
+  for(const [label,value] of Object.entries(fields)){
+    const term=document.createElement('dt'),description=document.createElement('dd');
+    term.textContent=label;description.textContent=value;get('reading').append(term,description);
+  }
+  get('explanation').textContent=payload.explanation;
+  get('action').textContent=payload.corrective_action;
+  const ack=get('ack'),save=get('save');
+  ack.onchange=()=>{save.disabled=!ack.checked;};
+  save.onclick=()=>{
+    if(!ack.checked)return;
+    const decision={
+      scenario_label:request.scenario_label,decision:'submit_synthetic_feedback',acknowledged:true,
+      request_id:request.request_id,request_sha256,decided_at:new Date().toISOString()
+    };
+    const url=URL.createObjectURL(new Blob([JSON.stringify(decision,null,2)],{type:'application/json'}));
+    const link=document.createElement('a');
+    link.href=url;link.download='decision-synthetic-operator-feedback-'+request.request_id+'.json';link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    get('message').textContent='Review decision saved locally. No feedback was sent.';
+  };
+}
+</script>
+</body>
+</html>

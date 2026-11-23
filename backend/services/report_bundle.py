@@ -2,9 +2,9 @@
 import hashlib
 import json
 import re
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 
-from agents.feedback_rca import run_rca
+from agents.feedback_rca import RCAProviderError, draft_from_evidence, feedback_evidence
 from database import (
     DimKPI,
     DimLocation,
@@ -30,53 +30,31 @@ def _status_label(status_code: str, higher_is_better: bool) -> str:
     return "Target unavailable"
 
 
-async def build_report_bundle(
-    db: Session,
-    domain_id: int,
-    submission_id: str,
-    fact_id: int,
-    bundle_id: str = "backend-bundle",
-    revision: str = "v1",
-) -> dict:
-    """Build a versioned, provenance-linked one-reading bundle in a single read session."""
-    if not BUNDLE_ID_RE.fullmatch(bundle_id):
-        raise ValueError("Invalid bundle_id: use 1–48 characters from [A-Za-z0-9_-].")
-    if not REVISION_RE.fullmatch(revision):
-        raise ValueError("Invalid revision: use v<integer> (for example v1).")
-
-    submission = (
-        db.query(Submission)
-        .filter_by(domain_id=domain_id, submission_id=submission_id)
-        .first()
-    )
-    if not submission:
-        raise LookupError("Submission not found in this domain.")
-    if submission.status != "confirmed":
-        raise ValueError("Report bundle requires a confirmed submission.")
-
-    row = (
-        db.query(ReadingSource, FactKPI, DimKPI, DimLocation, DimPeriod)
-        .join(FactKPI, ReadingSource.fact_id == FactKPI.fact_id)
-        .join(DimKPI, FactKPI.kpi_id == DimKPI.kpi_id)
-        .join(DimLocation, FactKPI.location_id == DimLocation.location_id)
-        .join(DimPeriod, FactKPI.period_id == DimPeriod.period_id)
-        .filter(
-            ReadingSource.submission_id == submission.submission_id,
-            ReadingSource.fact_id == fact_id,
-            FactKPI.domain_id == domain_id,
-        )
-        .first()
-    )
-    if not row:
-        raise LookupError("Confirmed reading not found for this submission and fact_id.")
-
-    source, fact, kpi, loc, period = row
-    feedback_entries = (
-        db.query(DivisionFeedback)
-        .filter_by(fact_id=fact.fact_id)
+def _capture_report_snapshot(db: Session, domain_id: int, submission_id: str, fact_id: int):
+    # A single SELECT gives SQLite one statement snapshot without keeping a
+    # transaction open across a later provider call.
+    rows = (
+        db.query(Submission, ReadingSource, FactKPI, DimKPI, DimLocation, DimPeriod, DivisionFeedback)
+        .select_from(Submission)
+        .options(load_only(Submission.status, Submission.fingerprint, Submission.filename))
+        .outerjoin(ReadingSource, (ReadingSource.submission_id == Submission.submission_id)
+                   & (ReadingSource.fact_id == fact_id))
+        .outerjoin(FactKPI, (FactKPI.fact_id == ReadingSource.fact_id) & (FactKPI.domain_id == domain_id))
+        .outerjoin(DimKPI, (FactKPI.kpi_id == DimKPI.kpi_id) & (DimKPI.domain_id == domain_id))
+        .outerjoin(DimLocation, (FactKPI.location_id == DimLocation.location_id) & (DimLocation.domain_id == domain_id))
+        .outerjoin(DimPeriod, FactKPI.period_id == DimPeriod.period_id)
+        .outerjoin(DivisionFeedback, DivisionFeedback.fact_id == FactKPI.fact_id)
+        .filter(Submission.domain_id == domain_id, Submission.submission_id == submission_id)
         .order_by(DivisionFeedback.feedback_id.asc())
         .all()
     )
+    if not rows:
+        raise LookupError("Submission not found in this domain.")
+    submission, source, fact, kpi, loc, period, _ = rows[0]
+    if submission.status != "confirmed":
+        raise ValueError("Report bundle requires a confirmed submission.")
+    if any(item is None for item in (source, fact, kpi, loc, period)):
+        raise LookupError("Confirmed reading not found for this submission and fact_id.")
 
     status_code = target_status(fact.actual_value, fact.target_value, kpi.higher_is_better)
     reading_record = {
@@ -102,18 +80,37 @@ async def build_report_bundle(
         ),
     }
 
+    evidence = [feedback_evidence(row[-1]) for row in rows if row[-1] is not None]
+    return submission.fingerprint, reading_record, evidence
+
+
+async def build_report_bundle(
+    db: Session,
+    domain_id: int,
+    submission_id: str,
+    fact_id: int,
+    bundle_id: str = "backend-bundle",
+    revision: str = "v1",
+) -> dict:
+    """Build a one-reading bundle using a read-only session owned by the caller."""
+    if not BUNDLE_ID_RE.fullmatch(bundle_id):
+        raise ValueError("Invalid bundle_id: use 1–48 characters from [A-Za-z0-9_-].")
+    if not REVISION_RE.fullmatch(revision):
+        raise ValueError("Invalid revision: use v<integer> (for example v1).")
+
+    try:
+        fingerprint, reading_record, evidence = _capture_report_snapshot(db, domain_id, submission_id, fact_id)
+        captured_at = now()
+    finally:
+        # The endpoint and CLI supply read-only sessions. Release the read
+        # connection before awaiting external I/O, including after a failed lookup.
+        db.rollback()
+
+    # Keep the direct RCA evidence's numeric IDs in the prompt. Bundle v2
+    # serializes those same records with lossless string IDs.
     feedback_records = [
-        {
-            "feedback_id": str(f.feedback_id),
-            "reference": f"F{f.feedback_id}",
-            "fact_id": str(f.fact_id),
-            "division": f.division,
-            "explanation": f.explanation,
-            "corrective_action": f.corrective_action,
-            "origin": getattr(f, "origin", "operator-api") or "operator-api",
-            "created_at": f.created_at,
-        }
-        for f in feedback_entries
+        {**entry, "feedback_id": str(entry["feedback_id"]), "fact_id": str(entry["fact_id"])}
+        for entry in evidence
     ]
     origins = {r["origin"] for r in feedback_records}
     if not origins:
@@ -123,15 +120,25 @@ async def build_report_bundle(
     else:
         feedback_origin = "mixed"
 
+    instance = get_disposable_instance_info()
+    is_disposable = isinstance(instance, dict) and instance.get("disposable") is True
+
     by_id = {r["feedback_id"]: r for r in feedback_records}
-    rca = None
     provider_error = None
     try:
-        rca = await run_rca(db, domain_id, kpi.kpi_id, loc.location_id, fact.fact_id)
-    except RuntimeError as exc:
-        provider_error = str(exc)
+        rca = await draft_from_evidence(reading_record, evidence, allow_synthetic_scenario=is_disposable)
+        if rca["evidence_status"] == "ai_draft":
+            cited_ids = [str(fid) for fid in rca["cited_feedback_ids"]]
+            if not cited_ids or any(fid not in by_id for fid in cited_ids):
+                raise RCAProviderError("response_rejected", "invalid_citations")
+    except RCAProviderError as exc:
+        provider_error = exc
+        rca = None
 
-    if provider_error is not None or rca is None:
+    provider_status = provider_error.provider_status if provider_error else rca["provider_status"]
+    ai_invoked = provider_status != "not_attempted"
+
+    if provider_error is not None:
         evidence_status = "provider_unavailable"
         narrative_origin = "provider-error"
     elif rca["evidence_status"] == "ai_draft":
@@ -146,18 +153,14 @@ async def build_report_bundle(
     else:
         raise RuntimeError(f"Unsupported RCA status for bundle export: {rca['evidence_status']}")
 
-    if evidence_status == "draft_ready" and rca:
-        cited_ids = [str(fid) for fid in rca.get("cited_feedback_ids", [])]
-    elif evidence_status == "insufficient_evidence":
+    if evidence_status == "insufficient_evidence":
         cited_ids = [r["feedback_id"] for r in feedback_records]
-    else:
+    elif evidence_status != "draft_ready":
         cited_ids = []
 
     references = []
     for fid in cited_ids:
-        rec = by_id.get(fid)
-        if not rec:
-            continue
+        rec = by_id[fid]
         text = rec["explanation"]
         if rec["corrective_action"]:
             text = f"{text} Proposed action: {rec['corrective_action']}"
@@ -170,7 +173,7 @@ async def build_report_bundle(
 
     canonical_source = json.dumps(
         {
-            "submission_fingerprint": submission.fingerprint,
+            "submission_fingerprint": fingerprint,
             "reading": reading_record,
             "feedback": feedback_records,
         },
@@ -180,40 +183,39 @@ async def build_report_bundle(
     ).encode("utf-8")
     reading_sha256 = hashlib.sha256(canonical_source).hexdigest()
 
-    instance = get_disposable_instance_info()
     return {
         "contract": "vantagenet.report-bundle",
         "schema_version": 2,
         "bundle_id": bundle_id,
         "revision": revision,
         "source_kind": "backend-read-bundle",
-        "ai_invoked": bool(rca["ai_invoked"]) if rca else False,
+        "ai_invoked": ai_invoked,
         "dataset": "submitted",
         "evidence_status": evidence_status,
         "producer": {
             "domain_id": domain_id,
             "disposable": instance["disposable"],
             "instance_id": instance["instance_id"],
-            "captured_at": now(),
-            "submission_fingerprint": submission.fingerprint,
+            "captured_at": captured_at,
+            "submission_fingerprint": fingerprint,
             "reading_sha256": reading_sha256,
         },
         "scope": {
-            "division": source.division,
-            "report_date": period.date,
-            "submission_id": submission.submission_id,
-            "fact_id": str(fact.fact_id),
+            "division": reading_record["division"],
+            "report_date": reading_record["date"],
+            "submission_id": submission_id,
+            "fact_id": reading_record["fact_id"],
         },
         "snapshot": {
             "schema_version": 2,
             "origin": "backend-confirmed-submission",
             "run_id": f"{bundle_id}-{revision}",
-            "submission_id": submission.submission_id,
-            "division": source.division,
-            "report_date": period.date,
+            "submission_id": submission_id,
+            "division": reading_record["division"],
+            "report_date": reading_record["date"],
             "reading": reading_record,
             "feedback": {
-                "fact_id": str(fact.fact_id),
+                "fact_id": reading_record["fact_id"],
                 "count": len(feedback_records),
                 "origin": feedback_origin,
                 "records": feedback_records,
@@ -227,7 +229,9 @@ async def build_report_bundle(
                 "origin": narrative_origin,
                 "backend_evidence_status": rca["evidence_status"] if rca else "provider_error",
                 "llm_model": rca["llm_model"] if rca else "not available",
-                "ai_invoked": bool(rca["ai_invoked"]) if rca else False,
+                "ai_invoked": ai_invoked,
+                "provider_status": provider_status,
+                "provider_error_code": provider_error.error_code if provider_error else None,
                 "grounding": (
                     {
                         "cited_feedback_ids": [str(fid) for fid in rca["grounding"].get("cited_feedback_ids", [])],
@@ -252,7 +256,7 @@ async def build_report_bundle(
                     else None
                 ),
                 "references": references,
-                "error": provider_error,
+                "error": str(provider_error) if provider_error else None,
             },
         },
     }

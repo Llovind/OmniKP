@@ -44,7 +44,7 @@ def _case_summary(rows):
 @router.get('/status')
 def ai_status():
     """Live provider configuration; recorded files are evaluation evidence only."""
-    from agents.harvester import LLM_MODEL, OPENROUTER_API_KEY, OPENROUTER_BASE_URL
+    from agents.harvester import LLM_MODEL, OPENROUTER_API_KEY, OPENROUTER_BASE_URL, _client
 
     configured = bool(OPENROUTER_API_KEY)
     recorded = _read(RECORDED_MAPPING_FILE.name) or {}
@@ -58,6 +58,7 @@ def ai_status():
         'mode': mode,
         'model': LLM_MODEL,
         'provider': OPENROUTER_BASE_URL,
+        'max_retries': _client.max_retries,
         'samples_per_column': 3,
         'required': True,
         'recorded_replay_enabled': False,

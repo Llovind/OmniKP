@@ -25,28 +25,19 @@ Model selection (for ITASE "alasan pemilihan teknologi" criterion):
 
 import json
 import math
-import os
 
-from dotenv import load_dotenv
-load_dotenv()
-
-from openai import AsyncOpenAI
 from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 
+from agents.openrouter_config import (
+    LLM_MODEL, OPENROUTER_API_KEY, OPENROUTER_BASE_URL, create_openrouter_client,
+)
 from database import DimKPI, DimLocation, DimPeriod, FactKPI
 
 # ─── LLM Client ───────────────────────────────────────────────────────────────
 # OpenAI SDK compatible — swap base_url to change provider
 
-OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-OPENROUTER_API_KEY  = os.getenv("OPENROUTER_API_KEY", "")
-LLM_MODEL           = os.getenv("LLM_MODEL", "meta-llama/llama-3.1-70b-instruct")
-
-_client = AsyncOpenAI(
-    api_key=OPENROUTER_API_KEY or "no-key-set",
-    base_url=OPENROUTER_BASE_URL,
-)
+_client = create_openrouter_client()
 
 
 # ─── Confidence Score (deterministic, not LLM-generated) ─────────────────────

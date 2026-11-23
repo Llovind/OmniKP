@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VantageNet backend narrative review</title>
+<style>
+body{font:16px system-ui;max-width:980px;margin:32px auto;padding:0 20px;background:#f5f8fa;color:#172d3c}
+h1{font-size:1.8rem}h2{font-size:1.2rem;margin-top:1.6rem}dl,pre,li{background:white;padding:.75rem;border-radius:.25rem}
+dt{font-weight:650}dd{margin:0 0 .55rem;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}
+li{margin:.45rem 0;white-space:pre-wrap;overflow-wrap:anywhere}label{display:block;margin:1rem 0}
+input,select,textarea,button{font:inherit;padding:.45rem}textarea{display:block;width:calc(100% - 1rem);min-height:5rem}
+#narrative{min-height:10rem}button{background:#123e5c;color:white;border:0;border-radius:.2rem;padding:.65rem 1rem}
+</style>
+</head>
+<body>
+<h1>Review backend report narrative</h1>
+<h2>Backend-confirmed reading</h2><dl id="reading"></dl>
+<h2>Feedback and references</h2>
+<p>Operator API feedback shows the submission channel. Reviewer and operator identities are self-reported.</p>
+<ul id="feedback"></ul><pre id="citations"></pre>
+<h2>AI-generated draft</h2><pre id="provider"></pre><pre id="original"></pre>
+<label for="narrative">Human-edited narrative <small>(up to 600 characters within the report template)</small></label>
+<textarea id="narrative" maxlength="600"></textarea>
+<label>Reviewer name or ID <input id="reviewer" maxlength="60" required></label>
+<label>Decision <select id="decision" required>
+<option value="" disabled selected>Choose explicitly</option>
+<option value="approve">Approve edited narrative</option>
+<option value="reject">Reject</option>
+<option value="request_revision">Request revision</option>
+</select></label>
+<label>Decision reason or revision comment <input id="reason" maxlength="120" required></label>
+<button id="save" type="button">Save decision file</button><p id="message" role="status"></p>
+<script>
+const data=/*BACKEND_V2_REVIEW_DATA*/null;
+if(data){
+  const {request,request_sha256,snapshot}=data;
+  const {reading,narrative}=snapshot;
+  const get=id=>document.getElementById(id);
+  const units=value=>value===null?'Unavailable':[value,reading.unit].filter(v=>v!=='').join(' ');
+  const fields={
+    'Submission':snapshot.submission_id,'Selected fact':reading.fact_id,'Division':snapshot.division,
+    'KPI':reading.kpi_name,'Location':reading.location_name,'Reporting date':snapshot.report_date,
+    'Actual':units(reading.actual_value),'Target':units(reading.target_value),'Status':reading.status,
+    'Source':reading.source_file+' / row '+reading.source_row,'Bundle revision':snapshot.run_id
+  };
+  for(const [label,value] of Object.entries(fields)){
+    const name=document.createElement('dt'),description=document.createElement('dd');
+    name.textContent=label;description.textContent=value;get('reading').append(name,description);
+  }
+  for(const record of snapshot.feedback.records){
+    const item=document.createElement('li');
+    const origin=record.origin==='fixture-worksheet-notes'?'Worksheet-derived note':'Operator API feedback';
+    item.textContent=record.reference+' | '+origin+'\n'+record.explanation+
+      (record.corrective_action?'\nProposed action: '+record.corrective_action:'');
+    get('feedback').append(item);
+  }
+  get('citations').textContent='Draft citations: '+narrative.references.map(reference=>reference.id).join(', ');
+  get('provider').textContent='Provider outcome: '+narrative.provider_status+' | Model: '+narrative.llm_model+
+    '\nProvider metadata comes from the archived bundle.';
+  get('original').textContent=narrative.draft;
+  get('narrative').value=narrative.draft;
+  get('save').onclick=async()=>{
+    const reviewer=get('reviewer').value.trim(),reason=get('reason').value.trim(),decision=get('decision').value;
+    const reviewed_narrative=get('narrative').value;
+    const controls=/[\x00-\x09\x0b-\x1f\x7f-\x9f]/;
+    const rows=reviewed_narrative.split('\n').reduce((count,line)=>count+Math.max(1,Math.ceil(line.length/52)),0);
+    if(!['approve','reject','request_revision'].includes(decision)||!/[\p{L}\p{N}]/u.test(reviewer)||
+       reviewer.length>60||controls.test(reviewer)||!reason||reason.length>120||controls.test(reason)||
+       (decision==='approve'&&(!reviewed_narrative.trim()||reviewed_narrative.length>600||controls.test(reviewed_narrative)||rows>9))){
+      get('message').textContent='Choose a decision and enter your reviewer identity and reason. Approved text must fit the template.';
+      return;
+    }
+    const button=get('save');
+    button.disabled=true;
+    try{
+      const bytes=new TextEncoder().encode(reviewed_narrative);
+      const hash=await crypto.subtle.digest('SHA-256',bytes);
+      const reviewed_narrative_sha256=Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('');
+      const result={binding:request.binding,request_id:request.request_id,request_sha256,reviewer,reason,decision,
+        reviewed_narrative,reviewed_narrative_sha256,decided_at:new Date().toISOString()};
+      const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));
+      const link=document.createElement('a');
+      link.href=url;link.download='narrative-decision-'+request.binding.run_id+'.json';link.click();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+      get('message').textContent='Decision saved locally. Record it in UiPath before requesting a report.';
+    }catch{
+      get('message').textContent='Could not hash the decision in this browser. Open the local form in a browser with Web Crypto.';
+    }finally{
+      button.disabled=false;
+    }
+  };
+}
+</script>
+</body>
+</html>

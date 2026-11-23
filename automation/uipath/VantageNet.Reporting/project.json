@@ -49,6 +49,53 @@
   "expressionLanguage": "VisualBasic",
   "entryPoints": [
     {
+      "filePath": "SubmitOperatorFeedback.cs",
+      "uniqueId": "362552da-ef7c-4bd8-91bf-fe4cdc740891",
+      "input": [
+        {"name":"projectFolder","type":"System.String","required":true},
+        {"name":"decisionPath","type":"System.String","required":false},
+        {"name":"authorizePost","type":"System.Boolean","required":false}
+      ],
+      "output": [{"name":"Output","type":"System.String"}]
+    },
+    {
+      "filePath": "ReviewBackendNarrativeV2.cs",
+      "uniqueId": "2347b011-8ce7-4ea1-b8db-398fa667febc",
+      "input": [
+        {"name":"projectFolder","type":"System.String","required":true},
+        {"name":"bundleId","type":"System.String","required":true},
+        {"name":"revision","type":"System.String","required":true},
+        {"name":"decisionPath","type":"System.String","required":false}
+      ],
+      "output": [{"name":"Output","type":"System.String"}]
+    },
+    {
+      "filePath": "GenerateBackendNarrativePptxV2.cs",
+      "uniqueId": "779e200c-da69-40b0-bef3-e9edf79040d0",
+      "input": [
+        {"name":"projectFolder","type":"System.String","required":true},
+        {"name":"bundleId","type":"System.String","required":true},
+        {"name":"revision","type":"System.String","required":true}
+      ],
+      "output": [{"name":"Output","type":"System.String"}]
+    },
+    {
+      "filePath": "AdmitBackendReportBundleV2.cs",
+      "uniqueId": "dbb0497a-a6cf-443b-ae10-5466dfc687bc",
+      "input": [
+        {"name":"projectFolder","type":"System.String","required":true},
+        {"name":"backendOrigin","type":"System.String","required":true},
+        {"name":"domainId","type":"System.Int32","required":true},
+        {"name":"expectedInstanceId","type":"System.String","required":true},
+        {"name":"expectedDatabase","type":"System.String","required":true},
+        {"name":"submissionId","type":"System.String","required":true},
+        {"name":"factId","type":"System.Int64","required":true},
+        {"name":"bundleId","type":"System.String","required":true},
+        {"name":"revision","type":"System.String","required":true}
+      ],
+      "output": [{"name":"Output","type":"System.String"}]
+    },
+    {
       "filePath": "AdaptReportBundle.cs",
       "uniqueId": "1b61bd08-6aa2-4902-abcc-5ca264d40638",
       "input": [{"name":"bundlePath","type":"System.String","required":true}],

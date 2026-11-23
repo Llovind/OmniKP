@@ -13,25 +13,18 @@ This pattern justifies the "Harvester Agent" framing for ITASE AI scoring:
 """
 
 import io
-import os
 from typing import Any
 
-from dotenv import load_dotenv
-load_dotenv()
-
 import pandas as pd
-from openai import AsyncOpenAI
 from rapidfuzz import fuzz, process
 
-OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-OPENROUTER_API_KEY  = os.getenv("OPENROUTER_API_KEY", "")
-LLM_MODEL           = os.getenv("LLM_MODEL", "meta-llama/llama-3.1-70b-instruct")
+from agents.openrouter_config import (
+    LLM_MODEL, OPENROUTER_API_KEY, OPENROUTER_BASE_URL, create_openrouter_client,
+)
+
 FUZZY_THRESHOLD     = 80  # Below this → escalate to LLM
 
-_client = AsyncOpenAI(
-    api_key=OPENROUTER_API_KEY or "no-key-set",
-    base_url=OPENROUTER_BASE_URL,
-)
+_client = create_openrouter_client()
 
 # Target schema columns (from dim_kpi / fact_kpi structure)
 TARGET_COLUMNS = [
