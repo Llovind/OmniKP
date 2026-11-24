@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VantageNet review</title>
+<link rel="icon" href="data:,">
+<style>
+body{font:16px system-ui;color:#142743;background:#f3f7fc;margin:0}main{max-width:1120px;margin:auto;padding:32px}h1{font-size:36px;margin-bottom:8px}h2{font-size:22px}table{width:100%;border-collapse:collapse;background:white}td,th{padding:10px;border-bottom:1px solid #d6e1ed;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:white;padding:16px}label{display:block;margin:12px 0}[hidden]{display:none}input,select,textarea,button{font:inherit;padding:8px}textarea{display:block;width:min(95%,540px)}button{background:#1456ba;color:white;border:0;padding:12px 20px}small{color:#425971}#message{font-weight:600}td input{width:min(85%,220px)}
+</style>
+<main>
+  <small id="scope"></small><h1 id="heading">VantageNet review</h1><p id="context"></p>
+  <section id="evidence"></section>
+  <form id="decision-form">
+    <label>Reviewer <input id="reviewer" maxlength="60" required></label>
+    <label>Decision reason <textarea id="reason" maxlength="240" required></textarea></label>
+    <label>Decision <select id="decision" required><option value="">Choose a decision</option><option value="approve">Approve</option><option value="reject">Reject</option></select></label>
+    <label id="confirm" hidden><input id="authorize" type="checkbox"> Authorize importing the displayed mapping into this disposable database.</label>
+    <button>Download decision</button>
+    <p id="message" role="status"></p>
+  </form>
+</main>
+<script>
+const data=/*REVIEW_DATA*/null;
+const {request,request_sha256,preview,validation,validated_mapping,previous_review,bundle}=data;
+const $=selector=>document.querySelector(selector);
+const evidence=$('#evidence'), inputs=new Map();
+function add(parent,tag,content){
+  const element=document.createElement(tag);
+  element.textContent=content;
+  parent.append(element);
+  return element;
+}
+function table(headers,rows){
+  const result=add(evidence,'table','');
+  const header=add(add(result,'thead',''),'tr','');
+  for(const value of headers)add(header,'th',value);
+  const body=add(result,'tbody','');
+  for(const row of rows){
+    const tr=add(body,'tr','');
+    for(const value of row){
+      const td=add(tr,'td',typeof value==='object'?'':value);
+      if(typeof value==='object')td.append(value);
+    }
+  }
+}
+$('#scope').textContent=`VantageNet · Synthetic demonstration · ${request.report_date} · ${request.decision_mode}`;
+const kind=request.kind;
+let direction;
+if(preview){
+  $('#heading').textContent=kind==='import'?'Authorize import':'Review column meanings';
+  $('#context').textContent=`${preview.division} · ${preview.filename} · ${preview.ai_trace.model} · ${request.identity.instance_id}`;
+  const targets=add(evidence,'datalist','');
+  targets.id='mapping-targets';
+  const choices=new Set([...data.fields,...Object.values(preview.column_mapping).map(proposal=>proposal.target)]);
+  choices.delete('date');
+  for(const choice of choices)add(targets,'option',choice).value=choice;
+  const rows=preview.columns.map(column=>{
+    const proposal=preview.column_mapping[column];
+    const samples=preview.raw_preview.slice(0,3).map(row=>row[column]??'').join(' · ');
+    const reviewed=(validated_mapping||previous_review)?.mapping[column]??proposal.target;
+    if(kind==='import')return [column,samples,reviewed];
+    const input=document.createElement('input');
+    input.setAttribute('aria-label',`Mapping for ${column}`);
+    input.setAttribute('list','mapping-targets');
+    input.required=true;
+    input.value=reviewed;
+    inputs.set(column,input);
+    return [column,samples,`${proposal.target} · ${proposal.reason||''}`,input];
+  });
+  table(kind==='import'?['Column','Sample values','Validated meaning']:['Column','Sample values','Live AI proposal','Reviewed meaning'],rows);
+  if(kind==='mapping'){
+    add(evidence,'p','Use location:<name> for a wide-layout column containing readings for that location. The manifest supplies the report date.');
+    const label=add(evidence,'label','Default direction ');
+    direction=add(label,'select','');
+    for(const label of ['','Higher better','Lower better'])add(direction,'option',label||'Unspecified').value=label;
+    direction.value=previous_review?.default_direction||'';
+  }else{
+    $('#confirm').hidden=false;
+    add(evidence,'p',`The approved mapping will import ${validation.valid_readings} readings. Submission ${request.submission_id}.`);
+  }
+  const result=validation||preview;
+  add(evidence,'h2',validation?'Validation of reviewed columns':'Validation of proposed columns');
+  add(evidence,'p',`${result.valid_readings} valid · ${result.invalid_readings} invalid · ${result.conflict_count} conflicts · ${data.expected_readings} expected`);
+  if(result.issues.length||result.conflicts.length||data.review_error){
+    add(evidence,'pre',JSON.stringify({issues:result.issues,conflicts:result.conflicts,review_error:data.review_error},null,2));
+  }
+}else{
+  $('#heading').textContent='Review the management narrative';
+  $('#context').textContent=`${request.bundle_id} · ${request.revision} · ${bundle.totals.kpis} KPIs · ${bundle.totals.readings} readings`;
+  table(['Division','KPIs','Readings','Meeting target','Below target'],bundle.divisions.map(d=>[d.division,d.kpis,d.readings,d.meeting,d.below_target]));
+  const n=bundle.narrative;
+  const fact=bundle.readings.find(row=>row.fact_id===n.fact_id);
+  add(evidence,'h2',n.evidence_status==='ai_draft'?'Cited AI draft':'Insufficient evidence');
+  add(evidence,'p',`${bundle.shortfalls_with_feedback} of ${bundle.gaps.length} shortfalls have recorded feedback.`);
+  if(fact)add(evidence,'p',`${fact.division} · ${fact.kpi_name} · ${fact.location_name} · actual ${fact.actual_value} ${fact.unit} · target ${fact.target_value} ${fact.unit}`);
+  if(n.root_cause)add(evidence,'p',n.root_cause);
+  if(n.prescriptive_action)add(evidence,'p',n.prescriptive_action);
+  if(!n.root_cause)add(evidence,'p','Request feedback for the shortfalls before assigning causes or corrective actions.');
+  for(const entry of bundle.feedback.filter(item=>item.fact_id===n.fact_id)){
+    add(evidence,'p',`[${entry.reference}] ${entry.origin} · ${entry.explanation}`);
+  }
+}
+$('#decision-form').onsubmit=event=>{
+  event.preventDefault();
+  const decision=$('#decision').value, reviewer=$('#reviewer').value.trim(), reason=$('#reason').value.trim();
+  const authorize_confirm=$('#authorize').checked;
+  if(!reviewer||!reason||(kind==='import'&&decision==='approve'&&!authorize_confirm)){
+    $('#message').textContent='Enter a reviewer and reason. Import approval also requires the authorization checkbox.';
+    return;
+  }
+  const record={request_sha256,decision_mode:request.decision_mode,decision,reviewer,reason,authorize_confirm,decided_at:new Date().toISOString()};
+  if(kind==='mapping'){
+    record.mapping=Object.fromEntries([...inputs].map(([column,input])=>[column,input.value.trim()]));
+    record.default_direction=direction.value||null;
+  }
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));
+  link.download=`decision-${kind}-${preview?.filename?.replace('.xlsx','')||request.revision}.json`;
+  link.click();
+  setTimeout(()=>URL.revokeObjectURL(link.href),1000);
+  $('#message').textContent='Decision downloaded. Resume the robot with this decision file.';
+};
+</script>
+</html>

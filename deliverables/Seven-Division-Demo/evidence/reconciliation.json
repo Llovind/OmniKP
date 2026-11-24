@@ -1,0 +1,16 @@
+{
+  "bundle_sha256": "f5e34f0aedfc60a89fce1fe8aa6ae40e849d186d29f5adb599c611c3a8c96ac5",
+  "reference_sha256": "c9ea615222d2fc06fd3ded1f98cf93460f4e00ebba2d0b6ebfd9b36e8f015e3a",
+  "matched_readings": 180,
+  "matched_submissions": 7,
+  "matched_heatmap_readings": 180,
+  "matched_anomalies": 59,
+  "totals": {
+    "kpis": 90,
+    "readings": 180,
+    "locations": 2,
+    "meeting": 121,
+    "below_target": 59,
+    "target_unavailable": 0
+  }
+}

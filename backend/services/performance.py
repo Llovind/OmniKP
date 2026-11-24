@@ -22,6 +22,10 @@ def attainment(actual, target, higher):
     return round((actual / target if higher else target / actual) * 100, 2)
 
 
+def relative_target_gap(actual, target):
+    return abs(actual - target) / max(abs(target), 1e-9)
+
+
 def latest_date(db, domain_id):
     return db.query(func.max(DimPeriod.date)).join(
         FactKPI, FactKPI.period_id == DimPeriod.period_id

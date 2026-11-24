@@ -1,5 +1,7 @@
 # VantageNet UiPath collaboration
 
+The [seven-division demo](../../../deliverables/Seven-Division-Demo/README.md) uses the separate `RunSevenDivisionDemo.cs` and `GenerateSevenDivisionPptx.cs` entry points. Its workspace, review decisions, aggregate contract and report template are independent of the earlier single-reading workflows below.
+
 Windows UiPath Process, VisualBasic expressions, net10.0, hybrid Main.xaml/coded workflows. See project.json for exact package versions. Requires compatible installed UiPath CLI/Robot and cached or restorable activities. Do not reinstall the CLI automatically. Full PowerPoint rendering needs installed PowerPoint; generation uses PowerPoint Activities OpenXML.
 
 Verified environment: Windows, UiPath CLI 1.205.0 with Studio/Robot 26.10 tooling, Python 3.13, Node 25 and PowerPoint 16.0.20527.20196. These are verified versions, not a claim that every earlier release works. Open this hybrid project in compatible Studio Desktop; Studio Web compatibility is not claimed. Python tests need Python 3.10+ and the pinned test dependencies. For an isolated setup from repository root, without global package installation:

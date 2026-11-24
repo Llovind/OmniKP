@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from dependencies import get_validated_domain
 from routers.kpi import period_rows
-from services.performance import target_status
+from services.performance import relative_target_gap, target_status
 
 router = APIRouter(prefix='/api/v1/domains/{domain_id}', tags=['Performance exceptions'],
                    dependencies=[Depends(get_validated_domain)])
@@ -24,5 +24,5 @@ def get_current_anomalies(domain_id: int, dataset: str = Query('all', pattern='^
             actual_value=fact.actual_value, target_value=fact.target_value, z_score=fact.z_score,
             status='RED', unit=kpi.unit, date=period.date, division=source.division if source else None,
             anomaly_reason='Below target' if kpi.higher_is_better else 'Above allowed limit'))
-    items.sort(key=lambda x: abs(x['actual_value'] - x['target_value']) / max(abs(x['target_value']), 1e-9), reverse=True)
+    items.sort(key=lambda x: relative_target_gap(x['actual_value'], x['target_value']), reverse=True)
     return dict(domain_id=domain_id, date=day, total_anomalies=len(items), anomalies=items)

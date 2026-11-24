@@ -1,0 +1,243 @@
+{
+  "decision_mode": "automated-test",
+  "baseline": {
+    "identity": {
+      "disposable": true,
+      "instance_id": "seven-live-20261124a",
+      "domain_id": 1,
+      "app": "VantageNet",
+      "database": "sqlite:disposable-seven-live-20261124a.db"
+    },
+    "submissions": [],
+    "periods": []
+  },
+  "confirmed_submissions": [
+    {
+      "division": "AIM",
+      "filename": "aim.xlsx",
+      "source_sha256": "1028a6852a91a51c28448f16325742015d5e7628d03e26b212926b5e5cd16e28",
+      "submission_id": "fd027d0b-8918-467a-9219-659e9858337a",
+      "readings": 4,
+      "mapping_trace": {
+        "mode": "live",
+        "model": "qwen3.5:9b",
+        "columns": 8,
+        "batches": 1,
+        "fallback_batches": 0,
+        "duration_ms": 5594
+      }
+    },
+    {
+      "division": "BGES & OLO",
+      "filename": "bges-olo.xlsx",
+      "source_sha256": "7649438ce456c9abca0240a5034562b4f7ac363b962af5c7614fab9cf8178421",
+      "submission_id": "203cc0ed-e29a-4ed7-90de-a4d2fe3e8704",
+      "readings": 82,
+      "mapping_trace": {
+        "mode": "live",
+        "model": "qwen3.5:9b",
+        "columns": 8,
+        "batches": 1,
+        "fallback_batches": 0,
+        "duration_ms": 6391
+      }
+    },
+    {
+      "division": "DEFA",
+      "filename": "defa.xlsx",
+      "source_sha256": "16512da5eacc01ec1a74ab1e7a4dd1e2b8dfbca24a306f6383a5fd15bd87d2ab",
+      "submission_id": "b9d4be9b-c2f5-43ea-b605-1d7af4058149",
+      "readings": 2,
+      "mapping_trace": {
+        "mode": "live",
+        "model": "qwen3.5:9b",
+        "columns": 7,
+        "batches": 1,
+        "fallback_batches": 0,
+        "duration_ms": 5625
+      }
+    },
+    {
+      "division": "ED",
+      "filename": "ed.xlsx",
+      "source_sha256": "8f35c686bb3f27521637787694d061660f657ac9a2a87ba4aeaedd77d9d3a498",
+      "submission_id": "62fa9c23-977a-4791-8488-972f7b6884fe",
+      "readings": 26,
+      "mapping_trace": {
+        "mode": "live",
+        "model": "qwen3.5:9b",
+        "columns": 7,
+        "batches": 1,
+        "fallback_batches": 0,
+        "duration_ms": 19280
+      }
+    },
+    {
+      "division": "FBB",
+      "filename": "fbb.xlsx",
+      "source_sha256": "21b0ccac7e80acf25fc34a75a1826e971f7b6d215ebf66c68f80c80b53d69b89",
+      "submission_id": "919596d1-9291-442e-9d88-2052bbda6519",
+      "readings": 16,
+      "mapping_trace": {
+        "mode": "live",
+        "model": "qwen3.5:9b",
+        "columns": 7,
+        "batches": 1,
+        "fallback_batches": 0,
+        "duration_ms": 4858
+      }
+    },
+    {
+      "division": "MBB",
+      "filename": "mbb.xlsx",
+      "source_sha256": "aaf540a3395227e665d8bc42b93c73a34070ca7248444ecb09b7a8ea93abfaa1",
+      "submission_id": "ce42e62a-4da6-4994-8c4d-118bce68efbd",
+      "readings": 34,
+      "mapping_trace": {
+        "mode": "live",
+        "model": "qwen3.5:9b",
+        "columns": 8,
+        "batches": 1,
+        "fallback_batches": 0,
+        "duration_ms": 6561
+      }
+    },
+    {
+      "division": "NETOP OSP",
+      "filename": "netop-osp.xlsx",
+      "source_sha256": "5881e3bd6a13e1b13baa4486240e27ae64b3e4d83af1e3d0e9561817ae638d00",
+      "submission_id": "6e4cf436-6e49-4cbb-9b0e-cf0935068a20",
+      "readings": 16,
+      "mapping_trace": {
+        "mode": "live",
+        "model": "qwen3.5:9b",
+        "columns": 7,
+        "batches": 1,
+        "fallback_batches": 0,
+        "duration_ms": 5327
+      }
+    }
+  ],
+  "clean_run": {
+    "reference": "expected-consolidated.xlsx",
+    "workbook_sha256": "6e018c5b92937d933f17f39d100e66d224e517c8ebe9c6d36ac7666622b86197",
+    "bundle_sha256": "00d45bc787f0c7b9d3b432d4a3384ebcdfadcf4c472db3960778f23452efdf6b",
+    "submissions": {
+      "62fa9c23-977a-4791-8488-972f7b6884fe": 26,
+      "203cc0ed-e29a-4ed7-90de-a4d2fe3e8704": 82,
+      "6e4cf436-6e49-4cbb-9b0e-cf0935068a20": 16,
+      "fd027d0b-8918-467a-9219-659e9858337a": 4,
+      "919596d1-9291-442e-9d88-2052bbda6519": 16,
+      "ce42e62a-4da6-4994-8c4d-118bce68efbd": 34,
+      "b9d4be9b-c2f5-43ea-b605-1d7af4058149": 2
+    },
+    "totals": {
+      "kpis": 90,
+      "readings": 180,
+      "locations": 2,
+      "meeting": 121,
+      "below_target": 59,
+      "target_unavailable": 0
+    },
+    "evidence_status": "ai_draft",
+    "receipt": {
+      "request_sha256": "3a9339bf4aa4cba769cf6650efb22ffcb30dc4b7fd83e085b8ab3b8fae3a06e3",
+      "pptx_sha256": "807e6c7de17d61289a7cb31ca60c86b8ad6da0accc441766cafdc36d2ea7042c",
+      "decision_sha256": "70155876a92e926ed94e6f8bd40ba654ed386fb67f6f0ad8a1747cbd511e0b99",
+      "approval_mode": "automated-test",
+      "filename": "VantageNet-seven-management-20261124a-v8.pptx",
+      "slide_count": 7
+    },
+    "pdf_sha256": "8edc03539c8893df4ab6d756230a40596b4b731dd3d7a537cfddae73122ac88c"
+  },
+  "recovery": "Simulated loss of the local ED confirmation response; resume reconciled the committed reading set with no additional confirmation.",
+  "negative_run": {
+    "division_status": {
+      "ED": "rejected",
+      "BGES & OLO": "rejected",
+      "NETOP OSP": "division_folder_missing",
+      "AIM": "expected_workbook_missing",
+      "FBB": "preview_http_422",
+      "MBB": "rejected",
+      "DEFA": "duplicate_workbook_bytes"
+    },
+    "confirmed_submissions": 0,
+    "readings": 0
+  },
+  "narrative_rejection": {
+    "narrative_decision": "reject",
+    "pptx_generated": false,
+    "unchanged_submissions": 7
+  },
+  "report_revision": {
+    "reference": "expected-consolidated.xlsx",
+    "workbook_sha256": "6e018c5b92937d933f17f39d100e66d224e517c8ebe9c6d36ac7666622b86197",
+    "bundle_sha256": "f5e34f0aedfc60a89fce1fe8aa6ae40e849d186d29f5adb599c611c3a8c96ac5",
+    "submissions": {
+      "62fa9c23-977a-4791-8488-972f7b6884fe": 26,
+      "203cc0ed-e29a-4ed7-90de-a4d2fe3e8704": 82,
+      "6e4cf436-6e49-4cbb-9b0e-cf0935068a20": 16,
+      "fd027d0b-8918-467a-9219-659e9858337a": 4,
+      "919596d1-9291-442e-9d88-2052bbda6519": 16,
+      "ce42e62a-4da6-4994-8c4d-118bce68efbd": 34,
+      "b9d4be9b-c2f5-43ea-b605-1d7af4058149": 2
+    },
+    "totals": {
+      "kpis": 90,
+      "readings": 180,
+      "locations": 2,
+      "meeting": 121,
+      "below_target": 59,
+      "target_unavailable": 0
+    },
+    "evidence_status": "ai_draft",
+    "receipt": {
+      "request_sha256": "d0c4177201e875004faca6948baaba66196f432ad9a7a8142a9e15c3d477e36d",
+      "pptx_sha256": "ad587fd683ff619b765fa1344eed5308afde0ee55bd38bd3ad80913941d42f2d",
+      "decision_sha256": "77bc64327e66f60a595fa9ac580deaaf277881f7982bbd003be090eb0f99c2b2",
+      "approval_mode": "automated-test",
+      "filename": "VantageNet-seven-management-20261124a-v10-v10.pptx",
+      "slide_count": 7
+    },
+    "pdf_sha256": "41bbd488bcd17566e3b506596e76aa37e597535fddab27ef75d4800f0ba55287"
+  },
+  "rca": {
+    "status": "ai_draft",
+    "model": "qwen3.5:9b",
+    "fact_id": 109,
+    "cited_feedback_ids": [
+      6
+    ],
+    "shortfalls_with_feedback": 12
+  },
+  "powerpoint_layout_check": [
+    {
+      "slide": 1,
+      "layout_issues": []
+    },
+    {
+      "slide": 2,
+      "layout_issues": []
+    },
+    {
+      "slide": 3,
+      "layout_issues": []
+    },
+    {
+      "slide": 4,
+      "layout_issues": []
+    },
+    {
+      "slide": 5,
+      "layout_issues": []
+    },
+    {
+      "slide": 6,
+      "layout_issues": []
+    },
+    {
+      "slide": 7,
+      "layout_issues": []
+    }
+  ]
+}

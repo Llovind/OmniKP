@@ -1,9 +1,11 @@
 """Competition demo: divisional upload → review → confirm → consolidated readings."""
 import json
 from datetime import date
+from uuid import UUID
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from database import (
     get_db,
     DimKPI,
@@ -18,6 +20,7 @@ from dependencies import get_validated_domain
 from services.intake import stage, review, confirm, now
 from services.performance import attainment, target_status
 from services.report_bundle import build_report_bundle
+from services.aggregate_report import build_aggregate_report
 
 router = APIRouter(prefix='/api/v1/domains/{domain_id}', tags=['Division submissions'],
                    dependencies=[Depends(get_validated_domain)])
@@ -41,14 +44,28 @@ class ReportBundleRequest(BaseModel):
     revision: str = 'v1'
 
 
+class AggregateReportRequest(BaseModel):
+    report_date: date
+    submission_ids: list[UUID] = Field(min_length=7, max_length=7)
+    bundle_id: str
+    revision: str
+
+
 @router.post('/submissions/preview')
 async def preview_report(domain_id: int, file: UploadFile = File(...), division: str = Form(...),
                          report_date: date = Form(...), sheet_name: str = Form(''), header_row: int = Form(0),
-                         header_depth: int = Form(1), use_ai: bool = Form(False), db: Session = Depends(get_db)):
+                         header_depth: int = Form(1), use_ai: bool = Form(False),
+                         submission_id: UUID | None = Form(None), db: Session = Depends(get_db)):
+    if submission_id and db.get(Submission, str(submission_id)):
+        raise HTTPException(409, 'Submission ID already exists. Check the submission ledger.')
     content = await file.read(10 * 1024 * 1024 + 1)
     try:
         return await stage(db, domain_id, content, file.filename or '', division, report_date.isoformat(),
-                           sheet_name, header_row, header_depth, use_ai)
+                           sheet_name, header_row, header_depth, use_ai,
+                           submission_id=str(submission_id) if submission_id else None)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(409, 'Submission could not be staged. Check the submission ledger.')
     except RuntimeError as exc:
         db.rollback()
         raise HTTPException(503, str(exc))
@@ -232,3 +249,14 @@ async def export_report_bundle(domain_id: int, request: ReportBundleRequest, db:
         raise HTTPException(404, str(exc))
     except ValueError as exc:
         raise HTTPException(422, str(exc))
+
+
+@router.post('/aggregate-report')
+async def aggregate_report(domain_id: int, request: AggregateReportRequest, db: Session = Depends(get_db)):
+    """Capture the complete, confirmed seven-division synthetic period and draft cited analysis."""
+    try:
+        return await build_aggregate_report(db, domain_id, request.report_date.isoformat(),
+                                            {str(value) for value in request.submission_ids},
+                                            request.bundle_id, request.revision)
+    except ValueError as exc:
+        raise HTTPException(409, str(exc))

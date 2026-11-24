@@ -49,6 +49,25 @@
   "expressionLanguage": "VisualBasic",
   "entryPoints": [
     {
+      "filePath": "RunSevenDivisionDemo.cs",
+      "uniqueId": "3150e358-cba8-4615-b3c3-1cc6486d5615",
+      "input": [
+        {"name":"projectFolder","type":"System.String","required":true},
+        {"name":"configPath","type":"System.String","required":true},
+        {"name":"decisionPath","type":"System.String","required":false}
+      ],
+      "output": [{"name":"Output","type":"System.String"}]
+    },
+    {
+      "filePath": "GenerateSevenDivisionPptx.cs",
+      "uniqueId": "649f9e4a-2d1f-4e83-88f7-da78ba23c38e",
+      "input": [
+        {"name":"projectFolder","type":"System.String","required":true},
+        {"name":"configPath","type":"System.String","required":true}
+      ],
+      "output": [{"name":"Output","type":"System.String"}]
+    },
+    {
       "filePath": "SubmitOperatorFeedback.cs",
       "uniqueId": "362552da-ef7c-4bd8-91bf-fe4cdc740891",
       "input": [

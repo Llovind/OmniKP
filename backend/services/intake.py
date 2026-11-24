@@ -430,7 +430,7 @@ def confirm(db, submission, mapping, default_direction=None):
             "division": submission.division, "dates": sorted({r['date'] for r in records})}
 
 
-async def stage(db, domain_id, content, filename, division, report_date, sheet_name='', header_row=0, header_depth=1, use_ai=True, _ai_proposal=None):
+async def stage(db, domain_id, content, filename, division, report_date, sheet_name='', header_row=0, header_depth=1, use_ai=True, _ai_proposal=None, submission_id=None):
     use_ai = True
     division = division.strip()
     if not 1 <= len(division) <= 100:
@@ -448,7 +448,7 @@ async def stage(db, domain_id, content, filename, division, report_date, sheet_n
         if not use_ai:
             raise ValueError("This report has already been imported for this division and reporting date.")
         message += ' This report is already imported: review AI suggestions here; duplicate confirmation remains blocked.'
-    submission = Submission(submission_id=str(uuid.uuid4()), domain_id=domain_id, division=division,
+    submission = Submission(submission_id=submission_id or str(uuid.uuid4()), domain_id=domain_id, division=division,
                             filename=filename[:255], report_date=report_date, sheet_name=report['sheet'],
                             fingerprint=fingerprint, created_at=now(), raw_json=json.dumps(report),
                             mapping_json=json.dumps(plain_mapping(mapping)), status='draft')
