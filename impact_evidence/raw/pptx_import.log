@@ -1,0 +1,13 @@
+command: C:\Users\lovind\AppData\Local\Programs\Python\Python313\python.exe -c "import pptx, pypdfium2, PIL; print('python-pptx', pptx.__version__); print('Pillow', PIL.__version__)"
+cwd: C:\KPI_Dashboard
+sources: automation/uipath/VantageNet.Reporting/Tests/requirements-test.txt
+start_utc: 2026-11-25T15:57:50.290263+00:00
+end_utc: 2026-11-25T15:57:51.092268+00:00
+duration_seconds: 0.8019921
+exit_code: 0
+
+[stdout]
+python-pptx 1.0.2
+Pillow 12.3.0
+
+[stderr]

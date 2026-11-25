@@ -1,0 +1,12 @@
+command: git -c safe.directory=C:/KPI_Dashboard rev-parse HEAD
+cwd: C:\KPI_Dashboard
+sources: .git/HEAD
+start_utc: 2026-11-25T15:57:47.143756+00:00
+end_utc: 2026-11-25T15:57:47.182534+00:00
+duration_seconds: 0.0387854
+exit_code: 0
+
+[stdout]
+c247093c6a052b04e74412c4cdf8164cfd28690b
+
+[stderr]

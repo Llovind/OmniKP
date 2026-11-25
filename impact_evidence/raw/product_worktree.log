@@ -1,0 +1,11 @@
+command: git -c safe.directory=C:/KPI_Dashboard status --porcelain=v1 -- backend automation frontend/public/demo/divisions
+cwd: C:\KPI_Dashboard
+sources: backend/, automation/, frontend/public/demo/divisions/
+start_utc: 2026-11-25T15:58:12.386704+00:00
+end_utc: 2026-11-25T15:58:12.443760+00:00
+duration_seconds: 0.0570558
+exit_code: 0
+
+[stdout]
+
+[stderr]

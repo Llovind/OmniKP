@@ -1,0 +1,117 @@
+{
+  "command": [
+    "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "impact_evidence/run_ed.py"
+  ],
+  "cwd": "C:\\KPI_Dashboard",
+  "timestamp_utc": "2026-11-25T07:55:02.953047+00:00",
+  "instance_id": "91c6a8e3-518b-440b-80d5-ae599a2d37bd",
+  "scenario": "Demo North",
+  "selected_source_row": 5,
+  "mode": "backend_with_mock_provider",
+  "runbook": "VantageNet/ED_DEMO_RUNBOOK.md",
+  "workbook": "frontend/public/demo/divisions/ed.xlsx",
+  "workbook_sha256": "8f35c686bb3f27521637787694d061660f657ac9a2a87ba4aeaedd77d9d3a498",
+  "run_dir": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd",
+  "operations": [
+    {
+      "langkah": "backend.instance",
+      "mulai": "2026-11-25T07:55:08.271666+00:00",
+      "selesai": "2026-11-25T07:55:08.276802+00:00",
+      "durasi_detik": "0.0050863",
+      "jenis": "mesin",
+      "method": "GET",
+      "route": "/_development/instance",
+      "status_code": 200,
+      "sources": [
+        "backend/main.py",
+        "VantageNet/ED_DEMO_RUNBOOK.md"
+      ],
+      "response": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/instance.json"
+    },
+    {
+      "langkah": "backend.preview",
+      "mulai": "2026-11-25T07:55:08.279403+00:00",
+      "selesai": "2026-11-25T07:55:10.273896+00:00",
+      "durasi_detik": "1.9944537",
+      "jenis": "mesin",
+      "method": "POST",
+      "route": "/api/v1/domains/1/submissions/preview",
+      "status_code": 200,
+      "sources": [
+        "frontend/public/demo/divisions/ed.xlsx",
+        "backend/services/intake.py",
+        "VantageNet/ED_DEMO_RUNBOOK.md"
+      ],
+      "response": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/preview.json"
+    },
+    {
+      "langkah": "backend.review",
+      "mulai": "2026-11-25T07:55:10.275977+00:00",
+      "selesai": "2026-11-25T07:55:10.291854+00:00",
+      "durasi_detik": "0.0158512",
+      "jenis": "mesin",
+      "method": "POST",
+      "route": "/api/v1/domains/1/submissions/4f1981b3-2ad8-42b9-bf11-377ceabf8cf9/review",
+      "status_code": 200,
+      "sources": [
+        "backend/routers/submissions.py",
+        "programmatic-mapping.json",
+        "VantageNet/ED_DEMO_RUNBOOK.md"
+      ],
+      "response": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/review.json"
+    },
+    {
+      "langkah": "backend.confirm",
+      "mulai": "2026-11-25T07:55:10.293924+00:00",
+      "selesai": "2026-11-25T07:55:10.406391+00:00",
+      "durasi_detik": "0.1124347",
+      "jenis": "mesin",
+      "method": "POST",
+      "route": "/api/v1/domains/1/submissions/4f1981b3-2ad8-42b9-bf11-377ceabf8cf9/confirm",
+      "status_code": 200,
+      "sources": [
+        "backend/services/intake.py",
+        "programmatic-mapping.json",
+        "VantageNet/ED_DEMO_RUNBOOK.md"
+      ],
+      "response": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/confirm.json"
+    },
+    {
+      "langkah": "backend.get_ledger",
+      "mulai": "2026-11-25T07:55:10.407780+00:00",
+      "selesai": "2026-11-25T07:55:10.422638+00:00",
+      "durasi_detik": "0.0148312",
+      "jenis": "mesin",
+      "method": "GET",
+      "route": "/api/v1/domains/1/submissions/4f1981b3-2ad8-42b9-bf11-377ceabf8cf9",
+      "status_code": 200,
+      "sources": [
+        "backend/routers/submissions.py",
+        "VantageNet/ED_DEMO_RUNBOOK.md"
+      ],
+      "response": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/backend-ledger.json"
+    },
+    {
+      "langkah": "backend.fetch_bundle",
+      "mulai": "2026-11-25T07:55:10.436822+00:00",
+      "selesai": "2026-11-25T07:55:10.464750+00:00",
+      "durasi_detik": "0.0278605",
+      "jenis": "mesin",
+      "method": "POST",
+      "route": "/api/v1/domains/1/report-bundles",
+      "status_code": 200,
+      "sources": [
+        "backend/services/report_bundle.py",
+        "backend/agents/feedback_rca.py",
+        "backend-ledger.json",
+        "VantageNet/ED_DEMO_RUNBOOK.md"
+      ],
+      "response": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/fetch_bundle.json"
+    }
+  ],
+  "transport": "Uvicorn loopback HTTP on a fresh port",
+  "origin": "http://127.0.0.1:49176",
+  "completed_backend_flow": true,
+  "finished_utc": "2026-11-25T07:55:10.627897+00:00"
+}

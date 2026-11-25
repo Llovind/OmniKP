@@ -1,0 +1,278 @@
+{
+  "command": [
+    "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "impact_evidence\\run_checks.py"
+  ],
+  "finished_utc": "2026-11-25T07:52:58.300422+00:00",
+  "branch": "handoff/vantagenet-ed-mvp",
+  "commit": "c247093c6a052b04e74412c4cdf8164cfd28690b",
+  "scenario": "Demo North",
+  "python": "3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]",
+  "dependencies": {
+    "fastapi": "0.141.1",
+    "sqlalchemy": "2.0.52",
+    "openpyxl": "3.1.5",
+    "httpx": "0.28.1",
+    "openai": "2.52.0",
+    "python-dotenv": "1.2.2"
+  },
+  "records": [
+    {
+      "name": "branch",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=C:/KPI_Dashboard",
+        "branch",
+        "--show-current"
+      ],
+      "cwd": "C:\\KPI_Dashboard",
+      "sources": [
+        ".git/HEAD"
+      ],
+      "start_utc": "2026-11-25T07:52:25.201140+00:00",
+      "end_utc": "2026-11-25T07:52:25.276241+00:00",
+      "elapsed_seconds": 0.0750993,
+      "exit_code": 0,
+      "log": "raw/branch.log"
+    },
+    {
+      "name": "commit",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=C:/KPI_Dashboard",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "C:\\KPI_Dashboard",
+      "sources": [
+        ".git/HEAD"
+      ],
+      "start_utc": "2026-11-25T07:52:25.277064+00:00",
+      "end_utc": "2026-11-25T07:52:25.359033+00:00",
+      "elapsed_seconds": 0.0819853,
+      "exit_code": 0,
+      "log": "raw/commit.log"
+    },
+    {
+      "name": "dotnet_sdks",
+      "command": [
+        "dotnet",
+        "--list-sdks"
+      ],
+      "cwd": "C:\\KPI_Dashboard",
+      "sources": [
+        "dotnet"
+      ],
+      "start_utc": "2026-11-25T07:52:25.360461+00:00",
+      "end_utc": "2026-11-25T07:52:25.382881+00:00",
+      "elapsed_seconds": 0.0224322,
+      "exit_code": 0,
+      "log": "raw/dotnet_sdks.log"
+    },
+    {
+      "name": "uip_lookup",
+      "command": [
+        "where.exe",
+        "uip"
+      ],
+      "cwd": "C:\\KPI_Dashboard",
+      "sources": [
+        "PATH"
+      ],
+      "start_utc": "2026-11-25T07:52:25.384078+00:00",
+      "end_utc": "2026-11-25T07:52:25.494998+00:00",
+      "elapsed_seconds": 0.1109412,
+      "exit_code": 1,
+      "log": "raw/uip_lookup.log"
+    },
+    {
+      "name": "test_product_flow",
+      "command": [
+        "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_product_flow"
+      ],
+      "cwd": "C:\\KPI_Dashboard\\backend",
+      "sources": [
+        "backend/test_product_flow.py",
+        "frontend/public/demo/"
+      ],
+      "start_utc": "2026-11-25T07:52:25.582260+00:00",
+      "end_utc": "2026-11-25T07:52:39.073898+00:00",
+      "elapsed_seconds": 13.4916487,
+      "exit_code": 1,
+      "log": "raw/test_product_flow.log",
+      "test_cases": {
+        "test_product_flow": "ERROR"
+      },
+      "tests_run": 1
+    },
+    {
+      "name": "test_ai_revision",
+      "command": [
+        "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ai_revision"
+      ],
+      "cwd": "C:\\KPI_Dashboard\\backend",
+      "sources": [
+        "backend/test_ai_revision.py",
+        "frontend/public/demo/"
+      ],
+      "start_utc": "2026-11-25T07:52:39.075548+00:00",
+      "end_utc": "2026-11-25T07:52:47.351683+00:00",
+      "elapsed_seconds": 8.2761481,
+      "exit_code": 1,
+      "log": "raw/test_ai_revision.log",
+      "test_cases": {
+        "test_ai_revision": "ERROR"
+      },
+      "tests_run": 1
+    },
+    {
+      "name": "test_demo",
+      "command": [
+        "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "test_demo"
+      ],
+      "cwd": "C:\\KPI_Dashboard\\backend",
+      "sources": [
+        "backend/test_demo.py",
+        "frontend/public/demo/"
+      ],
+      "start_utc": "2026-11-25T07:52:47.353185+00:00",
+      "end_utc": "2026-11-25T07:52:56.360550+00:00",
+      "elapsed_seconds": 9.0073523,
+      "exit_code": 1,
+      "log": "raw/test_demo.log",
+      "test_cases": {
+        "test_demo": "ERROR"
+      },
+      "tests_run": 1
+    },
+    {
+      "name": "robot_tracked_paths",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=C:/KPI_Dashboard",
+        "ls-files",
+        "--",
+        "automation/uipath/VantageNet.Reporting",
+        "frontend/public/demo/divisions/ed.xlsx"
+      ],
+      "cwd": "C:\\KPI_Dashboard",
+      "sources": [
+        "automation/uipath/VantageNet.Reporting",
+        "frontend/public/demo/divisions/ed.xlsx"
+      ],
+      "start_utc": "2026-11-25T07:52:56.361929+00:00",
+      "end_utc": "2026-11-25T07:52:56.480144+00:00",
+      "elapsed_seconds": 0.1182229,
+      "exit_code": 0,
+      "log": "raw/robot_tracked_paths.log"
+    },
+    {
+      "name": "test_mapping_review",
+      "command": [
+        "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "automation\\uipath\\VantageNet.Reporting\\Tests\\test_mapping_review.py"
+      ],
+      "cwd": "C:\\KPI_Dashboard\\impact_evidence\\raw\\check-db-4v1qwcv8\\robot-checks",
+      "sources": [
+        "automation/uipath/VantageNet.Reporting/Tests/test_mapping_review.py"
+      ],
+      "start_utc": "2026-11-25T07:52:56.678701+00:00",
+      "end_utc": "2026-11-25T07:52:57.126734+00:00",
+      "elapsed_seconds": 0.4480463,
+      "exit_code": 1,
+      "log": "raw/test_mapping_review.log",
+      "blocked_by_missing_cli": true
+    },
+    {
+      "name": "test_controlled_confirm",
+      "command": [
+        "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "automation\\uipath\\VantageNet.Reporting\\Tests\\test_controlled_confirm.py"
+      ],
+      "cwd": "C:\\KPI_Dashboard\\impact_evidence\\raw\\check-db-4v1qwcv8\\robot-checks",
+      "sources": [
+        "automation/uipath/VantageNet.Reporting/Tests/test_controlled_confirm.py"
+      ],
+      "start_utc": "2026-11-25T07:52:57.129647+00:00",
+      "end_utc": "2026-11-25T07:52:57.716718+00:00",
+      "elapsed_seconds": 0.5870527,
+      "exit_code": 1,
+      "log": "raw/test_controlled_confirm.log",
+      "blocked_by_missing_cli": true
+    },
+    {
+      "name": "test_report_bundle",
+      "command": [
+        "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "automation\\uipath\\VantageNet.Reporting\\Tests\\test_report_bundle.py"
+      ],
+      "cwd": "C:\\KPI_Dashboard\\impact_evidence\\raw\\check-db-4v1qwcv8\\robot-checks",
+      "sources": [
+        "automation/uipath/VantageNet.Reporting/Tests/test_report_bundle.py"
+      ],
+      "start_utc": "2026-11-25T07:52:57.717823+00:00",
+      "end_utc": "2026-11-25T07:52:57.992760+00:00",
+      "elapsed_seconds": 0.2749386,
+      "exit_code": 1,
+      "log": "raw/test_report_bundle.log",
+      "blocked_by_missing_cli": true
+    },
+    {
+      "name": "test_narrative_pptx",
+      "command": [
+        "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "automation\\uipath\\VantageNet.Reporting\\Tests\\test_narrative_pptx.py"
+      ],
+      "cwd": "C:\\KPI_Dashboard\\impact_evidence\\raw\\check-db-4v1qwcv8\\robot-checks",
+      "sources": [
+        "automation/uipath/VantageNet.Reporting/Tests/test_narrative_pptx.py"
+      ],
+      "start_utc": "2026-11-25T07:52:57.993691+00:00",
+      "end_utc": "2026-11-25T07:52:58.178601+00:00",
+      "elapsed_seconds": 0.184917,
+      "exit_code": 1,
+      "log": "raw/test_narrative_pptx.log",
+      "blocked_by_missing_cli": false
+    },
+    {
+      "name": "product_worktree",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=C:/KPI_Dashboard",
+        "status",
+        "--porcelain=v1",
+        "--",
+        "backend",
+        "automation",
+        "frontend/public/demo/divisions"
+      ],
+      "cwd": "C:\\KPI_Dashboard",
+      "sources": [
+        "backend/",
+        "automation/",
+        "frontend/public/demo/divisions/"
+      ],
+      "start_utc": "2026-11-25T07:52:58.195781+00:00",
+      "end_utc": "2026-11-25T07:52:58.299176+00:00",
+      "elapsed_seconds": 0.1034132,
+      "exit_code": 0,
+      "log": "raw/product_worktree.log"
+    }
+  ]
+}

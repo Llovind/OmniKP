@@ -1,0 +1,11 @@
+{
+  "mapping": {
+    "KPI WISA": "kpi_name",
+    "SATUAN": "unit",
+    "FORMULA": "higher_is_better",
+    "TGT": "target_value",
+    "Lokasi": "location_name",
+    "Realisasi": "actual_value",
+    "Keterangan": "notes"
+  }
+}

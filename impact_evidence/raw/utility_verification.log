@@ -1,0 +1,6 @@
+command: C:\Users\lovind\AppData\Local\Programs\Python\Python313\python.exe impact_evidence/verify_utilities.py
+start_utc: 2026-11-25T07:58:12.211736+00:00 end_utc: 2026-11-25T07:58:14.556025+00:00
+source: frontend\public\demo\divisions\expected-consolidated.xlsx sha256: 6e018c5b92937d933f17f39d100e66d224e517c8ebe9c6d36ac7666622b86197
+OK score_manual.py: identical input, four error categories and cell addresses
+OK cost_model.py: required inputs, exact fractional breakeven, sensitivity and nonpositive saving
+No manual baseline was measured by these checks.

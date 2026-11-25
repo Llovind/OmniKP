@@ -1,0 +1,12 @@
+command: where.exe uip
+cwd: C:\KPI_Dashboard
+sources: PATH
+start_utc: 2026-11-25T15:57:50.152153+00:00
+end_utc: 2026-11-25T15:57:50.227930+00:00
+duration_seconds: 0.0757813
+exit_code: 1
+
+[stdout]
+
+[stderr]
+INFO: Could not find files for the given pattern(s).

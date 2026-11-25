@@ -1,0 +1,41 @@
+{
+  "command": [
+    "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "impact_evidence/run_ed.py"
+  ],
+  "timestamp_utc": "2026-11-25T07:55:10.425419+00:00",
+  "mode": "backend_ledger_offline_mock",
+  "expected_path": "frontend/public/demo/divisions/expected-readings.json",
+  "expected_sha256": "c9ea615222d2fc06fd3ded1f98cf93460f4e00ebba2d0b6ebfd9b36e8f015e3a",
+  "ledger": "raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/backend-ledger.json",
+  "ledger_sha256": "75599df55594027c72b1ae991ca7f065fa50eba69fceb9da7144bec8dcba8bb4",
+  "join": "division, kpi_name, date, source_file; source_row first, unique location fallback",
+  "expected_readings": 26,
+  "observed_readings": 26,
+  "count_matches": true,
+  "missing_rows": 0,
+  "unmatched_observed": [],
+  "fields": {
+    "actual_value": {
+      "cocok": 26,
+      "tidak_cocok": 0,
+      "tidak_ada": 0
+    },
+    "target_value": {
+      "cocok": 26,
+      "tidak_cocok": 0,
+      "tidak_ada": 0
+    },
+    "location_name": {
+      "cocok": 26,
+      "tidak_cocok": 0,
+      "tidak_ada": 0
+    },
+    "source_row": {
+      "cocok": 26,
+      "tidak_cocok": 0,
+      "tidak_ada": 0
+    }
+  },
+  "differences": []
+}

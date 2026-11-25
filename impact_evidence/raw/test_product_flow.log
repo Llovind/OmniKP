@@ -1,0 +1,33 @@
+command: C:\Users\lovind\AppData\Local\Programs\Python\Python313\python.exe -m unittest -v test_product_flow
+cwd: C:\KPI_Dashboard\backend
+sources: backend/test_product_flow.py, frontend/public/demo/
+start_utc: 2026-11-25T15:57:51.096044+00:00
+end_utc: 2026-11-25T15:57:59.309357+00:00
+duration_seconds: 8.2133163
+exit_code: 0
+
+[stdout]
+
+[stderr]
+C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_ai_cannot_be_disabled_and_requires_review (test_product_flow.ProductFlow.test_ai_cannot_be_disabled_and_requires_review) ... ok
+test_ai_wide_report_aborts_on_failed_batch (test_product_flow.ProductFlow.test_ai_wide_report_aborts_on_failed_batch) ... ok
+test_causal_statistics_and_backfilled_dates (test_product_flow.ProductFlow.test_causal_statistics_and_backfilled_dates) ... ok
+test_disposable_instance_identity_and_submission_reconciliation (test_product_flow.ProductFlow.test_disposable_instance_identity_and_submission_reconciliation) ... ok
+test_feedback_is_exact_and_missing_feedback_never_calls_llm (test_product_flow.ProductFlow.test_feedback_is_exact_and_missing_feedback_never_calls_llm) ... ok
+test_feedback_provenance_and_consistent_report_bundle_statuses (test_product_flow.ProductFlow.test_feedback_provenance_and_consistent_report_bundle_statuses) ... ok
+test_mapping_memory_and_duplicates (test_product_flow.ProductFlow.test_mapping_memory_and_duplicates) ... ok
+test_missing_provider_blocks_intake_without_rule_fallback (test_product_flow.ProductFlow.test_missing_provider_blocks_intake_without_rule_fallback) ... ok
+test_multiple_divisions_wide_and_rows_unify (test_product_flow.ProductFlow.test_multiple_divisions_wide_and_rows_unify) ... ok
+test_seven_reconstructed_divisions_reconcile_every_reading (test_product_flow.ProductFlow.test_seven_reconstructed_divisions_reconcile_every_reading) ... ok
+test_target_direction_and_zero (test_product_flow.ProductFlow.test_target_direction_and_zero) ... ok
+test_validation_atomicity_and_manual_mapping (test_product_flow.ProductFlow.test_validation_atomicity_and_manual_mapping) ... ok
+test_validation_pack_failure_exercises (test_product_flow.ProductFlow.test_validation_pack_failure_exercises) ... ok
+test_worksheet_selection_single_sheet_and_ambiguous_workbooks (test_product_flow.ProductFlow.test_worksheet_selection_single_sheet_and_ambiguous_workbooks) ... ok
+test_xlsx_multilevel_headers_and_excel_percent_scale (test_product_flow.ProductFlow.test_xlsx_multilevel_headers_and_excel_percent_scale) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 3.374s
+
+OK

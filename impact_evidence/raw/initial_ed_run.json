@@ -1,0 +1,19 @@
+{
+  "command": [
+    "C:\\Users\\lovind\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "impact_evidence/run_ed.py"
+  ],
+  "cwd": "C:\\KPI_Dashboard",
+  "timestamp_utc": "2026-11-25T07:54:15.412122+00:00",
+  "instance_id": "e3961756-9689-42ca-b695-166f3787574b",
+  "scenario": "Demo North",
+  "selected_source_row": 5,
+  "mode": "backend_with_mock_provider",
+  "runbook": "VantageNet/ED_DEMO_RUNBOOK.md",
+  "workbook": "frontend/public/demo/divisions/ed.xlsx",
+  "workbook_sha256": "8f35c686bb3f27521637787694d061660f657ac9a2a87ba4aeaedd77d9d3a498",
+  "run_dir": "raw/ed-e3961756-9689-42ca-b695-166f3787574b",
+  "operations": [],
+  "failure": "Using SOCKS proxy, but the 'socksio' package is not installed. Make sure to install httpx using `pip install httpx[socks]`.",
+  "finished_utc": "2026-11-25T07:54:18.187739+00:00"
+}

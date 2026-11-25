@@ -1,0 +1,54 @@
+command: git -c safe.directory=C:/KPI_Dashboard ls-files -- automation/uipath/VantageNet.Reporting frontend/public/demo/divisions/ed.xlsx
+cwd: C:\KPI_Dashboard
+sources: automation/uipath/VantageNet.Reporting, frontend/public/demo/divisions/ed.xlsx
+start_utc: 2026-11-25T15:58:11.046819+00:00
+end_utc: 2026-11-25T15:58:11.089581+00:00
+duration_seconds: 0.0427718
+exit_code: 0
+
+[stdout]
+automation/uipath/VantageNet.Reporting/.gitignore
+automation/uipath/VantageNet.Reporting/AdaptReportBundle.cs
+automation/uipath/VantageNet.Reporting/ConfirmSubmission.cs
+automation/uipath/VantageNet.Reporting/ControlledConfirm.cs
+automation/uipath/VantageNet.Reporting/Data/config.example.json
+automation/uipath/VantageNet.Reporting/Data/independent-work-config.json
+automation/uipath/VantageNet.Reporting/Data/independent-work.synthetic.json
+automation/uipath/VantageNet.Reporting/Data/mapping-review.html
+automation/uipath/VantageNet.Reporting/Data/narrative-review.html
+automation/uipath/VantageNet.Reporting/Data/provisional-report-template.pptx
+automation/uipath/VantageNet.Reporting/Data/s42-report.synthetic.json
+automation/uipath/VantageNet.Reporting/Data/s43-report-bundle.synthetic.json
+automation/uipath/VantageNet.Reporting/FAIZH_INTEGRATION_HANDOFF.md
+automation/uipath/VantageNet.Reporting/FetchReportBundle.cs
+automation/uipath/VantageNet.Reporting/GenerateNarrativePptx.cs
+automation/uipath/VantageNet.Reporting/Main.xaml
+automation/uipath/VantageNet.Reporting/MappingReview.cs
+automation/uipath/VantageNet.Reporting/NarrativeState.cs
+automation/uipath/VantageNet.Reporting/PrepareReportWork.cs
+automation/uipath/VantageNet.Reporting/PreviewIntake.cs
+automation/uipath/VantageNet.Reporting/PreviewReport.cs
+automation/uipath/VantageNet.Reporting/README.md
+automation/uipath/VantageNet.Reporting/RenderReportProof.cs
+automation/uipath/VantageNet.Reporting/ReviewMapping.cs
+automation/uipath/VantageNet.Reporting/ReviewNarrative.cs
+automation/uipath/VantageNet.Reporting/Tests/check_live_backend.py
+automation/uipath/VantageNet.Reporting/Tests/check_non_ai_form.mjs
+automation/uipath/VantageNet.Reporting/Tests/cli_support.py
+automation/uipath/VantageNet.Reporting/Tests/config.json
+automation/uipath/VantageNet.Reporting/Tests/mode.txt
+automation/uipath/VantageNet.Reporting/Tests/preview_server.py
+automation/uipath/VantageNet.Reporting/Tests/requirements-test.txt
+automation/uipath/VantageNet.Reporting/Tests/test_controlled_confirm.py
+automation/uipath/VantageNet.Reporting/Tests/test_dropdowns.mjs
+automation/uipath/VantageNet.Reporting/Tests/test_independent_work.py
+automation/uipath/VantageNet.Reporting/Tests/test_mapping_review.py
+automation/uipath/VantageNet.Reporting/Tests/test_narrative_form.mjs
+automation/uipath/VantageNet.Reporting/Tests/test_narrative_pptx.py
+automation/uipath/VantageNet.Reporting/Tests/test_report_bundle.py
+automation/uipath/VantageNet.Reporting/Tests/test_review_form.mjs
+automation/uipath/VantageNet.Reporting/project.json
+automation/uipath/VantageNet.Reporting/project.uiproj
+frontend/public/demo/divisions/ed.xlsx
+
+[stderr]

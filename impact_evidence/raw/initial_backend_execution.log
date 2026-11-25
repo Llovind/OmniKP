@@ -1,0 +1,60 @@
+C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+Traceback (most recent call last):
+  File "C:\KPI_Dashboard\impact_evidence\run_ed.py", line 289, in <module>
+    main()
+    ~~~~^^
+  File "C:\KPI_Dashboard\impact_evidence\run_ed.py", line 236, in main
+    from agents import feedback_rca, harvester
+  File "C:\KPI_Dashboard\backend\agents\feedback_rca.py", line 5, in <module>
+    from agents.rca_agent import _client, LLM_MODEL, OPENROUTER_API_KEY
+  File "C:\KPI_Dashboard\backend\agents\rca_agent.py", line 46, in <module>
+    _client = AsyncOpenAI(
+        api_key=OPENROUTER_API_KEY or "no-key-set",
+        base_url=OPENROUTER_BASE_URL,
+    )
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_client.py", line 871, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        version=__version__,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _strict_response_validation=_strict_response_validation,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_base_client.py", line 1576, in __init__
+    self._client = http_client or AsyncHttpxClientWrapper(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_url=base_url,
+        ^^^^^^^^^^^^^^^^^^
+        # cast to a valid type because mypy doesn't understand our type narrowing
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        timeout=cast(Timeout, timeout),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_base_client.py", line 1469, in __init__
+    super().__init__(**kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 1415, in __init__
+    else self._init_proxy_transport(
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        proxy,
+        ^^^^^^
+    ...<5 lines>...
+        limits=limits,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 1464, in _init_proxy_transport
+    return AsyncHTTPTransport(
+        verify=verify,
+    ...<5 lines>...
+        proxy=proxy,
+    )
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_transports\default.py", line 335, in __init__
+    raise ImportError(
+    ...<2 lines>...
+    ) from None
+ImportError: Using SOCKS proxy, but the 'socksio' package is not installed. Make sure to install httpx using `pip install httpx[socks]`.

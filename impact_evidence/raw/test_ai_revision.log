@@ -1,0 +1,22 @@
+command: C:\Users\lovind\AppData\Local\Programs\Python\Python313\python.exe -m unittest -v test_ai_revision
+cwd: C:\KPI_Dashboard\backend
+sources: backend/test_ai_revision.py, frontend/public/demo/
+start_utc: 2026-11-25T15:57:59.310626+00:00
+end_utc: 2026-11-25T15:58:04.531810+00:00
+duration_seconds: 5.221189
+exit_code: 0
+
+[stdout]
+
+[stderr]
+test_evaluation_compares_rules_with_provider (test_ai_revision.EvidenceEndpoints.test_evaluation_compares_rules_with_provider) ... ok
+test_status_requires_provider_even_with_recordings (test_ai_revision.EvidenceEndpoints.test_status_requires_provider_even_with_recordings) ... ok
+test_partial_model_response_is_rejected (test_ai_revision.LiveInterpretation.test_partial_model_response_is_rejected) ... ok
+test_recorded_demo_layout_cannot_bypass_missing_provider (test_ai_revision.LiveInterpretation.test_recorded_demo_layout_cannot_bypass_missing_provider) ... ok
+test_structured_reasons_and_trace_describe_live_call (test_ai_revision.LiveInterpretation.test_structured_reasons_and_trace_describe_live_call) ... ok
+test_unknown_layout_without_key_requires_provider (test_ai_revision.LiveInterpretation.test_unknown_layout_without_key_requires_provider) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.831s
+
+OK

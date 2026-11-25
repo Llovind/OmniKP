@@ -1,0 +1,11 @@
+command: dotnet --list-sdks
+cwd: C:\KPI_Dashboard
+sources: dotnet
+start_utc: 2026-11-25T15:57:47.183435+00:00
+end_utc: 2026-11-25T15:57:47.199658+00:00
+duration_seconds: 0.0162319
+exit_code: 0
+
+[stdout]
+
+[stderr]

@@ -1,0 +1,12 @@
+command: git -c safe.directory=C:/KPI_Dashboard branch --show-current
+cwd: C:\KPI_Dashboard
+sources: .git/HEAD
+start_utc: 2026-11-25T15:57:47.096255+00:00
+end_utc: 2026-11-25T15:57:47.142934+00:00
+duration_seconds: 0.0466795
+exit_code: 0
+
+[stdout]
+handoff/vantagenet-ed-mvp
+
+[stderr]

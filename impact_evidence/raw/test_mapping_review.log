@@ -1,0 +1,17 @@
+command: C:\Users\lovind\AppData\Local\Programs\Python\Python313\python.exe automation\uipath\VantageNet.Reporting\Tests\test_mapping_review.py
+cwd: C:\KPI_Dashboard\impact_evidence\raw\check-db-_w037var\robot-checks
+sources: automation/uipath/VantageNet.Reporting/Tests/test_mapping_review.py
+start_utc: 2026-11-25T15:58:11.137413+00:00
+end_utc: 2026-11-25T15:58:11.402737+00:00
+duration_seconds: 0.2653257
+exit_code: 1
+
+[stdout]
+
+[stderr]
+Traceback (most recent call last):
+  File "C:\KPI_Dashboard\impact_evidence\raw\check-db-_w037var\robot-checks\automation\uipath\VantageNet.Reporting\Tests\test_mapping_review.py", line 12, in <module>
+    from cli_support import CLI
+  File "C:\KPI_Dashboard\impact_evidence\raw\check-db-_w037var\robot-checks\automation\uipath\VantageNet.Reporting\Tests\cli_support.py", line 9, in <module>
+    raise RuntimeError('Set UIPATH_CLI to your existing uip executable/launcher or add it to PATH. No installer is run.')
+RuntimeError: Set UIPATH_CLI to your existing uip executable/launcher or add it to PATH. No installer is run.

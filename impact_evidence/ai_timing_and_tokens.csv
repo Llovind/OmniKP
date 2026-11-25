@@ -1,0 +1,3 @@
+langkah,model,mulai,selesai,durasi_detik,jenis,input_bytes,output_bytes,usage_input,usage_output,estimasi_input,estimasi_output,evidence
+preview_mapping,synthetic-offline-mock,2026-11-25T07:55:10.246969+00:00,2026-11-25T07:55:10.247116+00:00,0.0001258,"transport mock, bukan latensi inferensi",1988,162,,,497,41,raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/mock_preview_mapping_1.json
+rca,synthetic-offline-mock,2026-11-25T07:55:10.460214+00:00,2026-11-25T07:55:10.460542+00:00,0.0003016,"transport mock, bukan latensi inferensi",1334,217,,,334,55,raw/ed-91c6a8e3-518b-440b-80d5-ae599a2d37bd/mock_rca_2.json

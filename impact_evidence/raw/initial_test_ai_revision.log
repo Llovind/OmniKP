@@ -1,0 +1,79 @@
+command: C:\Users\lovind\AppData\Local\Programs\Python\Python313\python.exe -m unittest -v test_ai_revision
+cwd: C:\KPI_Dashboard\backend
+sources: backend/test_ai_revision.py, frontend/public/demo/
+start_utc: 2026-11-25T07:52:39.075548+00:00
+end_utc: 2026-11-25T07:52:47.351683+00:00
+duration_seconds: 8.2761481
+exit_code: 1
+
+[stdout]
+
+[stderr]
+test_ai_revision (unittest.loader._FailedTest.test_ai_revision) ... ERROR
+
+======================================================================
+ERROR: test_ai_revision (unittest.loader._FailedTest.test_ai_revision)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_ai_revision
+Traceback (most recent call last):
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\unittest\loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "C:\KPI_Dashboard\backend\test_ai_revision.py", line 15, in <module>
+    from agents import harvester  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\KPI_Dashboard\backend\agents\harvester.py", line 31, in <module>
+    _client = AsyncOpenAI(
+        api_key=OPENROUTER_API_KEY or "no-key-set",
+        base_url=OPENROUTER_BASE_URL,
+    )
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_client.py", line 871, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        version=__version__,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        _strict_response_validation=_strict_response_validation,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_base_client.py", line 1576, in __init__
+    self._client = http_client or AsyncHttpxClientWrapper(
+                                  ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_url=base_url,
+        ^^^^^^^^^^^^^^^^^^
+        # cast to a valid type because mypy doesn't understand our type narrowing
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        timeout=cast(Timeout, timeout),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\openai\_base_client.py", line 1469, in __init__
+    super().__init__(**kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 1415, in __init__
+    else self._init_proxy_transport(
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        proxy,
+        ^^^^^^
+    ...<5 lines>...
+        limits=limits,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 1464, in _init_proxy_transport
+    return AsyncHTTPTransport(
+        verify=verify,
+    ...<5 lines>...
+        proxy=proxy,
+    )
+  File "C:\Users\lovind\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_transports\default.py", line 335, in __init__
+    raise ImportError(
+    ...<2 lines>...
+    ) from None
+ImportError: Using SOCKS proxy, but the 'socksio' package is not installed. Make sure to install httpx using `pip install httpx[socks]`.
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

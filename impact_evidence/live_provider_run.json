@@ -1,0 +1,127 @@
+{
+    "command":  [
+                    "python",
+                    "impact_evidence/run_ed_live.py"
+                ],
+    "source_commit":  "c247093c6a052b04e74412c4cdf8164cfd28690b",
+    "timestamp_utc":  "2026-11-25T15:56:38.209224+00:00",
+    "finished_utc":  "2026-11-25T15:56:51.825085+00:00",
+    "mode":  "backend_with_live_provider",
+    "provider":  "generativelanguage.googleapis.com",
+    "requested_model":  "gemini-flash-lite-latest",
+    "fixture":  "frontend/public/demo/divisions/ed.xlsx",
+    "fixture_sha256":  "8f35c686bb3f27521637787694d061660f657ac9a2a87ba4aeaedd77d9d3a498",
+    "scenario":  "Demo North",
+    "backend_flow_completed":  true,
+    "harness_exit_code":  1,
+    "cleanup_error":  "Event loop is closed",
+    "provider_calls":  [
+                           {
+                               "langkah":  "preview_mapping",
+                               "model":  "gemini-flash-lite-latest",
+                               "mulai":  "2026-11-25T15:56:46.589867+00:00",
+                               "selesai":  "2026-11-25T15:56:49.056887+00:00",
+                               "durasi_detik":  "2.4670348",
+                               "jenis":  "live provider HTTP",
+                               "status_http":  200,
+                               "usage_input":  469,
+                               "usage_output":  264,
+                               "usage_total":  733
+                           },
+                           {
+                               "langkah":  "rca",
+                               "model":  "gemini-flash-lite-latest",
+                               "mulai":  "2026-11-25T15:56:49.197156+00:00",
+                               "selesai":  "2026-11-25T15:56:51.618186+00:00",
+                               "durasi_detik":  "2.4210461",
+                               "jenis":  "live provider HTTP",
+                               "status_http":  200,
+                               "usage_input":  326,
+                               "usage_output":  81,
+                               "usage_total":  407
+                           }
+                       ],
+    "backend_http_steps":  [
+                               {
+                                   "langkah":  "backend.instance",
+                                   "mulai":  "2026-11-25T15:56:45.428236+00:00",
+                                   "selesai":  "2026-11-25T15:56:45.451579+00:00",
+                                   "durasi_detik":  "0.0228695",
+                                   "status_code":  200
+                               },
+                               {
+                                   "langkah":  "backend.preview",
+                                   "mulai":  "2026-11-25T15:56:45.452640+00:00",
+                                   "selesai":  "2026-11-25T15:56:49.079371+00:00",
+                                   "durasi_detik":  "3.6267114",
+                                   "status_code":  200
+                               },
+                               {
+                                   "langkah":  "backend.review",
+                                   "mulai":  "2026-11-25T15:56:49.081072+00:00",
+                                   "selesai":  "2026-11-25T15:56:49.088831+00:00",
+                                   "durasi_detik":  "0.0077373",
+                                   "status_code":  200
+                               },
+                               {
+                                   "langkah":  "backend.confirm",
+                                   "mulai":  "2026-11-25T15:56:49.090142+00:00",
+                                   "selesai":  "2026-11-25T15:56:49.143287+00:00",
+                                   "durasi_detik":  "0.05312",
+                                   "status_code":  200
+                               },
+                               {
+                                   "langkah":  "backend.get_ledger",
+                                   "mulai":  "2026-11-25T15:56:49.144107+00:00",
+                                   "selesai":  "2026-11-25T15:56:49.153841+00:00",
+                                   "durasi_detik":  "0.009714",
+                                   "status_code":  200
+                               },
+                               {
+                                   "langkah":  "backend.fetch_bundle",
+                                   "mulai":  "2026-11-25T15:56:49.180692+00:00",
+                                   "selesai":  "2026-11-25T15:56:51.619961+00:00",
+                                   "durasi_detik":  "2.4392459",
+                                   "status_code":  200
+                               }
+                           ],
+    "ledger":  {
+                   "observed":  26,
+                   "expected":  26,
+                   "fields":  {
+                                  "actual_value":  {
+                                                       "cocok":  26,
+                                                       "tidak_cocok":  0,
+                                                       "tidak_ada":  0
+                                                   },
+                                  "target_value":  {
+                                                       "cocok":  26,
+                                                       "tidak_cocok":  0,
+                                                       "tidak_ada":  0
+                                                   },
+                                  "location_name":  {
+                                                        "cocok":  26,
+                                                        "tidak_cocok":  0,
+                                                        "tidak_ada":  0
+                                                    },
+                                  "source_row":  {
+                                                     "cocok":  26,
+                                                     "tidak_cocok":  0,
+                                                     "tidak_ada":  0
+                                                 }
+                              },
+                   "differences":  [
+
+                                   ],
+                   "raw_generated_mode_label":  "backend_ledger_offline_mock (stale label in harness at time of live run)"
+               },
+    "bundle":  {
+                   "evidence_status":  "draft_ready",
+                   "citation_verified":  true,
+                   "feedback_origin":  "fixture-worksheet-notes",
+                   "location":  "Demo North",
+                   "source_row":  5,
+                   "actual":  97.8,
+                   "target":  98.5
+               }
+}

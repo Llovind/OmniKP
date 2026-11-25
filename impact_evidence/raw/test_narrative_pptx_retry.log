@@ -1,0 +1,17 @@
+command: C:\Users\lovind\AppData\Local\Programs\Python\Python313\python.exe automation\uipath\VantageNet.Reporting\Tests\test_narrative_pptx.py
+cwd: C:\KPI_Dashboard\impact_evidence\raw\verify-impact-cx7m9rqx
+sources: automation/uipath/VantageNet.Reporting/Tests/test_narrative_pptx.py, output/deck-style/deps, .local/pitch-python
+start_utc: 2026-11-25T07:58:13.671213+00:00
+end_utc: 2026-11-25T07:58:14.552265+00:00
+duration_seconds: 0.881049
+exit_code: 1
+
+[stdout]
+
+[stderr]
+Traceback (most recent call last):
+  File "C:\KPI_Dashboard\impact_evidence\raw\verify-impact-cx7m9rqx\automation\uipath\VantageNet.Reporting\Tests\test_narrative_pptx.py", line 14, in <module>
+    from cli_support import CLI as cli
+  File "C:\KPI_Dashboard\impact_evidence\raw\verify-impact-cx7m9rqx\automation\uipath\VantageNet.Reporting\Tests\cli_support.py", line 9, in <module>
+    raise RuntimeError('Set UIPATH_CLI to your existing uip executable/launcher or add it to PATH. No installer is run.')
+RuntimeError: Set UIPATH_CLI to your existing uip executable/launcher or add it to PATH. No installer is run.
