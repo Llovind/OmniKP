@@ -90,8 +90,8 @@ button:active { filter:brightness(.94); }
 .empty-workspace { display:flex; align-items:center; gap:40px; padding:48px; text-align:left; }
 .empty-workspace h2 { font-size:24px; font-weight:600; letter-spacing:-.5px; }
 .empty-workspace p { max-width:520px; line-height:1.7; }
-.brand-art { width:184px; height:auto; flex-shrink:0; border-radius:8px; }
-@media(max-width:760px) { .empty-workspace { padding:28px; gap:24px; flex-direction:column; align-items:flex-start; }.brand-art { width:130px; }.summary-strip>div { padding-right:12px; border:0; }.page-heading h1 { font-size:28px; } }
+.brand-art { width:64px; height:auto; flex-shrink:0; }
+@media(max-width:760px) { .empty-workspace { padding:28px; gap:24px; flex-direction:column; align-items:flex-start; }.summary-strip>div { padding-right:12px; border:0; }.page-heading h1 { font-size:28px; } }
 @media(max-width:640px) { .workspace-header { padding:14px 16px; gap:12px; flex-wrap:wrap; }.workspace-label { display:none; }.header-actions { gap:10px; }.header-actions time { display:none; }.workspace-main { padding:22px 16px; }.summary-strip { gap:20px; }.summary-strip>div { flex:1 0 40%; }.filter-bar>label { flex:1 1 140px; } th.sticky,td.sticky { position:static; } }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
 

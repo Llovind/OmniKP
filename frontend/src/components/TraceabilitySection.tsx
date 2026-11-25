@@ -31,7 +31,7 @@ export default function TraceabilitySection() {
   return <section ref={ref} id="traceability" className="landing-section landing-white" aria-labelledby="trace-heading" data-revealed={revealed}>
     <div className="landing-container trace-layout">
       <div className="trace-copy">
-        <motion.h2 id="trace-heading" {...entrance(0)}>Every number knows <span>where it came from.</span></motion.h2>
+        <motion.h2 id="trace-heading" {...entrance(0)}>Trace a KPI reading <span>to its source row.</span></motion.h2>
         <motion.p {...entrance(.06)}>Follow each reading to its report and responsible unit. Keep division feedback linked to the KPI, location and reporting date.</motion.p>
         <motion.a {...entrance(.12)} className="validation-download" href="/demo/divisions/validation-pack.zip" download>
           <Download size={20} strokeWidth={1.75} aria-hidden="true" />

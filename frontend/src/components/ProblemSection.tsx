@@ -13,9 +13,9 @@ function observe(query: string, callback: () => void) {
 const subscribeReduced = (callback: () => void) => observe(reducedQuery, callback);
 const subscribeHover = (callback: () => void) => observe(hoverQuery, callback);
 const problems = [
-  { title: 'Reports live in different files', body: 'Each division reports separately, leaving analysts to connect the pieces.', Icon: Files },
-  { title: 'Consolidating takes manual effort', body: 'Column meanings, units and targets need to line up before results can be compared.', Icon: Combine },
-  { title: 'Explanations get lost', body: 'The reason behind a missed target can become detached from the reading.', Icon: MessageSquareOff },
+  { title: 'Reports arrive separately', body: 'Analysts collect spreadsheets from several divisions for the same reporting period.', Icon: Files },
+  { title: 'Columns mean different things', body: 'Analysts check which values are actuals and targets, and confirm the units before comparing results.', Icon: Combine },
+  { title: 'Feedback lives elsewhere', body: 'Division explanations can get separated from the KPI, location and date they explain.', Icon: MessageSquareOff },
 ];
 
 function ProblemPanel({ title, body, Icon, index, reduced, canHover }: {
@@ -41,7 +41,7 @@ export default function ProblemSection() {
   return <section className="landing-section landing-container problem-section" aria-labelledby="problem-heading">
     <motion.h2 ref={heading} id="problem-heading" data-problem-motion="" initial={false}
       animate={{ y: inView || reduced ? 0 : 6 }} transition={{ duration: reduced ? 0 : .3, ease: [.16, 1, .3, 1] }}>
-      <span>The data exists.</span><br />The shared view takes work.
+      <span>Why telecom reporting</span><br />takes manual work
     </motion.h2>
     <div className="problem-columns">{problems.map((problem, index) => <ProblemPanel key={problem.title} {...problem} index={index} reduced={reduced} canHover={canHover} />)}</div>
   </section>;

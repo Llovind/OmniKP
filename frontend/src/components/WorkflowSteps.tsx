@@ -1,13 +1,13 @@
 import { useRef, useSyncExternalStore } from 'react';
 import { motion, useInView } from 'motion/react';
-import { FileUp, ListChecks, Layers3, Search, type LucideIcon } from 'lucide-react';
+import { FileUp, ListChecks, FileCheck, Search, type LucideIcon } from 'lucide-react';
 import './WorkflowSteps.css';
 
 const steps = [
-  { title: 'Submit', body: 'Choose the submitting unit, reporting date and Excel or CSV file.', Icon: FileUp },
-  { title: 'Review mapping', body: 'AI proposes column meanings. The analyst reviews and corrects them.', Icon: ListChecks },
-  { title: 'Consolidate', body: 'Validated readings enter a shared database, linked to the source file, row and submitting unit.', Icon: Layers3 },
-  { title: 'Investigate', body: 'Attach division feedback to a KPI, location and date, then request a root-cause analysis draft.', Icon: Search },
+  { title: 'Collect a report', body: 'UiPath submits a division file with its reporting date and requests an AI mapping preview.', Icon: FileUp },
+  { title: 'Review and import', body: 'The analyst reviews the mapping. UiPath confirms the import after backend validation and analyst approval.', Icon: ListChecks },
+  { title: 'Investigate a shortfall', body: 'UiPath retrieves the selected reading, its source and a draft based on division feedback.', Icon: Search },
+  { title: 'Approve the report', body: 'The analyst reviews the narrative. UiPath generates the PowerPoint report after approval.', Icon: FileCheck },
 ];
 const preference = '(prefers-reduced-motion: reduce)';
 function subscribe(callback: () => void) {
